@@ -14,3 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.transport;
+
+import io.github.xinfra.lab.rpc.protocol.XProtocolConfig;
+import io.github.xinfra.lab.transport.XRemotingTransportClientConfig;
+
+public class Transports {
+  public static ClientTransport getClientTransport(String protocol) {
+    if (XProtocolConfig.PROTOCL_NAME.equals(protocol)) {
+      return ClientTransportFactory.create(
+          TransportType.X_REMOTING, new XRemotingTransportClientConfig());
+    }
+    throw new UnsupportedOperationException("unsupport protocol:" + protocol);
+  }
+}

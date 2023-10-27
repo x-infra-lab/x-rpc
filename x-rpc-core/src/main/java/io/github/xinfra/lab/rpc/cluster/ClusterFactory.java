@@ -14,3 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.cluster;
+
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.transport.ClientTransport;
+
+public class ClusterFactory {
+
+  public static Cluster create(
+      ReferenceConfig<?> referenceConfig, ClientTransport clientTransport) {
+    return new FastFailCluster(referenceConfig, clientTransport);
+  }
+}

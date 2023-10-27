@@ -14,3 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.invoker;
+
+import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
+import lombok.Data;
+
+@Data
+public class Invocation {
+
+  private InetSocketAddress targetAddress;
+  private int timeoutMills = 3000;
+
+  private Class<?> serviceClass;
+  private Method method;
+  private String[] argTypes;
+  private Object[] args;
+}

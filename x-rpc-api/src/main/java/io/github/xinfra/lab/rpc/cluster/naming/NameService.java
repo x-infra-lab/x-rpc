@@ -14,3 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.cluster.naming;
+
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.registry.NotifyListener;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import io.github.xinfra.lab.rpc.transport.TransportEventListener;
+import java.util.List;
+
+public interface NameService extends NotifyListener, TransportEventListener {
+
+  List<ServiceInstance> getInstances(Invocation invocation);
+}

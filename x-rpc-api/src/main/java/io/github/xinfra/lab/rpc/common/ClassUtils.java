@@ -14,3 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.common;
+
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
+public class ClassUtils {
+
+  public static String genMethodSign(Method method) {
+    return method.getName()
+        + "("
+        + Arrays.stream(method.getParameterTypes())
+            .map(Class::getName)
+            .collect(Collectors.joining(";"))
+        + ")";
+  }
+
+  public static String genMethodSign(String methodName, String[] methodArgTypes) {
+    if (methodArgTypes == null) {
+      return methodName + "()";
+    }
+    return methodName + "(" + String.join(";", methodArgTypes) + ")";
+  }
+}

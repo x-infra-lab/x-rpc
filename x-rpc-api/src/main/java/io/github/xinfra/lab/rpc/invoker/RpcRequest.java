@@ -14,3 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.invoker;
+
+import java.io.Serializable;
+import java.util.Map;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class RpcRequest implements Serializable {
+  /** eg: com.github.xinfra.lab.rpc.exanple.EchoService */
+  private String serviceName;
+
+  /** eg:echo */
+  private String methodName;
+
+  /** eg: java.lang.String */
+  private String[] methodArgTypes;
+
+  private Object[] methodArgs;
+
+  /** Extensional properties of request */
+  private Map<String, Object> requestProps;
+}

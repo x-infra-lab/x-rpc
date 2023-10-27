@@ -14,3 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.config;
+
+import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
+import io.github.xinfra.lab.rpc.filter.ClusterFilter;
+import io.github.xinfra.lab.rpc.filter.Filter;
+import java.util.List;
+import lombok.Data;
+
+@Data
+public class ConsumerConfig {
+
+  private ApplicationConfig applicationConfig;
+
+  private RegistryConfig<?> registryConfig;
+
+  private ProtocolConfig protocolConfig;
+
+  private List<ClusterFilter> clusterFilters;
+
+  private List<Filter> filters;
+
+  private RouterChain routerChain;
+}

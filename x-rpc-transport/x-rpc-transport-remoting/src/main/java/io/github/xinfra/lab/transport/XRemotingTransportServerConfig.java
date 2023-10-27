@@ -14,3 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.transport;
+
+import io.github.xinfra.lab.rpc.config.TransportServerConfig;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
+import lombok.Setter;
+
+public class XRemotingTransportServerConfig implements TransportServerConfig {
+
+  @Setter private int serverPort;
+
+  @Override
+  public int port() {
+    return serverPort;
+  }
+
+  @Override
+  public String host() {
+    try {
+      return Inet4Address.getLocalHost().getHostAddress();
+    } catch (UnknownHostException e) {
+      throw new RuntimeException(e);
+    }
+  }
+}

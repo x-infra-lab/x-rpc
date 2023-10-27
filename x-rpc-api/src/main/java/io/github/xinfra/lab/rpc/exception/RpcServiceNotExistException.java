@@ -14,3 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.exception;
+
+public class RpcServiceNotExistException extends RpcServerException {
+  public RpcServiceNotExistException() {}
+
+  public RpcServiceNotExistException(String message) {
+    super(message);
+  }
+
+  public RpcServiceNotExistException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public RpcServiceNotExistException(Throwable cause) {
+    super(cause);
+  }
+
+  public RpcServiceNotExistException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
+}

@@ -14,3 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.exception;
+
+public class NoAvailableProviderException extends RpcException {
+  public NoAvailableProviderException() {}
+
+  public NoAvailableProviderException(String message) {
+    super(message);
+  }
+
+  public NoAvailableProviderException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public NoAvailableProviderException(Throwable cause) {
+    super(cause);
+  }
+
+  public NoAvailableProviderException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
+}

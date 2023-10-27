@@ -14,3 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.service;
+
+import io.github.xinfra.lab.rpc.api.EchoService;
+
+public class EchoServiceImpl implements EchoService {
+  @Override
+  public String hello(String str) {
+    return "hello " + str;
+  }
+}

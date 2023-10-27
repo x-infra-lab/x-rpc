@@ -14,3 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.config;
+
+import io.github.xinfra.lab.rpc.filter.Filter;
+import java.util.List;
+import lombok.Data;
+
+@Data
+public class ProviderConfig {
+
+  private ApplicationConfig applicationConfig;
+
+  private RegistryConfig<?> registryConfig;
+
+  private ProtocolConfig protocolConfig;
+
+  private List<Filter> filters;
+}

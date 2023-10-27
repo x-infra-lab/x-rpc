@@ -14,3 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.config;
+
+import io.github.xinfra.lab.rpc.registry.RegistryClientConfig;
+import io.github.xinfra.lab.rpc.registry.RegistryType;
+
+public interface RegistryConfig<CONFIG extends RegistryClientConfig> {
+
+  RegistryType getRegistryType();
+
+  CONFIG getRegistryClientConfig();
+}

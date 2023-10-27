@@ -14,3 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.exception;
+
+public class RpcServerException extends RpcException {
+  public RpcServerException() {}
+
+  public RpcServerException(String message) {
+    super(message);
+  }
+
+  public RpcServerException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public RpcServerException(Throwable cause) {
+    super(cause);
+  }
+
+  public RpcServerException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
+}

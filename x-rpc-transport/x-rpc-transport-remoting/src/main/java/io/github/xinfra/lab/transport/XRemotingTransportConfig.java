@@ -14,3 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.transport;
+
+import io.github.xinfra.lab.rpc.config.TransportConfig;
+import io.github.xinfra.lab.rpc.transport.TransportType;
+import lombok.Setter;
+
+public class XRemotingTransportConfig implements TransportConfig {
+
+  @Setter private XRemotingTransportClientConfig transportClientConfig;
+  @Setter private XRemotingTransportServerConfig transportServerConfig;
+
+  @Override
+  public XRemotingTransportClientConfig transportClientConfig() {
+    return transportClientConfig;
+  }
+
+  @Override
+  public XRemotingTransportServerConfig transportServerConfig() {
+    return transportServerConfig;
+  }
+
+  @Override
+  public TransportType transportType() {
+    return TransportType.X_REMOTING;
+  }
+}

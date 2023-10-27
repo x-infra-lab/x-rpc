@@ -14,3 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.registry;
+
+import io.github.xinfra.lab.registry.ZookeeperRegistry;
+import io.github.xinfra.lab.rpc.config.RegistryConfig;
+
+public class RegistryFactory {
+
+  public static Registry create(RegistryConfig<?> registryConfig) {
+    if (registryConfig.getRegistryType() == RegistryType.ZOOKEEPER) {
+      return new ZookeeperRegistry(registryConfig);
+    }
+    throw new IllegalArgumentException(
+        "Unsupported registry type: " + registryConfig.getRegistryType());
+  }
+}

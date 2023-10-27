@@ -14,3 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.cluster;
+
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.filter.FilterChainBuilder;
+import io.github.xinfra.lab.rpc.transport.ClientTransport;
+
+public class FastFailCluster extends AbstractCluster {
+
+  public FastFailCluster(ReferenceConfig<?> referenceConfig, ClientTransport clientTransport) {
+    super(referenceConfig, clientTransport);
+  }
+
+  @Override
+  public ClusterInvoker filteringInvoker() {
+    FailFastClusterInvoker clusterInvoker = new FailFastClusterInvoker(this);
+    return FilterChainBuilder.buildClusterFilterChainInvoker(
+        referenceConfig.getConsumerConfig().getClusterFilters(), clusterInvoker);
+  }
+}
