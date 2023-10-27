@@ -14,3 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.registry;
+
+import java.util.Map;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class ZookeeperInstancePayload {
+  private String revision;
+  private String protocol;
+
+  /** Additional extended attributes */
+  private Map<String, String> props;
+}

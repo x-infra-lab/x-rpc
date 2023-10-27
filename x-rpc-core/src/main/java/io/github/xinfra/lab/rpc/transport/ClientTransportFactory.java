@@ -14,3 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.transport;
+
+import io.github.xinfra.lab.rpc.config.TransportClientConfig;
+import io.github.xinfra.lab.transport.XRemotingClientTransport;
+
+public class ClientTransportFactory {
+
+  public static ClientTransport create(
+      TransportType transportType, TransportClientConfig transportClientConfig) {
+    if (transportType == TransportType.X_REMOTING) {
+      return new XRemotingClientTransport(transportClientConfig);
+    }
+    throw new IllegalStateException("unsupported transportType:" + transportType);
+  }
+}

@@ -14,3 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.transport;
+
+import java.net.InetSocketAddress;
+
+public interface TransportEventListener {
+  void onEvent(TransportEvent event, InetSocketAddress socketAddress);
+}

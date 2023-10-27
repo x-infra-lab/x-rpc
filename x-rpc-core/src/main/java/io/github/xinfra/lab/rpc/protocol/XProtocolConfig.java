@@ -14,3 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.protocol;
+
+import io.github.xinfra.lab.rpc.config.ProtocolConfig;
+import io.github.xinfra.lab.transport.XRemotingTransportConfig;
+import lombok.Setter;
+
+public class XProtocolConfig implements ProtocolConfig {
+
+  public static final String PROTOCL_NAME = "x-rpc";
+
+  @Setter private XRemotingTransportConfig xRemotingTransportConfig;
+
+  @Override
+  public String protocol() {
+    return PROTOCL_NAME;
+  }
+
+  @Override
+  public XRemotingTransportConfig transportConfig() {
+    return xRemotingTransportConfig;
+  }
+}

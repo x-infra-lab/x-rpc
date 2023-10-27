@@ -14,3 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.transport;
+
+import io.github.xinfra.lab.rpc.invoker.RpcRequest;
+import io.github.xinfra.lab.rpc.invoker.RpcResponse;
+import java.io.Closeable;
+import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+
+public interface ClientTransport extends Closeable {
+
+  void connect(InetSocketAddress socketAddress) throws Exception;
+
+  void disconnect(InetSocketAddress socketAddress);
+
+  void reconnect(InetSocketAddress socketAddress);
+
+  void addTransportEventListener(TransportEventListener listener);
+
+  CompletableFuture<RpcResponse> sendAsync(
+      InetSocketAddress socketAddress,
+      RpcRequest request,
+      int timeoutMills,
+      ExecutorService executor)
+      throws Exception;
+}

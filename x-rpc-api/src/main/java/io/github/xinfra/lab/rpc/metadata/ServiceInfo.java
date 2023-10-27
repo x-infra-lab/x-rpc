@@ -14,3 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.metadata;
+
+import java.io.Serializable;
+import java.util.TreeSet;
+import lombok.Data;
+
+@Data
+public class ServiceInfo implements Serializable {
+  private String interfaceName;
+  private TreeSet<String> version;
+  private TreeSet<String> group;
+  private TreeSet<String> protocol;
+}

@@ -14,3 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.invoker;
+
+import java.net.InetSocketAddress;
+
+/** direct connect provider */
+public class DirectConnectInvoker implements Invoker {
+
+  private InetSocketAddress directSocketAddress;
+
+  private Invoker invoker;
+
+  public DirectConnectInvoker(InetSocketAddress directSocketAddress, Invoker invoker) {
+    this.directSocketAddress = directSocketAddress;
+    this.invoker = invoker;
+  }
+
+  @Override
+  public InvocationResult invoke(Invocation invocation) {
+    invocation.setTargetAddress(directSocketAddress);
+    return invoker.invoke(invocation);
+  }
+}

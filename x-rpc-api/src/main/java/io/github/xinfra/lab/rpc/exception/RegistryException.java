@@ -14,3 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.exception;
+
+public class RegistryException extends RpcException {
+  public RegistryException() {}
+
+  public RegistryException(String message) {
+    super(message);
+  }
+
+  public RegistryException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public RegistryException(Throwable cause) {
+    super(cause);
+  }
+
+  public RegistryException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
+}

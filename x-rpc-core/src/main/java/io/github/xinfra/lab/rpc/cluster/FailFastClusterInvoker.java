@@ -14,3 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.cluster;
+
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.invoker.InvocationResult;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import java.util.List;
+
+public class FailFastClusterInvoker extends AbstractClusterInvoker {
+
+  public FailFastClusterInvoker(Cluster cluster) {
+    super(cluster);
+  }
+
+  @Override
+  protected InvocationResult doInvoke(
+      Invocation invocation, List<ServiceInstance> serviceInstances) {
+    ServiceInstance serviceInstance = select(invocation, serviceInstances);
+    invocation.setTargetAddress(serviceInstance.getSocketAddress());
+    return filteringConsumerInvoker.invoke(invocation);
+  }
+}

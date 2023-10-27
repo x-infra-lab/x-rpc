@@ -14,3 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.cluster;
+
+import io.github.xinfra.lab.rpc.cluster.naming.NameService;
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.transport.ClientTransport;
+
+public interface Cluster {
+
+  ReferenceConfig<?> referenceConfig();
+
+  NameService nameService();
+
+  ClientTransport clientTransport();
+
+  ClusterInvoker filteringInvoker();
+}

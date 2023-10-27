@@ -14,3 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.registry;
+
+import io.github.xinfra.lab.rpc.config.RegistryConfig;
+import io.github.xinfra.lab.rpc.registry.RegistryType;
+
+public class ZookeeperRegistryConfig implements RegistryConfig<ZookeeperConfig> {
+  private ZookeeperConfig zookeeperConfig;
+
+  public ZookeeperRegistryConfig(ZookeeperConfig zookeeperConfig) {
+    this.zookeeperConfig = zookeeperConfig;
+  }
+
+  @Override
+  public RegistryType getRegistryType() {
+    return RegistryType.ZOOKEEPER;
+  }
+
+  @Override
+  public ZookeeperConfig getRegistryClientConfig() {
+    return zookeeperConfig;
+  }
+}

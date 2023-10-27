@@ -14,3 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.exception;
+
+public class RpcTimeoutException extends RpcClientException {
+  public RpcTimeoutException() {}
+
+  public RpcTimeoutException(String message) {
+    super(message);
+  }
+
+  public RpcTimeoutException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public RpcTimeoutException(Throwable cause) {
+    super(cause);
+  }
+
+  public RpcTimeoutException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
+}

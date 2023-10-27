@@ -14,3 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.cluster.loadblancer;
+
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import java.util.List;
+
+public interface LoadBalancer {
+
+  ServiceInstance select(List<ServiceInstance> serviceInstances, Invocation invocation);
+}

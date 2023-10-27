@@ -14,3 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.metadata;
+
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+
+public class MetadataServiceImpl implements MetadataService {
+  private ServiceInstance serviceInstance;
+
+  public MetadataServiceImpl(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+  }
+
+  @Override
+  public MetadataInfo getMetadataInfo() {
+    return serviceInstance.getMetadataInfo();
+  }
+}

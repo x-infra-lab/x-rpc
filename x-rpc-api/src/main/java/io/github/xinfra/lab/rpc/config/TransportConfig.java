@@ -14,3 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.config;
+
+import io.github.xinfra.lab.rpc.transport.TransportType;
+
+public interface TransportConfig {
+
+  TransportClientConfig transportClientConfig();
+
+  TransportServerConfig transportServerConfig();
+
+  TransportType transportType();
+}

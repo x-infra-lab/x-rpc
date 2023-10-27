@@ -14,3 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.config;
+
+import java.util.HashSet;
+import java.util.Set;
+import lombok.Data;
+
+@Data
+public class ServiceConfig<T> {
+
+  public ServiceConfig(Class<T> serviceInterfaceClass) {
+    this.serviceInterfaceClass = serviceInterfaceClass;
+    this.serviceInterfaceName = serviceInterfaceClass.getName();
+  }
+
+  private Class<T> serviceInterfaceClass;
+
+  /** use for generic call */
+  private String serviceInterfaceName;
+
+  protected Set<String> group = new HashSet<>();
+
+  protected Set<String> version = new HashSet<>();
+
+  protected Set<String> protocol = new HashSet<>();
+}

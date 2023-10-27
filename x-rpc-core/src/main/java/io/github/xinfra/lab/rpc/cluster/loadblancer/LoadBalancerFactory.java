@@ -14,3 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.cluster.loadblancer;
+
+public class LoadBalancerFactory {
+
+  public static LoadBalancer create(LoadBalanceType loadBalanceType) {
+    // todo
+    return new RandomLoadBalancer();
+  }
+}

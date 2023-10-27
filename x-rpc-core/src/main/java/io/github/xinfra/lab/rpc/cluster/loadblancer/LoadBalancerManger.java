@@ -14,3 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.cluster.loadblancer;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class LoadBalancerManger {
+
+  private static Map<LoadBalanceType, LoadBalancer> loadBalancerMap = new HashMap<>();
+
+  public static synchronized LoadBalancer getLoadBalancer(LoadBalanceType loadBalanceType) {
+    LoadBalancer loadBalancer = loadBalancerMap.get(loadBalanceType);
+    if (loadBalancer == null) {
+      loadBalancer = LoadBalancerFactory.create(loadBalanceType);
+      loadBalancerMap.put(loadBalanceType, loadBalancer);
+    }
+    return loadBalancer;
+  }
+}

@@ -14,3 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.invoker;
+
+import java.io.Serializable;
+import java.util.Map;
+import lombok.Data;
+
+@Data
+public class RpcResponse implements Serializable {
+
+  private boolean success = true;
+
+  private String errorMsg;
+
+  private Object result;
+
+  /** extensional properties */
+  private Map<String, String> responseProps;
+}

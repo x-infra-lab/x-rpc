@@ -14,3 +14,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.github.xinfra.lab.rpc.registry;
+
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
+import java.util.List;
+
+public interface NotifyListener {
+
+  ServiceConfig<?> serviceConfig();
+
+  void notify(List<ServiceInstance> serviceInstances);
+}
