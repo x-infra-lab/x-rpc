@@ -17,6 +17,8 @@ public class ConsumerConfig<T> {
 
     private ProviderInfoListener providerInfoListener;
 
+    private ConsumerBootstrap<T> bootstrap;
+
     public ConsumerConfig<T> interfaceId(Class<T> interfaceId) {
         this.interfaceId = interfaceId;
         return this;
@@ -38,7 +40,13 @@ public class ConsumerConfig<T> {
     }
 
     public T refer() {
-        ConsumerBootstrap<T> bootstrap = new ConsumerBootstrap<>(this);
+        this.bootstrap = new ConsumerBootstrap<>(this);
         return bootstrap.refer();
+    }
+
+    public void unRefer() {
+        if (this.bootstrap != null) {
+            bootstrap.unRefer();
+        }
     }
 }

@@ -2,11 +2,11 @@ package io.github.xinfra.lab.rpc.cluster;
 
 import io.github.xinfra.lab.rpc.RpcRequest;
 import io.github.xinfra.lab.rpc.config.ConsumerConfig;
+import io.github.xinfra.lab.rpc.registry.ProviderGroup;
 import io.github.xinfra.lab.rpc.registry.ProviderInfo;
 
-import java.util.List;
 
-public class DefaultCluster implements Cluster{
+public class DefaultCluster implements Cluster {
     private ConsumerConfig<?> config;
 
     public DefaultCluster(ConsumerConfig<?> config) {
@@ -19,17 +19,29 @@ public class DefaultCluster implements Cluster{
         return null;
     }
 
+
     @Override
-    public void addProviders(List<ProviderInfo> providerInfoList) {
+    public void addProvider(ProviderGroup providerGroup) {
         // TODO
     }
 
     @Override
-    public void removeProviders(List<ProviderInfo> providerInfoList) {
+    public void removeProvider(ProviderGroup providerGroup) {
         // TODO
     }
 
-    public void init() {
+    @Override
+    public void updateProvider(ProviderGroup providerGroup) {
+        // TODO
+    }
+
+    @Override
+    public void startup() {
+        // TODO
+    }
+
+    @Override
+    public void shutDown() {
         // TODO
     }
 }

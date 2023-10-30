@@ -1,9 +1,8 @@
 package io.github.xinfra.lab.rpc.cluster;
 
-import io.github.xinfra.lab.rpc.registry.ProviderInfo;
+import io.github.xinfra.lab.rpc.registry.ProviderGroup;
 import io.github.xinfra.lab.rpc.registry.ProviderInfoListener;
 
-import java.util.List;
 
 public class ClusterProviderInfoListener implements ProviderInfoListener {
     private Cluster cluster;
@@ -12,13 +11,19 @@ public class ClusterProviderInfoListener implements ProviderInfoListener {
         this.cluster = cluster;
     }
 
+
     @Override
-    public void addProviders(List<ProviderInfo> providerInfoList) {
+    public void addProvider(ProviderGroup providerGroup) {
         // TODO
     }
 
     @Override
-    public void removeProviders(List<ProviderInfo> providerInfoList) {
+    public void removeProvider(ProviderGroup providerGroup) {
+        // TODO
+    }
+
+    @Override
+    public void updateProvider(ProviderGroup providerGroup) {
         // TODO
     }
 }
