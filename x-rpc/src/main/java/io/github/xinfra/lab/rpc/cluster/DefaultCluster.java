@@ -9,6 +9,11 @@ import io.github.xinfra.lab.rpc.registry.ProviderInfo;
 public class DefaultCluster implements Cluster {
     private ConsumerConfig<?> config;
 
+    private RouterChain routerChain;
+
+    private LoadBalancer loadBalancer;
+
+
     public DefaultCluster(ConsumerConfig<?> config) {
         this.config = config;
     }
