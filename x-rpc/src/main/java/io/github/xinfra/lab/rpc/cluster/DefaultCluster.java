@@ -1,6 +1,6 @@
 package io.github.xinfra.lab.rpc.cluster;
 
-import io.github.xinfra.lab.rpc.RpcRequest;
+import io.github.xinfra.lab.rpc.invoker.RpcRequest;
 import io.github.xinfra.lab.rpc.config.ConsumerConfig;
 import io.github.xinfra.lab.rpc.registry.ProviderGroup;
 import io.github.xinfra.lab.rpc.registry.ProviderInfo;

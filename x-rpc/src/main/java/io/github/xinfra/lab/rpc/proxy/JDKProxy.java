@@ -1,7 +1,7 @@
 package io.github.xinfra.lab.rpc.proxy;
 
-import io.github.xinfra.lab.rpc.RpcRequest;
-import io.github.xinfra.lab.rpc.RpcResponse;
+import io.github.xinfra.lab.rpc.invoker.RpcRequest;
+import io.github.xinfra.lab.rpc.invoker.RpcResponse;
 import io.github.xinfra.lab.rpc.common.ClassUtils;
 import io.github.xinfra.lab.rpc.exception.ErrorCode;
 import io.github.xinfra.lab.rpc.exception.RpcException;

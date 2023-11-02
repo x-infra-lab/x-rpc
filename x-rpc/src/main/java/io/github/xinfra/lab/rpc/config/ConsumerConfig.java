@@ -3,15 +3,13 @@ package io.github.xinfra.lab.rpc.config;
 import io.github.xinfra.lab.rpc.bootstrap.ConsumerBootstrap;
 import io.github.xinfra.lab.rpc.proxy.ProxyType;
 import io.github.xinfra.lab.rpc.registry.ProviderInfoListener;
+import io.github.xinfra.lab.rpc.remoting.codec.ProtocolType;
+import io.github.xinfra.lab.rpc.remoting.serialization.SerializationType;
 import lombok.Getter;
 
 
 @Getter
-public class ConsumerConfig<T> {
-
-    private Class<T> interfaceId;
-
-    private RegistryConfig<?> registryConfig;
+public class ConsumerConfig<T> extends BaseConfig<T> {
 
     private ProxyType proxyType;
 
@@ -21,6 +19,16 @@ public class ConsumerConfig<T> {
 
     public ConsumerConfig<T> interfaceId(Class<T> interfaceId) {
         this.interfaceId = interfaceId;
+        return this;
+    }
+
+    public ConsumerConfig<T> protocolType(ProtocolType protocolType) {
+        this.protocolType = protocolType;
+        return this;
+    }
+
+    public ConsumerConfig<T> serializationType(SerializationType serializationType) {
+        this.serializationType = serializationType;
         return this;
     }
 
