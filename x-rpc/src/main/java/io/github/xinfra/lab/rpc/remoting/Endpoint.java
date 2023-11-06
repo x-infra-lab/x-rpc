@@ -1,6 +1,7 @@
 package io.github.xinfra.lab.rpc.remoting;
 
 
+import io.github.xinfra.lab.rpc.remoting.protocol.ProtocolType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,11 +17,9 @@ public class Endpoint {
 
     private int port;
 
-    private long connectTimeoutMills;
+    private int connectTimeoutMills;
 
-    private byte protocol;
-
-    private byte version = 0;
+    private ProtocolType protocolType;
 
     private int connNum = 1;
 

@@ -5,7 +5,6 @@ import io.github.xinfra.lab.rpc.remoting.codec.Encoder;
 
 public interface Protocol {
 
-    ProtocolType type();
 
     Encoder encoder();
 

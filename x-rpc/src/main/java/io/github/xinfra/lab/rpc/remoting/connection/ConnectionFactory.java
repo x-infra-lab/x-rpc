@@ -1,7 +1,8 @@
 package io.github.xinfra.lab.rpc.remoting.connection;
 
-import java.net.URL;
+import io.github.xinfra.lab.rpc.remoting.Endpoint;
+
 
 public interface ConnectionFactory {
-    Connection create(URL url);
+    Connection create(Endpoint endpoint) throws Exception;
 }

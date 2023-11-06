@@ -5,13 +5,11 @@ import io.github.xinfra.lab.rpc.remoting.codec.Encoder;
 
 /**
  *
+ *
+ *
  */
 public class XProtocol implements Protocol {
 
-    @Override
-    public ProtocolType type() {
-        return ProtocolType.X;
-    }
 
     @Override
     public Encoder encoder() {
