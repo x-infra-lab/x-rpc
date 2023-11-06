@@ -1,22 +1,21 @@
 package io.github.xinfra.lab.rpc.remoting.connection;
 
-import io.github.xinfra.lab.rpc.config.ConsumerConfig;
 
-import java.net.URL;
+import io.github.xinfra.lab.rpc.remoting.Endpoint;
+
 
 public class DefaultConnectionManager implements ConnectionManager {
 
-    private ConsumerConfig<?> config;
     private ConnectionFactory connectionFactory;
 
-    public DefaultConnectionManager(ConsumerConfig<?> config) {
-        this.config = config;
-        this.connectionFactory = new DefaultConnectionFactory(config);
+    public DefaultConnectionManager() {
+        this.connectionFactory = new DefaultConnectionFactory();
     }
 
+
     @Override
-    public Connection getConnection(URL url) {
-        // todo
+    public Connection getConnection(Endpoint endpoint) {
+        // TODO
         return null;
     }
 }

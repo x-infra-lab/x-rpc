@@ -1,6 +1,6 @@
 package io.github.xinfra.lab.rpc.config;
 
-import io.github.xinfra.lab.rpc.remoting.codec.ProtocolType;
+import io.github.xinfra.lab.rpc.remoting.protocol.ProtocolType;
 import io.github.xinfra.lab.rpc.remoting.serialization.SerializationType;
 import lombok.Getter;
 

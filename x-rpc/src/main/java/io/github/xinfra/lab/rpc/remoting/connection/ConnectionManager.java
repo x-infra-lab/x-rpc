@@ -1,8 +1,9 @@
 package io.github.xinfra.lab.rpc.remoting.connection;
 
-import java.net.URL;
+import io.github.xinfra.lab.rpc.remoting.Endpoint;
+
 
 public interface ConnectionManager {
 
-    Connection getConnection(URL url);
+    Connection getConnection(Endpoint endpoint);
 }

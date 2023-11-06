@@ -3,7 +3,7 @@ package io.github.xinfra.lab.rpc.config;
 import io.github.xinfra.lab.rpc.bootstrap.ConsumerBootstrap;
 import io.github.xinfra.lab.rpc.proxy.ProxyType;
 import io.github.xinfra.lab.rpc.registry.ProviderInfoListener;
-import io.github.xinfra.lab.rpc.remoting.codec.ProtocolType;
+import io.github.xinfra.lab.rpc.remoting.protocol.ProtocolType;
 import io.github.xinfra.lab.rpc.remoting.serialization.SerializationType;
 import lombok.Getter;
 
