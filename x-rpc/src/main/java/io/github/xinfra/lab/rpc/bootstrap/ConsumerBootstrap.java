@@ -19,9 +19,7 @@ public class ConsumerBootstrap<T> {
         // TODO: check duplicate refer
         Cluster cluster = new DefaultCluster(config);
         ConsumerProxyInvoker invoker = new ConsumerProxyInvoker(config, cluster);
-        config.providerInfoListener(new ClusterProviderInfoListener(cluster));
         cluster.startup();
-
         return ProxyFactory.getProxy(config).getObject(config.getInterfaceId(), invoker);
     }
 

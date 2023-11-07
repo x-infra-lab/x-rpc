@@ -18,13 +18,23 @@ public class ProtocolDecoder extends ByteToMessageDecoder {
         this.protocolManager = protocolManager;
     }
 
+    public ProtocolDecoder(int protocolLength) {
+        this.protocolLength = protocolLength;
+    }
+
+    public ProtocolDecoder(int protocolLength, ProtocolManager protocolManager) {
+        this.protocolLength = protocolLength;
+        this.protocolManager = protocolManager;
+    }
+
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
         if (in.readableBytes() >= protocolLength) {
             in.markReaderIndex();
-            byte protocolCode = in.readByte();
+            byte[] protocolCode = new byte[protocolLength];
+            in.readBytes(protocolCode);
             in.resetReaderIndex();
-            ProtocolType protocolType = ProtocolType.valueOfProtocolCode(protocolCode);
+            ProtocolType protocolType = ProtocolType.valueOf(protocolCode);
             protocolManager.getProtocol(protocolType).decoder().decode(ctx, in, out);
         }
     }

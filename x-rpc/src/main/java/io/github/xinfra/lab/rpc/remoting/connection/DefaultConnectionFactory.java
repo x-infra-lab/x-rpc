@@ -32,7 +32,6 @@ public class DefaultConnectionFactory implements ConnectionFactory {
                 pipeline.addLast("encoder", new ProtocolEncoder(protocolManager));
                 pipeline.addLast("decoder", new ProtocolDecoder(protocolManager));
                 // todo idle
-
             }
         });
     }

@@ -42,6 +42,8 @@ public class DefaultCluster implements Cluster {
 
     @Override
     public void startup() {
+        config.providerInfoListener(new ClusterProviderInfoListener(this));
+
         // TODO
     }
 

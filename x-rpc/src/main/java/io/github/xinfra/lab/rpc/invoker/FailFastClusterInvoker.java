@@ -26,6 +26,6 @@ public class FailFastClusterInvoker implements Invoker {
         ProviderInfo providerInfo = cluster.select(request);
         // TODO providerInfo to endpoint
         Endpoint endpoint = null;
-        return remotingClient.syncCall(request, endpoint);
+        return (RpcResponse) remotingClient.syncCall(request, endpoint);
     }
 }

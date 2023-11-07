@@ -11,11 +11,15 @@ public class Connection {
      */
     public static final AttributeKey<ProtocolType> PROTOCOL = AttributeKey.valueOf("protocol");
 
+    public static final AttributeKey<Connection> CONNECTION = AttributeKey.valueOf("connection");
+
+
     private Channel channel;
 
     public Connection(Channel channel, ProtocolType protocolType) {
         this.channel = channel;
         this.channel.attr(PROTOCOL).set(protocolType);
+        this.channel.attr(CONNECTION).set(this);
     }
 
 }

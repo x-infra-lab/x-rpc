@@ -1,7 +1,5 @@
 package io.github.xinfra.lab.rpc.remoting.client;
 
-import io.github.xinfra.lab.rpc.invoker.RpcRequest;
-import io.github.xinfra.lab.rpc.invoker.RpcResponse;
 import io.github.xinfra.lab.rpc.remoting.Endpoint;
 import io.github.xinfra.lab.rpc.remoting.connection.Connection;
 import io.github.xinfra.lab.rpc.remoting.connection.ConnectionManager;
@@ -16,9 +14,10 @@ public class DefaultRemotingClient implements RemotingClient {
     }
 
     @Override
-    public RpcResponse syncCall(RpcRequest request, Endpoint endpoint) {
+    public Object syncCall(Object request, Endpoint endpoint) {
         Connection connection = connectionManager.getConnection(endpoint);
         // TODO
+
         return null;
     }
 }
