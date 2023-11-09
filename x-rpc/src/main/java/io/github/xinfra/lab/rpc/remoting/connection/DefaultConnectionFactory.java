@@ -32,6 +32,7 @@ public class DefaultConnectionFactory implements ConnectionFactory {
                 pipeline.addLast("encoder", new ProtocolEncoder(protocolManager));
                 pipeline.addLast("decoder", new ProtocolDecoder(protocolManager));
                 // todo idle
+                // todo heartbeat
             }
         });
     }
@@ -59,6 +60,6 @@ public class DefaultConnectionFactory implements ConnectionFactory {
             throw new Exception(errMsg, future.cause());
         }
         Channel channel = future.channel();
-        return  new Connection(channel, endpoint.getProtocolType());
+        return new Connection(channel, endpoint.getProtocolType());
     }
 }
