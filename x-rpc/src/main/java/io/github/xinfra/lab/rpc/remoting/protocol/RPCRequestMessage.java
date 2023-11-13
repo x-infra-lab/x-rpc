@@ -14,19 +14,13 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class XRequestMessage implements Message {
+public class RPCRequestMessage extends RPCMessage {
 
-    private ProtocolType protocolType;
+    public RPCRequestMessage(int id) {
+        this(id, SerializationType.HESSION);
+    }
 
-    private MessageType messageType;
-
-    private int requestId;
-
-    private SerializationType serializationType;
-
-    private String contentType;
-
-    private String header;
-
-    private Object content;
+    public RPCRequestMessage(int id, SerializationType serializationType) {
+        super(id, MessageType.request, serializationType);
+    }
 }

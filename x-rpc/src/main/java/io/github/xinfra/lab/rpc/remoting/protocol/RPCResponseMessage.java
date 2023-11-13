@@ -12,21 +12,17 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class XResponseMessage implements Message {
+public class RPCResponseMessage extends RPCMessage {
 
-    private ProtocolType protocolType;
-
-    private MessageType messageType;
-
-    private int requestId;
-
-    private SerializationType serializationType;
-
+    @Setter
+    @Getter
     private short status;
 
-    private String contentType;
+    public RPCResponseMessage(int id) {
+        this(id, SerializationType.HESSION);
+    }
 
-    private String header;
-
-    private Object content;
+    public RPCResponseMessage(int id, SerializationType serializationType) {
+        super(id, MessageType.response, serializationType);
+    }
 }

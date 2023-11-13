@@ -4,7 +4,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
 public enum ProtocolType {
-    X("x".getBytes(StandardCharsets.UTF_8));
+    RPC("x-rpc".getBytes(StandardCharsets.UTF_8));
 
     byte[] protocolCode;
 

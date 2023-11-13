@@ -1,40 +1,34 @@
 package io.github.xinfra.lab.rpc.remoting.client;
 
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
+
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 
-public class InvokeFuture implements Future {
+public class InvokeFuture<Message> {
 
+    private final CountDownLatch countDownLatch;
 
-    @Override
-    public boolean cancel(boolean mayInterruptIfRunning) {
-        // TODO
-        return false;
+    private Message result;
+
+    public InvokeFuture() {
+        this.countDownLatch = new CountDownLatch(1);
     }
 
-    @Override
-    public boolean isCancelled() {
-        // TODO
-        return false;
+    public void finish(Message result) {
+        this.result = result;
+        countDownLatch.countDown();
     }
 
-    @Override
-    public boolean isDone() {
-        // TODO
-        return false;
+    public Message get() throws InterruptedException {
+        countDownLatch.await();
+        return result;
     }
 
-    @Override
-    public Object get() throws InterruptedException, ExecutionException {
-        // TODO
-        return null;
-    }
-
-    @Override
-    public Object get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
-        // TODO
-        return null;
+    public Message get(long timeout, TimeUnit unit) throws InterruptedException {
+        boolean finished = countDownLatch.await(timeout, unit);
+        if (!finished) {
+            return null;
+        }
+        return result;
     }
 }
