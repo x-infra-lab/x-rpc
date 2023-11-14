@@ -6,8 +6,8 @@ import io.netty.channel.Channel;
 import io.netty.util.AttributeKey;
 import lombok.Getter;
 
+import java.net.SocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class Connection {
 
@@ -18,11 +18,11 @@ public class Connection {
 
     public static final AttributeKey<Connection> CONNECTION = AttributeKey.valueOf("connection");
 
-    private ConcurrentHashMap<Integer, InvokeFuture<?>> invokeMap = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<Integer, InvokeFuture> invokeMap = new ConcurrentHashMap<>();
 
     @Getter
     private Channel channel;
-    private AtomicInteger requestIdGenerator = new AtomicInteger(0);
+
 
     public Connection(Channel channel, ProtocolType protocolType) {
         this.channel = channel;
@@ -31,15 +31,15 @@ public class Connection {
     }
 
 
-    public Integer nextRequestId() {
-        return requestIdGenerator.getAndIncrement();
+    public void addInvokeFuture(InvokeFuture invokeFuture) {
+        invokeMap.put(invokeFuture.getRequestId(), invokeFuture);
     }
 
-    public void addInvokeFuture(Integer requestId, InvokeFuture<?> invokeFuture) {
-        invokeMap.put(requestId, invokeFuture);
+    public InvokeFuture removeInvokeFuture(Integer requestId) {
+        return invokeMap.remove(requestId);
     }
 
-    public void removeInvokeFuture(Integer requestId) {
-        invokeMap.remove(requestId);
+    public SocketAddress remoteAddress() {
+        return channel.remoteAddress();
     }
 }

@@ -3,6 +3,8 @@ package io.github.xinfra.lab.rpc.remoting.protocol;
 import io.github.xinfra.lab.rpc.remoting.codec.Decoder;
 import io.github.xinfra.lab.rpc.remoting.codec.Encoder;
 
+import java.util.concurrent.Executor;
+
 /**
  * x-protocol
  * <p>
@@ -23,6 +25,12 @@ public class RPCProtocol implements Protocol {
 
     @Override
     public Decoder decoder() {
+        return null;
+    }
+
+    @Override
+    public Executor callBackExecutor() {
+        // todo
         return null;
     }
 }

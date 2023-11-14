@@ -1,6 +1,6 @@
 package io.github.xinfra.lab.rpc.remoting.rpc;
 
-import io.github.xinfra.lab.rpc.remoting.client.CallBack;
+import io.github.xinfra.lab.rpc.remoting.client.InvokeCallBack;
 import io.github.xinfra.lab.rpc.remoting.Endpoint;
 
 import java.util.concurrent.Future;
@@ -19,7 +19,7 @@ public class RpcClient {
     }
 
 
-    public <R> void asyncCall(Object request, Endpoint endpoint, CallBack<R> callBack) {
+    public <R> void asyncCall(Object request, Endpoint endpoint, InvokeCallBack invokeCallBack) {
         // todo
     }
 
