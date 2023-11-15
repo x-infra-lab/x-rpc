@@ -12,17 +12,17 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class RPCResponseMessage extends RPCMessage {
+public class RpcResponseMessage extends RpcMessage {
 
     @Setter
     @Getter
     private short status;
 
-    public RPCResponseMessage(int id) {
+    public RpcResponseMessage(int id) {
         this(id, SerializationType.HESSION);
     }
 
-    public RPCResponseMessage(int id, SerializationType serializationType) {
+    public RpcResponseMessage(int id, SerializationType serializationType) {
         super(id, MessageType.response, serializationType);
     }
 }

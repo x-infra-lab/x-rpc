@@ -14,13 +14,13 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class RPCRequestMessage extends RPCMessage {
+public class RpcRequestMessage extends RpcMessage {
 
-    public RPCRequestMessage(int id) {
+    public RpcRequestMessage(int id) {
         this(id, SerializationType.HESSION);
     }
 
-    public RPCRequestMessage(int id, SerializationType serializationType) {
+    public RpcRequestMessage(int id, SerializationType serializationType) {
         super(id, MessageType.request, serializationType);
     }
 }

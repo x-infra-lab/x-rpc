@@ -5,10 +5,10 @@ import java.net.SocketAddress;
 
 public interface MessageFactory {
 
-    Message createSendFailMessage(Throwable cause);
 
-    Message createSendFailMessage(SocketAddress remoteAddress, Throwable cause);
+    Message createSendFailResponseMessage(SocketAddress remoteAddress, Throwable cause);
 
-    Message createTimeoutMessage(SocketAddress remoteAddress);
+    Message createTimeoutResponseMessage(SocketAddress remoteAddress);
 
+     Message createRequestMessage();
 }
