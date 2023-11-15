@@ -1,13 +1,20 @@
 package io.github.xinfra.lab.rpc.remoting.client;
 
 
-import io.github.xinfra.lab.rpc.remoting.protocol.Message;
+import io.github.xinfra.lab.rpc.remoting.message.Message;
+import io.github.xinfra.lab.rpc.remoting.protocol.Protocol;
+import io.github.xinfra.lab.rpc.remoting.protocol.ProtocolManager;
+import io.github.xinfra.lab.rpc.remoting.protocol.ProtocolType;
 import io.netty.util.Timeout;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 
+@Slf4j
 public class InvokeFuture {
 
     @Getter
@@ -20,6 +27,8 @@ public class InvokeFuture {
     private Timeout timeout;
 
     private InvokeCallBack invokeCallBack;
+
+    private AtomicBoolean callBackExecuted = new AtomicBoolean(false);
 
     public InvokeFuture(int requestId) {
         this.requestId = requestId;
@@ -34,8 +43,24 @@ public class InvokeFuture {
         this.invokeCallBack = invokeCallBack;
     }
 
-    public void tryExecuteCallBack() {
-        // TODO
+    public void executeCallBack() {
+        if (invokeCallBack != null) {
+            if (isDone()) {
+                if (callBackExecuted.compareAndSet(false, true)) {
+                    try {
+                        // TODO ClassLoader??
+                        ProtocolType protocolType = result.protocolType();
+                        Protocol protocol = ProtocolManager.getProtocol(protocolType);
+                        Executor executor = protocol.messageHandler().executor();
+                        executor.execute(() -> {
+                            invokeCallBack.complete(result);
+                        });
+                    } catch (Throwable t) {
+                        log.error("execute callback fail. id:{}", result.id());
+                    }
+                }
+            }
+        }
     }
 
     public void finish(Message result) {

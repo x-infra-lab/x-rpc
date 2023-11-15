@@ -11,20 +11,13 @@ import java.util.List;
 public class ProtocolDecoder extends ByteToMessageDecoder {
     private int protocolLength = 1;
 
-    private ProtocolManager protocolManager;
-
-    public ProtocolDecoder(ProtocolManager protocolManager) {
-        this.protocolManager = protocolManager;
+    public ProtocolDecoder() {
     }
 
     public ProtocolDecoder(int protocolLength) {
         this.protocolLength = protocolLength;
     }
 
-    public ProtocolDecoder(int protocolLength, ProtocolManager protocolManager) {
-        this.protocolLength = protocolLength;
-        this.protocolManager = protocolManager;
-    }
 
     @Override
     protected void decode(ChannelHandlerContext ctx, ByteBuf in, List<Object> out) throws Exception {
@@ -34,7 +27,7 @@ public class ProtocolDecoder extends ByteToMessageDecoder {
             in.readBytes(protocolCode);
             in.resetReaderIndex();
             ProtocolType protocolType = ProtocolType.valueOf(protocolCode);
-            protocolManager.getProtocol(protocolType).decoder().decode(ctx, in, out);
+            ProtocolManager.getProtocol(protocolType).decoder().decode(ctx, in, out);
         }
     }
 }

@@ -1,9 +1,10 @@
 package io.github.xinfra.lab.rpc.remoting.protocol;
 
+import io.github.xinfra.lab.rpc.remoting.message.MessageHandler;
 import io.github.xinfra.lab.rpc.remoting.codec.Decoder;
 import io.github.xinfra.lab.rpc.remoting.codec.Encoder;
-
-import java.util.concurrent.Executor;
+import io.github.xinfra.lab.rpc.remoting.message.HeartbeatTrigger;
+import io.github.xinfra.lab.rpc.remoting.message.MessageFactory;
 
 /**
  * x-protocol
@@ -20,17 +21,31 @@ public class RPCProtocol implements Protocol {
 
     @Override
     public Encoder encoder() {
+        // TODO
         return null;
     }
 
     @Override
     public Decoder decoder() {
+        // TODO
         return null;
     }
 
     @Override
-    public Executor callBackExecutor() {
-        // todo
+    public MessageHandler messageHandler() {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public MessageFactory messageFactory() {
+        // TODO
+        return null;
+    }
+
+    @Override
+    public HeartbeatTrigger heartbeatTrigger() {
+        // TODO
         return null;
     }
 }

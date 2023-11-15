@@ -1,4 +1,4 @@
-package io.github.xinfra.lab.rpc.remoting.protocol;
+package io.github.xinfra.lab.rpc.remoting.message;
 
 
 import java.net.SocketAddress;

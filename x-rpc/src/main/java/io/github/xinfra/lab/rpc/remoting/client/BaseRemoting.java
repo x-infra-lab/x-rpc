@@ -1,8 +1,8 @@
 package io.github.xinfra.lab.rpc.remoting.client;
 
 import io.github.xinfra.lab.rpc.remoting.connection.Connection;
-import io.github.xinfra.lab.rpc.remoting.protocol.Message;
-import io.github.xinfra.lab.rpc.remoting.protocol.MessageFactory;
+import io.github.xinfra.lab.rpc.remoting.message.Message;
+import io.github.xinfra.lab.rpc.remoting.message.MessageFactory;
 import io.netty.channel.ChannelFuture;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timeout;
@@ -94,8 +94,50 @@ public abstract class BaseRemoting {
         return invokeFuture;
     }
 
-    public void asyncCall(Message message, Connection connection, InvokeCallBack invokeCallBack) {
-        // todo
+    public void asyncCall(Message message, Connection connection,
+                          int timeoutMills,
+                          InvokeCallBack invokeCallBack) {
+        int requestId = message.id();
+        InvokeFuture invokeFuture = new InvokeFuture(requestId);
+
+        Timeout timeout = timer.newTimeout((t) -> {
+            InvokeFuture future = connection.removeInvokeFuture(requestId);
+            if (future != null) {
+                Message result = messageFactory.createTimeoutMessage(connection.remoteAddress());
+                future.finish(result);
+                future.executeCallBack();
+            }
+            log.warn("Wait result timeout. id:{}", requestId);
+        }, timeoutMills, TimeUnit.MILLISECONDS);
+        invokeFuture.addTimeout(timeout);
+        invokeFuture.addCallBack(invokeCallBack);
+
+        try {
+            connection.addInvokeFuture(invokeFuture);
+            connection.getChannel().writeAndFlush(message).addListener(
+                    (ChannelFuture channelFuture) -> {
+                        if (!channelFuture.isSuccess()) {
+                            InvokeFuture future = connection.removeInvokeFuture(requestId);
+                            if (future != null) {
+                                future.cancelTimeout();
+                                future.finish(messageFactory.createSendFailMessage(connection.remoteAddress(),
+                                        channelFuture.cause()));
+                                future.executeCallBack();
+                            }
+                            log.error("Send message fail. id:{}", requestId, channelFuture.cause());
+                        }
+                    }
+            );
+        } catch (Throwable t) {
+            InvokeFuture future = connection.removeInvokeFuture(requestId);
+            if (future != null) {
+                future.cancelTimeout();
+                future.finish(messageFactory.createSendFailMessage(connection.remoteAddress(), t));
+                future.executeCallBack();
+            }
+            log.error("Invoke sending message fail. id:{}", requestId, t);
+        }
+
     }
 
     public void oneway(Message message, Connection connection) {

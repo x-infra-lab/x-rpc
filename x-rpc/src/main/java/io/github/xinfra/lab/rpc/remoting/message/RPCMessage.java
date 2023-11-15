@@ -1,7 +1,9 @@
-package io.github.xinfra.lab.rpc.remoting.protocol;
+package io.github.xinfra.lab.rpc.remoting.message;
 
+import io.github.xinfra.lab.rpc.remoting.message.Message;
+import io.github.xinfra.lab.rpc.remoting.message.MessageType;
+import io.github.xinfra.lab.rpc.remoting.protocol.ProtocolType;
 import io.github.xinfra.lab.rpc.remoting.serialization.SerializationType;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

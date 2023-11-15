@@ -2,7 +2,6 @@ package io.github.xinfra.lab.rpc.remoting.connection;
 
 
 import io.github.xinfra.lab.rpc.remoting.Endpoint;
-import io.github.xinfra.lab.rpc.remoting.protocol.ProtocolManager;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -20,8 +19,6 @@ import java.net.SocketAddress;
 public class DefaultConnectionFactory implements ConnectionFactory {
     private Bootstrap bootstrap;
 
-    private ProtocolManager protocolManager = new ProtocolManager();
-
     public DefaultConnectionFactory() {
         bootstrap = new Bootstrap();
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
@@ -29,8 +26,8 @@ public class DefaultConnectionFactory implements ConnectionFactory {
             @Override
             protected void initChannel(SocketChannel ch) throws Exception {
                 ChannelPipeline pipeline = ch.pipeline();
-                pipeline.addLast("encoder", new ProtocolEncoder(protocolManager));
-                pipeline.addLast("decoder", new ProtocolDecoder(protocolManager));
+                pipeline.addLast("encoder", new ProtocolEncoder());
+                pipeline.addLast("decoder", new ProtocolDecoder());
                 // todo idle
                 // todo heartbeat
             }
