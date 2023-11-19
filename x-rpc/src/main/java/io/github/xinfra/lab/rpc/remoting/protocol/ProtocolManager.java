@@ -1,15 +1,19 @@
 package io.github.xinfra.lab.rpc.remoting.protocol;
 
-public class ProtocolManager {
+import java.util.HashMap;
+import java.util.Map;
 
-    public static Protocol getProtocol(ProtocolType type) {
-        // TODO
-        return null;
+public class ProtocolManager {
+    private static Map<ProtocolType, Protocol> protocols = new HashMap<>();
+
+
+    public static Protocol getProtocol(ProtocolType protocolType) {
+        return protocols.get(protocolType);
     }
 
 
     public static void registerProtocol(ProtocolType protocolType,
                                         Protocol protocol) {
-        // TODO
+        protocols.put(protocolType, protocol);
     }
 }

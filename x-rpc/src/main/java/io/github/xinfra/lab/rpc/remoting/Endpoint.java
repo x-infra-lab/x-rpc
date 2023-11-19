@@ -2,7 +2,6 @@ package io.github.xinfra.lab.rpc.remoting;
 
 
 import io.github.xinfra.lab.rpc.remoting.protocol.ProtocolType;
-import io.github.xinfra.lab.rpc.remoting.serialization.SerializationType;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -21,8 +20,6 @@ public class Endpoint {
     private int connectTimeoutMills;
 
     private ProtocolType protocolType;
-
-    private SerializationType serializationType;
 
     private int connNum = 1;
 

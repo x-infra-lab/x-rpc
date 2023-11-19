@@ -9,10 +9,12 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.ChannelPipeline;
 import io.netty.channel.socket.SocketChannel;
+import io.netty.handler.timeout.IdleStateHandler;
 import lombok.extern.slf4j.Slf4j;
 
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
+import java.util.concurrent.TimeUnit;
 
 
 @Slf4j
@@ -28,8 +30,11 @@ public class DefaultConnectionFactory implements ConnectionFactory {
                 ChannelPipeline pipeline = ch.pipeline();
                 pipeline.addLast("encoder", new ProtocolEncoder());
                 pipeline.addLast("decoder", new ProtocolDecoder());
-                // todo idle
-                // todo heartbeat
+
+                // TODO heartbeat
+                pipeline.addLast("idleStateHandler", new IdleStateHandler(1500, 1500, 0, TimeUnit.MILLISECONDS));
+                pipeline.addLast("heartbeatHandler", new HeartBeatHandler());
+                // todo  handler
             }
         });
     }

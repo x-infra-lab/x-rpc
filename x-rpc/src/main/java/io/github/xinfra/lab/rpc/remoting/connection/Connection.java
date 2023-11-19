@@ -10,10 +10,7 @@ import java.net.SocketAddress;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Connection {
-
-    /**
-     * Attribute key for protocol
-     */
+    
     public static final AttributeKey<ProtocolType> PROTOCOL = AttributeKey.valueOf("protocol");
 
     public static final AttributeKey<Connection> CONNECTION = AttributeKey.valueOf("connection");
