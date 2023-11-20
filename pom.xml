@@ -19,6 +19,8 @@
         <netty.version>4.1.75.Final</netty.version>
         <slf4j.version>1.7.25</slf4j.version>
         <lombok.version>1.18.28</lombok.version>
+        <junit.version>4.13</junit.version>
+        <logback.version>1.4.11</logback.version>
     </properties>
 
     <dependencyManagement>
@@ -50,12 +52,14 @@
             <dependency>
                 <groupId>junit</groupId>
                 <artifactId>junit</artifactId>
+                <version>${junit.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
+                <version>${logback.version}</version>
                 <scope>test</scope>
             </dependency>
             <!-- test scope end -->
