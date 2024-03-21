@@ -1,17 +1,18 @@
 package io.github.xinfra.lab.rpc.config;
 
 import io.github.xinfra.lab.rpc.bootstrap.ConsumerBootstrap;
+import io.github.xinfra.lab.rpc.cluster.ClusterType;
 import io.github.xinfra.lab.rpc.proxy.ProxyType;
-import io.github.xinfra.lab.rpc.registry.ProviderInfoListener;
 import lombok.Getter;
+
+import java.util.List;
 
 
 @Getter
-public class ConsumerConfig<T> extends BaseConfig<T> {
+public class ConsumerConfig<T> extends InterfaceConfig<T> {
 
-    private ProxyType proxyType;
-
-    private ProviderInfoListener providerInfoListener;
+    private ProxyType proxyType = ProxyType.JDK;
+    private ClusterType clusterType = ClusterType.FastFail;
 
     private ConsumerBootstrap<T> bootstrap;
 
@@ -20,9 +21,8 @@ public class ConsumerConfig<T> extends BaseConfig<T> {
         return this;
     }
 
-
-    public ConsumerConfig<T> registryConfig(RegistryConfig<?> registryConfig) {
-        this.registryConfig = registryConfig;
+    public ConsumerConfig<T> registryConfig(List<RegistryConfig<?>> registryConfigs) {
+        this.registryConfigs = registryConfigs;
         return this;
     }
 
@@ -31,8 +31,8 @@ public class ConsumerConfig<T> extends BaseConfig<T> {
         return this;
     }
 
-    public ConsumerConfig<T> providerInfoListener(ProviderInfoListener providerInfoListener) {
-        this.providerInfoListener = providerInfoListener;
+    public ConsumerConfig<T> clusterType(ClusterType clusterType) {
+        this.clusterType = clusterType;
         return this;
     }
 

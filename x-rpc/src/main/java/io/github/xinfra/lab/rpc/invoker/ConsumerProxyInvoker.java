@@ -5,7 +5,10 @@ import io.github.xinfra.lab.rpc.config.ConsumerConfig;
 import io.github.xinfra.lab.rpc.filter.DefaultFilterChain;
 import io.github.xinfra.lab.rpc.filter.Filter;
 import io.github.xinfra.lab.rpc.filter.FilterChain;
+import io.github.xinfra.lab.rpc.filter.MetricFilter;
+import io.github.xinfra.lab.rpc.filter.MockFilter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ConsumerProxyInvoker implements Invoker {
@@ -25,16 +28,16 @@ public class ConsumerProxyInvoker implements Invoker {
 
     protected FilterChain buildFilterChain() {
         // TODO
-        List<Filter> filters = null;
-        // TODO
-        Invoker invoker = null;
+        List<Filter> filters = new ArrayList<>();
+        filters.add(new MockFilter());
+        filters.add(new MetricFilter());
 
+        Invoker invoker = cluster.invoker();
         return new DefaultFilterChain(filters, invoker);
     }
 
     @Override
-    public RpcResponse invoke(RpcRequest request) {
-
-        return filterChain.invoke(request);
+    public InvocationResult invoke(Invocation invocation) {
+        return filterChain.invoke(invocation);
     }
 }

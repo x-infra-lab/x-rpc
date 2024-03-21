@@ -7,7 +7,7 @@ import java.io.Serializable;
 
 @Setter
 @Getter
-public class RpcRequest implements Serializable {
+public class Invocation {
     private String interfaceName;
     private String methodName;
     private String[] argSigns;

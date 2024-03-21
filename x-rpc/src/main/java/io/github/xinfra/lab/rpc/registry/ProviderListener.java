@@ -1,7 +1,7 @@
 package io.github.xinfra.lab.rpc.registry;
 
 
-public interface ProviderInfoListener {
+public interface ProviderListener {
 
     void addProvider(ProviderGroup providerGroup);
 

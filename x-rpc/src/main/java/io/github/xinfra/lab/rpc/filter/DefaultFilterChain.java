@@ -1,7 +1,7 @@
 package io.github.xinfra.lab.rpc.filter;
 
-import io.github.xinfra.lab.rpc.invoker.RpcRequest;
-import io.github.xinfra.lab.rpc.invoker.RpcResponse;
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 
 import java.util.List;
@@ -30,8 +30,8 @@ public class DefaultFilterChain implements FilterChain {
     }
 
     @Override
-    public RpcResponse invoke(RpcRequest request) {
-        return invoker.invoke(request);
+    public InvocationResult invoke(Invocation invocation) {
+        return invoker.invoke(invocation);
     }
 
     public static class FilterChainNodeInvoker implements Invoker {
@@ -44,8 +44,16 @@ public class DefaultFilterChain implements FilterChain {
         }
 
         @Override
-        public RpcResponse invoke(RpcRequest request) {
-            return filter.filter(nextNode, request);
+        public InvocationResult invoke(Invocation invocation) {
+            return filter.filter(nextNode, invocation).whenComplete(
+                    (invocationResult, throwable) -> {
+                        if (throwable != null) {
+                            filter.onError(throwable);
+                        } else {
+                            filter.onResult(invocationResult);
+                        }
+                    }
+            );
         }
     }
 }

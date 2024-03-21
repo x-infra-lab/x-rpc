@@ -1,11 +1,12 @@
 package io.github.xinfra.lab.rpc.registry;
 
+import io.github.xinfra.lab.rpc.common.LifeCycle;
 import io.github.xinfra.lab.rpc.config.ConsumerConfig;
 import io.github.xinfra.lab.rpc.config.ProviderConfig;
 
 import java.util.List;
 
-public interface Registry {
+public interface Registry  extends LifeCycle {
 
     void register(ProviderConfig providerConfig);
 
@@ -15,4 +16,6 @@ public interface Registry {
 
     void unSubscribe(ConsumerConfig<?> config);
 
+
+    void addListener(ProviderListener listener);
 }

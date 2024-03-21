@@ -26,4 +26,19 @@ public class ZooKeeperRegistry implements Registry {
     public void unSubscribe(ConsumerConfig<?> config) {
         // TODO
     }
+
+    @Override
+    public void addListener(ProviderListener listener) {
+        // todo
+    }
+
+    @Override
+    public void startup() {
+
+    }
+
+    @Override
+    public void shutDown() {
+
+    }
 }

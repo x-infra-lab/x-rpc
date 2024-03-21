@@ -1,12 +1,15 @@
 package io.github.xinfra.lab.rpc.cluster;
 
-import io.github.xinfra.lab.rpc.invoker.RpcRequest;
+import io.github.xinfra.lab.rpc.invoker.FailFastClusterInvoker;
+import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.config.ConsumerConfig;
+import io.github.xinfra.lab.rpc.invoker.Invoker;
 import io.github.xinfra.lab.rpc.registry.ProviderGroup;
 import io.github.xinfra.lab.rpc.registry.ProviderInfo;
+import io.github.xinfra.lab.rpc.transport.TransportManager;
 
 
-public class DefaultCluster implements Cluster {
+public class FastFailCluster implements Cluster {
     private ConsumerConfig<?> config;
 
     private RouterChain routerChain;
@@ -14,13 +17,23 @@ public class DefaultCluster implements Cluster {
     private LoadBalancer loadBalancer;
 
 
-    public DefaultCluster(ConsumerConfig<?> config) {
+    public FastFailCluster(ConsumerConfig<?> config) {
         this.config = config;
     }
 
     @Override
-    public ProviderInfo select(RpcRequest request) {
+    public Invoker invoker() {
+        return new FailFastClusterInvoker(this, config);
+    }
+
+    @Override
+    public ProviderInfo select(Invocation request) {
         // TODO
+        return null;
+    }
+
+    @Override
+    public TransportManager transportManager() {
         return null;
     }
 
@@ -42,7 +55,6 @@ public class DefaultCluster implements Cluster {
 
     @Override
     public void startup() {
-        config.providerInfoListener(new ClusterProviderInfoListener(this));
 
         // TODO
     }

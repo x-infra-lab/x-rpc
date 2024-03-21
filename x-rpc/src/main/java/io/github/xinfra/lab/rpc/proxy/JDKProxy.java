@@ -1,7 +1,7 @@
 package io.github.xinfra.lab.rpc.proxy;
 
-import io.github.xinfra.lab.rpc.invoker.RpcRequest;
-import io.github.xinfra.lab.rpc.invoker.RpcResponse;
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.common.ClassUtils;
 import io.github.xinfra.lab.rpc.exception.ErrorCode;
 import io.github.xinfra.lab.rpc.exception.RpcException;
@@ -32,23 +32,26 @@ public class JDKProxy<T> implements Proxy<T> {
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             // TODO: handle toString hashCode equals method
-            RpcRequest request = new RpcRequest();
-            request.setArgs(args);
-            request.setInterfaceName(interfaceId.getName());
-            request.setMethodName(method.getName());
+
+            Invocation invocation = new Invocation();
+            invocation.setArgs(args);
+            invocation.setInterfaceName(interfaceId.getName());
+            invocation.setMethodName(method.getName());
             String[] argSigns = (String[]) Arrays.stream(method.getParameterTypes())
                     .map(Class::getName).toArray();
-            request.setArgSigns(argSigns);
+            invocation.setArgSigns(argSigns);
 
-            RpcResponse response = invoker.invoke(request);
+            InvocationResult invocationResult = invoker.invoke(invocation);
 
-            if (response.isError()) {
-                throw new RpcException(ErrorCode.SERVER_UNDEFINED_ERROR, response.getErrorMsg());
+            if (invocationResult.isError()) {
+                // todo
+                throw new RpcException(ErrorCode.SERVER_UNDEFINED_ERROR, invocationResult.getErrorMsg());
             }
 
-            Object result = response.getResult();
+            Object result = invocationResult.getResult();
 
             if (result instanceof Throwable) {
+                // todo
                 throw (Throwable) result;
             }
 
