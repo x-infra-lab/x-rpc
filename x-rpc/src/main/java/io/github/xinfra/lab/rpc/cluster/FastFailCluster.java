@@ -22,12 +22,12 @@ public class FastFailCluster implements Cluster {
     }
 
     @Override
-    public Invoker invoker() {
+    public ClusterInvoker invoker() {
         return new FailFastClusterInvoker(this, config);
     }
 
     @Override
-    public ProviderInfo select(Invocation request) {
+    public Invoker select(Invocation request) {
         // TODO
         return null;
     }

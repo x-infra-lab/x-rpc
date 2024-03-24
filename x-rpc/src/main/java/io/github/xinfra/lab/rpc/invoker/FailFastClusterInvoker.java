@@ -1,13 +1,11 @@
 package io.github.xinfra.lab.rpc.invoker;
 
 import io.github.xinfra.lab.rpc.cluster.Cluster;
+import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
 import io.github.xinfra.lab.rpc.config.ConsumerConfig;
-import io.github.xinfra.lab.rpc.exception.RpcException;
-import io.github.xinfra.lab.rpc.registry.ProviderInfo;
-import io.github.xinfra.lab.rpc.transport.ClientTransport;
 
 
-public class FailFastClusterInvoker implements Invoker {
+public class FailFastClusterInvoker implements ClusterInvoker {
     private Cluster cluster;
     private ConsumerConfig<?> config;
 
@@ -18,12 +16,12 @@ public class FailFastClusterInvoker implements Invoker {
 
     @Override
     public InvocationResult invoke(Invocation invocation) {
-        ProviderInfo providerInfo = cluster.select(invocation);
-        ClientTransport client = cluster.transportManager().getClient(providerInfo);
-        if (client == null) {
-            // TODO
-            throw new RuntimeException();
-        }
-        return client.invokeAsync(invocation);
+        Invoker invoker = cluster.select(invocation);
+        return invoker.invoke(invocation);
+    }
+
+    @Override
+    public Cluster cluster() {
+        return cluster;
     }
 }
