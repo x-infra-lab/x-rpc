@@ -11,7 +11,7 @@ public class ConsumerProxyClusterInvoker implements ClusterInvoker {
 
     private Cluster cluster;
 
-    private Invoker filterClusterInvoker;
+    private ClusterInvoker filterClusterInvoker;
 
     public ConsumerProxyClusterInvoker(ConsumerConfig<?> config, Cluster cluster) {
         this.config = config;
