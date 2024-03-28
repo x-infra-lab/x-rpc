@@ -1,27 +1,24 @@
 package io.github.xinfra.lab.rpc.invoker;
 
-import io.github.xinfra.lab.rpc.cluster.Cluster;
 import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
-import io.github.xinfra.lab.rpc.config.ConsumerConfig;
+import io.github.xinfra.lab.rpc.cluster.Directory;
 
 
 public class FailFastClusterInvoker implements ClusterInvoker {
-    private Cluster cluster;
-    private ConsumerConfig<?> config;
+    private Directory directory;
 
-    public FailFastClusterInvoker(Cluster cluster, ConsumerConfig<?> config) {
-        this.cluster = cluster;
-        this.config = config;
+    public FailFastClusterInvoker(Directory directory) {
+        this.directory = directory;
     }
 
     @Override
     public InvocationResult invoke(Invocation invocation) {
-        Invoker invoker = cluster.select(invocation);
-        return invoker.invoke(invocation);
+        // todo
+        return null;
     }
 
     @Override
-    public Cluster cluster() {
-        return cluster;
+    public Directory directory() {
+        return this.directory;
     }
 }

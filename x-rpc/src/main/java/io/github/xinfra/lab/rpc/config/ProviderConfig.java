@@ -1,4 +1,4 @@
 package io.github.xinfra.lab.rpc.config;
 
-public class ProviderConfig {
+public class ProviderConfig extends BaseConfig {
 }

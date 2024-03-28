@@ -2,6 +2,7 @@ package io.github.xinfra.lab.rpc.filter;
 
 import io.github.xinfra.lab.rpc.cluster.Cluster;
 import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
+import io.github.xinfra.lab.rpc.cluster.Directory;
 import io.github.xinfra.lab.rpc.config.ConsumerConfig;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
@@ -34,14 +35,14 @@ public class FilterChainBuilder {
     }
 
 
-    public static Invoker buildFilterChainInvoker(ConsumerConfig<?> config, Invoker invoker) {
+    public static Invoker buildFilterChainInvoker(ConsumerConfig consumerConfig, Invoker invoker) {
         // todo config this
         List<Filter> filters = new ArrayList<>();
 
         return buildFilterChainInvoker(filters, invoker, FilterChainNodeInvoker.class);
     }
 
-    public static ClusterInvoker buildClusterFilterChainInvoker(ConsumerConfig<?> config,
+    public static ClusterInvoker buildClusterFilterChainInvoker(ConsumerConfig consumerConfig,
                                                                 ClusterInvoker clusterInvoker) {
         // todo config this
         List<ClusterFilter> clusterFilters = new ArrayList<>();
@@ -97,8 +98,8 @@ public class FilterChainBuilder {
         }
 
         @Override
-        public Cluster cluster() {
-            return nextNode.cluster();
+        public Directory directory() {
+            return nextNode.directory();
         }
     }
 }

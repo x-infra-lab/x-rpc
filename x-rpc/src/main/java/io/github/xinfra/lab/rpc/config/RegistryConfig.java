@@ -1,28 +1,13 @@
 package io.github.xinfra.lab.rpc.config;
 
 
-import lombok.Getter;
+import io.github.xinfra.lab.rpc.registry.RegistryClientConfig;
+import io.github.xinfra.lab.rpc.registry.RegistryType;
 
-@Getter
-public class RegistryConfig<T> {
+public class RegistryConfig<CONFIG extends RegistryClientConfig> {
 
+    private RegistryType type = RegistryType.zookeeper;
 
-    public static enum RegistryType {
-        ZOOKEEPER,
-        SOFA_REGISTRY;
-    }
+    private CONFIG registryClientConfig;
 
-    private RegistryType type;
-
-    private T config;
-
-    public RegistryConfig<T> type(RegistryType type) {
-        this.type = type;
-        return this;
-    }
-
-    public RegistryConfig<T> setConfig(T config) {
-        this.config = config;
-        return this;
-    }
 }

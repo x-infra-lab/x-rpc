@@ -11,22 +11,22 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 
-public class JDKProxy<T> implements Proxy<T> {
+public class JDKProxy implements Proxy {
     @Override
-    public T getObject(Class<T> interfaceId, Invoker invoker) {
+    public <T> T createProxyObject(Class<T> serviceClass, Invoker invoker) {
 
         return (T) java.lang.reflect.Proxy.newProxyInstance
                 (Thread.currentThread().getContextClassLoader(),
-                        new Class[]{interfaceId}, new JDKInvocationHandler(invoker, interfaceId));
+                        new Class[]{serviceClass}, new JDKInvocationHandler(invoker, serviceClass));
     }
 
     public static class JDKInvocationHandler implements InvocationHandler {
         private Invoker invoker;
-        private Class<?> interfaceId;
+        private Class<?> serviceClass;
 
-        public JDKInvocationHandler(Invoker invoker, Class<?> interfaceId) {
+        public JDKInvocationHandler(Invoker invoker, Class<?> serviceClass) {
             this.invoker = invoker;
-            this.interfaceId = interfaceId;
+            this.serviceClass = serviceClass;
         }
 
         @Override
@@ -35,7 +35,7 @@ public class JDKProxy<T> implements Proxy<T> {
 
             Invocation invocation = new Invocation();
             invocation.setArgs(args);
-            invocation.setInterfaceName(interfaceId.getName());
+            invocation.setInterfaceName(serviceClass.getName());
             invocation.setMethodName(method.getName());
             String[] argSigns = (String[]) Arrays.stream(method.getParameterTypes())
                     .map(Class::getName).toArray();

@@ -1,28 +1,43 @@
 package io.github.xinfra.lab.rpc.bootstrap;
 
 import io.github.xinfra.lab.rpc.cluster.Cluster;
-import io.github.xinfra.lab.rpc.cluster.ClusterFactory;
+import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
+import io.github.xinfra.lab.rpc.cluster.ClusterManager;
+import io.github.xinfra.lab.rpc.cluster.Directory;
+import io.github.xinfra.lab.rpc.cluster.RegisterDirectory;
 import io.github.xinfra.lab.rpc.config.ConsumerConfig;
-import io.github.xinfra.lab.rpc.invoker.ConsumerProxyClusterInvoker;
-import io.github.xinfra.lab.rpc.proxy.ProxyFactory;
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.config.RegistryConfig;
+import io.github.xinfra.lab.rpc.proxy.Proxy;
+import io.github.xinfra.lab.rpc.proxy.ProxyManager;
+import io.github.xinfra.lab.rpc.registry.Registry;
+import io.github.xinfra.lab.rpc.registry.RegistryManager;
 
 public class ConsumerBootstrap<T> {
 
-    private final ConsumerConfig<T> config;
+    private final ConsumerConfig consumerConfig;
 
-    public ConsumerBootstrap(ConsumerConfig<T> config) {
-        this.config = config;
+    private RegistryManager registryManager = new RegistryManager();
+
+    private ConsumerBootstrap(ConsumerConfig consumerConfig) {
+        this.consumerConfig = consumerConfig;
     }
 
-    public T refer() {
-        // TODO: check duplicate refer
-        Cluster cluster = ClusterFactory.create(config);
-        ConsumerProxyClusterInvoker invoker = new ConsumerProxyClusterInvoker(config, cluster);
-        return ProxyFactory.getProxy(config).getObject(config.getInterfaceId(), invoker);
+    public static ConsumerBootstrap from(ConsumerConfig consumerConfig) {
+        return new ConsumerBootstrap(consumerConfig);
     }
 
 
-    public void unRefer() {
-        // TODO
+    public <T> T refer(ReferenceConfig<T> referenceConfig) {
+        referenceConfig.setConsumerConfig(consumerConfig);
+
+        RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
+        Registry registry = registryManager.getRegistry(registryConfig);
+
+        Directory directory = new RegisterDirectory(registry, referenceConfig);
+        Cluster cluster = ClusterManager.getCluster(referenceConfig.getClusterType());
+        ClusterInvoker clusterInvoker = cluster.filteringInvoker(directory);
+        Proxy proxy = ProxyManager.getProxy(referenceConfig.getProxyType());
+        return proxy.createProxyObject(referenceConfig.getServiceClass(), clusterInvoker);
     }
 }

@@ -2,8 +2,8 @@ package io.github.xinfra.lab.rpc.proxy;
 
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 
-public interface Proxy<T> {
+public interface Proxy {
 
-    T getObject(Class<T> interfaceId, Invoker invoker);
+    <T> T createProxyObject(Class<T> serviceClass, Invoker invoker);
 
 }
