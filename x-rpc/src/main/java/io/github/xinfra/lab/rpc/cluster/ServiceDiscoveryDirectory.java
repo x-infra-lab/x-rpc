@@ -3,16 +3,16 @@ package io.github.xinfra.lab.rpc.cluster;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
-import io.github.xinfra.lab.rpc.registry.Registry;
+import io.github.xinfra.lab.rpc.discovery.ServiceDiscovery;
 
 import java.util.List;
 
-public class RegisterDirectory implements Directory{
-    private Registry registry;
+public class ServiceDiscoveryDirectory implements Directory{
+    private ServiceDiscovery serviceDiscovery;
     private ReferenceConfig<?> referenceConfig;
 
-    public RegisterDirectory(Registry registry, ReferenceConfig<?> referenceConfig) {
-        this.registry = registry;
+    public ServiceDiscoveryDirectory(ServiceDiscovery serviceDiscovery, ReferenceConfig<?> referenceConfig) {
+        this.serviceDiscovery = serviceDiscovery;
         this.referenceConfig = referenceConfig;
     }
 
