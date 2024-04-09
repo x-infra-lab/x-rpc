@@ -14,29 +14,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.common;
+package io.github.xinfra.lab.rpc.registry;
 
-public class ClassUtils {
+import io.github.xinfra.lab.rpc.cluster.Directory;
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.invoker.Invoker;
+import java.util.List;
 
-  public static Object getDefaultPrimitiveValue(Class<?> clazz) {
-    if (clazz == int.class) {
-      return 0;
-    } else if (clazz == boolean.class) {
-      return false;
-    } else if (clazz == long.class) {
-      return 0L;
-    } else if (clazz == byte.class) {
-      return (byte) 0;
-    } else if (clazz == double.class) {
-      return 0d;
-    } else if (clazz == short.class) {
-      return (short) 0;
-    } else if (clazz == float.class) {
-      return 0f;
-    } else if (clazz == char.class) {
-      return (char) 0;
-    } else {
-      return null;
-    }
+public class RegistryDirectory implements Directory {
+  private Registry registry;
+  private ReferenceConfig<?> referenceConfig;
+
+  public RegistryDirectory(Registry registry, ReferenceConfig<?> referenceConfig) {
+    this.registry = registry;
+    this.referenceConfig = referenceConfig;
+  }
+
+  @Override
+  public List<Invoker> list(Invocation invocation) {
+    // todo
+    return null;
   }
 }
