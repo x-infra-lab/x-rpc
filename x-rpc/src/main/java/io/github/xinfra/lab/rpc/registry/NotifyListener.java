@@ -18,14 +18,10 @@ package io.github.xinfra.lab.rpc.registry;
 
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import java.util.List;
-import java.util.Map;
 
-public class ServiceInstancesChangedListener {
-  private String serviceName;
-  private Registry registry;
-  private Map<ServiceConfig<?>, NotifyListener> listenerMap;
+public interface NotifyListener {
 
-  public void onChange() {
-    List<ServiceInstance> serviceInstances = registry.queryServiceInstances(serviceName);
-  }
+  ServiceConfig<?> serviceConfig();
+
+  void notify(List<ServiceInstance> serviceInstances);
 }

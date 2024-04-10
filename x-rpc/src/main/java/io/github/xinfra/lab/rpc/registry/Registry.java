@@ -27,13 +27,14 @@ public interface Registry extends LifeCycle {
 
   void unRegister(ServiceInstance serviceInstance);
 
-  void subscribe(String serviceName);
+  void subscribe(String serviceName, NotifyListener notifyListener);
 
-  void unSubscribe(String serviceName);
+  void unSubscribe(String serviceName, NotifyListener notifyListener);
 
   List<ServiceInstance> queryServiceInstances(String serviceName);
 
-  void addServiceInstancesChangedListener(ServiceInstancesChangedListener listener);
+  void addServiceInstancesChangedListener(ServiceInstancesChangedListener instancesChangedListener);
 
-  void removeServiceInstancesChangedListener(ServiceInstancesChangedListener listener);
+  void removeServiceInstancesChangedListener(
+      ServiceInstancesChangedListener instancesChangedListener);
 }
