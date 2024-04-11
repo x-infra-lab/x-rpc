@@ -17,12 +17,12 @@
 package io.github.xinfra.lab.rpc.cluster.loadblance;
 
 import io.github.xinfra.lab.rpc.invoker.Invocation;
-import io.github.xinfra.lab.rpc.invoker.Invoker;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.util.List;
 
 public class RandomLoadBalancer implements LoadBalancer {
   @Override
-  public Invoker select(List<Invoker> invokers, Invocation invocation) {
+  public ServiceInstance select(List<ServiceInstance> serviceInstances, Invocation invocation) {
     // todo
     return null;
   }

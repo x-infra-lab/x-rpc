@@ -16,33 +16,4 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
-import lombok.Getter;
-import lombok.Setter;
-
-@Setter
-@Getter
-public class InvocationResult {
-  // todo
-  private boolean isError;
-  // todo
-  private String errorMsg;
-  private Object result;
-
-  // todo
-  CompletableFuture<InvocationResult> invocationResultCompletableFuture;
-
-  // todo
-  CompletableFuture<RpcResponse> responseCompletableFuture;
-
-  public InvocationResult(CompletableFuture<RpcResponse> responseCompletableFuture) {
-    this.responseCompletableFuture = responseCompletableFuture;
-  }
-
-  public InvocationResult whenComplete(
-      BiConsumer<? super InvocationResult, ? super Throwable> action) {
-    invocationResultCompletableFuture.whenComplete(action);
-    return this;
-  }
-}
+public class RpcRequest {}

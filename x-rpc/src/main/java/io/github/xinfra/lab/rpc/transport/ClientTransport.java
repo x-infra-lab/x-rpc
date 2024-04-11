@@ -14,35 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.invoker;
+package io.github.xinfra.lab.rpc.transport;
 
+import io.github.xinfra.lab.rpc.invoker.RpcRequest;
+import io.github.xinfra.lab.rpc.invoker.RpcResponse;
 import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
-import lombok.Getter;
-import lombok.Setter;
 
-@Setter
-@Getter
-public class InvocationResult {
-  // todo
-  private boolean isError;
-  // todo
-  private String errorMsg;
-  private Object result;
-
-  // todo
-  CompletableFuture<InvocationResult> invocationResultCompletableFuture;
-
-  // todo
-  CompletableFuture<RpcResponse> responseCompletableFuture;
-
-  public InvocationResult(CompletableFuture<RpcResponse> responseCompletableFuture) {
-    this.responseCompletableFuture = responseCompletableFuture;
-  }
-
-  public InvocationResult whenComplete(
-      BiConsumer<? super InvocationResult, ? super Throwable> action) {
-    invocationResultCompletableFuture.whenComplete(action);
-    return this;
-  }
+public interface ClientTransport {
+  CompletableFuture<RpcResponse> sendAsync(RpcRequest request);
 }

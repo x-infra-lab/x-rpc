@@ -17,14 +17,17 @@
 package io.github.xinfra.lab.rpc.registry;
 
 import io.github.xinfra.lab.rpc.cluster.Directory;
+import io.github.xinfra.lab.rpc.cluster.route.Router;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
-import io.github.xinfra.lab.rpc.invoker.Invoker;
 import java.util.List;
 
 public class RegistryDirectory implements Directory {
   private Registry registry;
   private ReferenceConfig<?> referenceConfig;
+  private List<ServiceInstance> serviceInstances;
+  // todo
+  private Router router;
 
   public RegistryDirectory(Registry registry, ReferenceConfig<?> referenceConfig) {
     this.registry = registry;
@@ -32,8 +35,8 @@ public class RegistryDirectory implements Directory {
   }
 
   @Override
-  public List<Invoker> list(Invocation invocation) {
+  public List<ServiceInstance> list(Invocation invocation) {
     // todo
-    return null;
+    return serviceInstances;
   }
 }

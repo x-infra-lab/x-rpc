@@ -17,10 +17,10 @@
 package io.github.xinfra.lab.rpc.cluster.loadblance;
 
 import io.github.xinfra.lab.rpc.invoker.Invocation;
-import io.github.xinfra.lab.rpc.invoker.Invoker;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.util.List;
 
 public interface LoadBalancer {
 
-  Invoker select(List<Invoker> invokers, Invocation invocation);
+  ServiceInstance select(List<ServiceInstance> serviceInstances, Invocation invocation);
 }

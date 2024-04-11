@@ -14,15 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.cluster;
+package io.github.xinfra.lab.rpc.transport;
 
-import io.github.xinfra.lab.rpc.config.ReferenceConfig;
-import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 
-public interface Cluster {
-
-  ClusterInvoker filteringInvoker(
-      ReferenceConfig<?> referenceConfig,
-      Directory directory,
-      ClientTransportManager clientTransportManager);
+public class ClientTransportManager {
+  public ClientTransport getClientTransport(ServiceInstance targetServiceInstance) {
+    // todo
+    return null;
+  }
 }

@@ -20,19 +20,27 @@ import io.github.xinfra.lab.rpc.cluster.loadblance.LoadBalancer;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
-import io.github.xinfra.lab.rpc.invoker.Invoker;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
 import java.util.List;
 
 public class FailFastClusterInvoker extends AbstractClusterInvoker {
 
-  public FailFastClusterInvoker(ReferenceConfig<?> referenceConfig, Directory directory) {
-    super(referenceConfig, directory);
+  public FailFastClusterInvoker(
+      ReferenceConfig<?> referenceConfig,
+      Directory directory,
+      ClientTransportManager clientTransportManager) {
+    super(referenceConfig, directory, clientTransportManager);
   }
 
   @Override
   protected InvocationResult doInvoke(
-      Invocation invocation, List<Invoker> invokers, LoadBalancer loadBalancer) {
-    Invoker invoker = loadBalancer.select(invokers, invocation);
-    return invoker.invoke(invocation);
+      Invocation invocation, List<ServiceInstance> serviceInstances, LoadBalancer loadBalancer) {
+
+    ServiceInstance serviceInstance = select(loadBalancer, invocation, serviceInstances, null);
+
+    invocation.setTargetServiceInstance(serviceInstance);
+
+    return filteringConsumerInvoker.invoke(invocation);
   }
 }

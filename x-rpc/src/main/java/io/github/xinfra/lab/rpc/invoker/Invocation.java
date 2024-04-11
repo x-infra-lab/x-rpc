@@ -16,12 +16,16 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import lombok.Getter;
 import lombok.Setter;
 
 @Setter
 @Getter
 public class Invocation {
+
+  private ServiceInstance targetServiceInstance;
+
   private String interfaceName;
   private String methodName;
   private String[] argSigns;

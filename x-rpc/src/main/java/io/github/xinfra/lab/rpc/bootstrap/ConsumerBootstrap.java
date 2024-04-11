@@ -28,12 +28,15 @@ import io.github.xinfra.lab.rpc.proxy.ProxyManager;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.RegistryDirectory;
 import io.github.xinfra.lab.rpc.registry.RegistryManager;
+import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
 
 public class ConsumerBootstrap<T> {
 
   private final ConsumerConfig consumerConfig;
 
   private RegistryManager registryManager = new RegistryManager();
+
+  private ClientTransportManager clientTransportManager = new ClientTransportManager();
 
   private ConsumerBootstrap(ConsumerConfig consumerConfig) {
     this.consumerConfig = consumerConfig;
@@ -51,7 +54,8 @@ public class ConsumerBootstrap<T> {
 
     Directory directory = new RegistryDirectory(registry, referenceConfig);
     Cluster cluster = ClusterManager.getCluster(referenceConfig.getClusterType());
-    ClusterInvoker clusterInvoker = cluster.filteringInvoker(referenceConfig, directory);
+    ClusterInvoker clusterInvoker =
+        cluster.filteringInvoker(referenceConfig, directory, clientTransportManager);
     Proxy proxy = ProxyManager.getProxy(referenceConfig.getProxyType());
     return proxy.createProxyObject(referenceConfig.getServiceClass(), clusterInvoker);
   }
