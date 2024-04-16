@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.cluster;
 
+import io.github.xinfra.lab.rpc.cluster.directory.Directory;
 import io.github.xinfra.lab.rpc.cluster.loadblance.LoadBalancer;
 import io.github.xinfra.lab.rpc.cluster.loadblance.LoadBalancerManger;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
@@ -37,13 +38,10 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
 
   protected Invoker filteringConsumerInvoker;
 
-  public AbstractClusterInvoker(
-      ReferenceConfig<?> referenceConfig,
-      Directory directory,
-      ClientTransportManager clientTransportManager) {
-    this.referenceConfig = referenceConfig;
-    this.directory = directory;
-    this.clientTransportManager = clientTransportManager;
+  public AbstractClusterInvoker(Cluster cluster) {
+    this.referenceConfig = cluster.referenceConfig();
+    this.directory = cluster.directory();
+    this.clientTransportManager = cluster.clientTransportManager();
     this.filteringConsumerInvoker =
         FilterChainBuilder.buildFilterChainInvoker(
             referenceConfig.getConsumerConfig().getFilters(),

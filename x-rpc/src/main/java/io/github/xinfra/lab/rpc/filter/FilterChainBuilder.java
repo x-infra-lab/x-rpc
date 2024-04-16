@@ -17,7 +17,7 @@
 package io.github.xinfra.lab.rpc.filter;
 
 import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
-import io.github.xinfra.lab.rpc.cluster.Directory;
+import io.github.xinfra.lab.rpc.cluster.directory.Directory;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;

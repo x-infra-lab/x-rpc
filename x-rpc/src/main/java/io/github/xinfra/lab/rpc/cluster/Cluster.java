@@ -16,13 +16,18 @@
  */
 package io.github.xinfra.lab.rpc.cluster;
 
+import io.github.xinfra.lab.rpc.cluster.directory.Directory;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.registry.NotifyListener;
 import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
 
-public interface Cluster {
+public interface Cluster extends NotifyListener {
 
-  ClusterInvoker filteringInvoker(
-      ReferenceConfig<?> referenceConfig,
-      Directory directory,
-      ClientTransportManager clientTransportManager);
+  ClusterInvoker filteringInvoker();
+
+  ReferenceConfig<?> referenceConfig();
+
+  Directory directory();
+
+  ClientTransportManager clientTransportManager();
 }

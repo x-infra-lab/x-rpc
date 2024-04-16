@@ -16,10 +16,14 @@
  */
 package io.github.xinfra.lab.rpc.cluster;
 
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
+
 public class ClusterFactory {
 
-  public static Cluster create(ClusterType clusterType) {
+  public static Cluster create(
+      ReferenceConfig<?> referenceConfig, ClientTransportManager clientTransportManager) {
     // todo
-    return new FastFailCluster();
+    return new FastFailCluster(referenceConfig, clientTransportManager);
   }
 }

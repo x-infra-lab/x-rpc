@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.cluster;
 
+import io.github.xinfra.lab.rpc.cluster.directory.Directory;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 
 public interface ClusterInvoker extends Invoker {

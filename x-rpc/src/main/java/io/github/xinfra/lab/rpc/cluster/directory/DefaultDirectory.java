@@ -14,20 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.cluster;
+package io.github.xinfra.lab.rpc.cluster.directory;
 
-import java.util.HashMap;
-import java.util.Map;
+import io.github.xinfra.lab.rpc.cluster.route.Router;
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import java.util.List;
 
-public class ClusterManager {
-  private static Map<ClusterType, Cluster> clusterMap = new HashMap<>();
+public class DefaultDirectory implements Directory {
+  private Router router;
 
-  public static synchronized Cluster getCluster(ClusterType clusterType) {
-    Cluster cluster = clusterMap.get(clusterType);
-    if (cluster == null) {
-      cluster = ClusterFactory.create(clusterType);
-      clusterMap.put(clusterType, cluster);
-    }
-    return cluster;
+  public DefaultDirectory(Router router) {
+    this.router = router;
+  }
+
+  @Override
+  public List<ServiceInstance> list(Invocation invocation) {
+    // todo
+    return null;
   }
 }

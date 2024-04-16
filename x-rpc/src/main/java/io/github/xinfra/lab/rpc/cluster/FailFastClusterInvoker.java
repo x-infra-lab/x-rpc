@@ -17,20 +17,15 @@
 package io.github.xinfra.lab.rpc.cluster;
 
 import io.github.xinfra.lab.rpc.cluster.loadblance.LoadBalancer;
-import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
-import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
 import java.util.List;
 
 public class FailFastClusterInvoker extends AbstractClusterInvoker {
 
-  public FailFastClusterInvoker(
-      ReferenceConfig<?> referenceConfig,
-      Directory directory,
-      ClientTransportManager clientTransportManager) {
-    super(referenceConfig, directory, clientTransportManager);
+  public FailFastClusterInvoker(Cluster cluster) {
+    super(cluster);
   }
 
   @Override

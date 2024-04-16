@@ -17,16 +17,14 @@
 package io.github.xinfra.lab.rpc.bootstrap;
 
 import io.github.xinfra.lab.rpc.cluster.Cluster;
+import io.github.xinfra.lab.rpc.cluster.ClusterFactory;
 import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
-import io.github.xinfra.lab.rpc.cluster.ClusterManager;
-import io.github.xinfra.lab.rpc.cluster.Directory;
 import io.github.xinfra.lab.rpc.config.ConsumerConfig;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
 import io.github.xinfra.lab.rpc.proxy.Proxy;
 import io.github.xinfra.lab.rpc.proxy.ProxyManager;
 import io.github.xinfra.lab.rpc.registry.Registry;
-import io.github.xinfra.lab.rpc.registry.RegistryDirectory;
 import io.github.xinfra.lab.rpc.registry.RegistryManager;
 import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
 
@@ -52,10 +50,8 @@ public class ConsumerBootstrap<T> {
     RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);
 
-    Directory directory = new RegistryDirectory(registry, referenceConfig);
-    Cluster cluster = ClusterManager.getCluster(referenceConfig.getClusterType());
-    ClusterInvoker clusterInvoker =
-        cluster.filteringInvoker(referenceConfig, directory, clientTransportManager);
+    Cluster cluster = ClusterFactory.create(referenceConfig, clientTransportManager);
+    ClusterInvoker clusterInvoker = cluster.filteringInvoker();
     Proxy proxy = ProxyManager.getProxy(referenceConfig.getProxyType());
     return proxy.createProxyObject(referenceConfig.getServiceClass(), clusterInvoker);
   }

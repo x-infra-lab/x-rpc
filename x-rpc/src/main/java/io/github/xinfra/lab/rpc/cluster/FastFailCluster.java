@@ -20,17 +20,16 @@ import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.filter.FilterChainBuilder;
 import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
 
-public class FastFailCluster implements Cluster {
+public class FastFailCluster extends AbstractCluster {
 
-  public FastFailCluster() {}
+  public FastFailCluster(
+      ReferenceConfig<?> referenceConfig, ClientTransportManager clientTransportManager) {
+    super(referenceConfig, clientTransportManager);
+  }
 
   @Override
-  public ClusterInvoker filteringInvoker(
-      ReferenceConfig<?> referenceConfig,
-      Directory directory,
-      ClientTransportManager clientTransportManager) {
-    FailFastClusterInvoker clusterInvoker =
-        new FailFastClusterInvoker(referenceConfig, directory, clientTransportManager);
+  public ClusterInvoker filteringInvoker() {
+    FailFastClusterInvoker clusterInvoker = new FailFastClusterInvoker(this);
     return FilterChainBuilder.buildClusterFilterChainInvoker(
         referenceConfig.getConsumerConfig().getClusterFilters(), clusterInvoker);
   }
