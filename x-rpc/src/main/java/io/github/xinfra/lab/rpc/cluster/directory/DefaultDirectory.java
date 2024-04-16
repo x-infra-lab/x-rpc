@@ -17,6 +17,7 @@
 package io.github.xinfra.lab.rpc.cluster.directory;
 
 import io.github.xinfra.lab.rpc.cluster.route.Router;
+import io.github.xinfra.lab.rpc.common.Pair;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.util.List;
@@ -26,6 +27,13 @@ public class DefaultDirectory implements Directory {
 
   public DefaultDirectory(Router router) {
     this.router = router;
+  }
+
+  @Override
+  public Pair<List<ServiceInstance>, List<ServiceInstance>> refreshAll(
+      List<ServiceInstance> serviceInstanceList) {
+    // todo
+    return null;
   }
 
   @Override

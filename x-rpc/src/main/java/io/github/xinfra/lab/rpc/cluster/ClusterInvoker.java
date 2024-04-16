@@ -21,4 +21,6 @@ import io.github.xinfra.lab.rpc.invoker.Invoker;
 
 public interface ClusterInvoker extends Invoker {
   Directory directory();
+
+  Cluster cluster();
 }

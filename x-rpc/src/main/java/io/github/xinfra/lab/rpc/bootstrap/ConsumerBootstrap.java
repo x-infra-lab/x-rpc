@@ -28,7 +28,7 @@ import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.RegistryManager;
 import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
 
-public class ConsumerBootstrap<T> {
+public class ConsumerBootstrap {
 
   private final ConsumerConfig consumerConfig;
 
@@ -51,6 +51,8 @@ public class ConsumerBootstrap<T> {
     Registry registry = registryManager.getRegistry(registryConfig);
 
     Cluster cluster = ClusterFactory.create(referenceConfig, clientTransportManager);
+    registry.subscribe(
+        referenceConfig.getConsumerConfig().getApplicationConfig().getAppName(), cluster);
     ClusterInvoker clusterInvoker = cluster.filteringInvoker();
     Proxy proxy = ProxyManager.getProxy(referenceConfig.getProxyType());
     return proxy.createProxyObject(referenceConfig.getServiceClass(), clusterInvoker);

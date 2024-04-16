@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.filter;
 
+import io.github.xinfra.lab.rpc.cluster.Cluster;
 import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
 import io.github.xinfra.lab.rpc.cluster.directory.Directory;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
@@ -107,6 +108,11 @@ public class FilterChainBuilder {
     @Override
     public Directory directory() {
       return nextNode.directory();
+    }
+
+    @Override
+    public Cluster cluster() {
+      return nextNode.cluster();
     }
   }
 }

@@ -16,10 +16,19 @@
  */
 package io.github.xinfra.lab.rpc.cluster.directory;
 
+import io.github.xinfra.lab.rpc.common.Pair;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.util.List;
 
 public interface Directory {
+
+  /**
+   * @param serviceInstanceList
+   * @return Pair left: added serviceInstanceList right: deleted serviceInstanceList
+   */
+  Pair<List<ServiceInstance>, List<ServiceInstance>> refreshAll(
+      List<ServiceInstance> serviceInstanceList);
+
   List<ServiceInstance> list(Invocation invocation);
 }

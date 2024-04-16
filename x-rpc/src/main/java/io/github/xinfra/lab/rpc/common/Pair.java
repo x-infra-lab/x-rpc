@@ -14,25 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.cluster;
+package io.github.xinfra.lab.rpc.common;
 
-import io.github.xinfra.lab.rpc.cluster.loadblance.LoadBalancer;
-import io.github.xinfra.lab.rpc.invoker.Invocation;
-import io.github.xinfra.lab.rpc.invoker.InvocationResult;
-import io.github.xinfra.lab.rpc.registry.ServiceInstance;
-import java.util.List;
+import lombok.NoArgsConstructor;
 
-public class FailFastClusterInvoker extends AbstractClusterInvoker {
+@NoArgsConstructor
+public class Pair<L, R> {
+  private L left;
+  private R right;
 
-  public FailFastClusterInvoker(Cluster cluster) {
-    super(cluster);
+  public Pair(L left, R right) {
+    this.left = left;
+    this.right = right;
   }
 
-  @Override
-  protected InvocationResult doInvoke(
-      Invocation invocation, List<ServiceInstance> serviceInstances, LoadBalancer loadBalancer) {
-    ServiceInstance serviceInstance = select(loadBalancer, invocation, serviceInstances);
-    invocation.setTargetServiceInstance(serviceInstance);
-    return filteringConsumerInvoker.invoke(invocation);
+  public L left() {
+    return left;
+  }
+
+  public R right() {
+    return right;
+  }
+
+  public static <L, R> Pair<L, R> of(L left, R right) {
+    return new Pair<>(left, right);
   }
 }

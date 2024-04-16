@@ -23,11 +23,11 @@ import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
 
 public interface Cluster extends NotifyListener {
 
-  ClusterInvoker filteringInvoker();
-
   ReferenceConfig<?> referenceConfig();
 
   Directory directory();
 
   ClientTransportManager clientTransportManager();
+
+  ClusterInvoker filteringInvoker();
 }

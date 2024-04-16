@@ -13,17 +13,6 @@
     <name>x-rpc</name>
 
     <dependencies>
-        <!-- transport -->
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-        </dependency>
-
-        <!-- log -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
 
         <!-- lombok -->
         <dependency>

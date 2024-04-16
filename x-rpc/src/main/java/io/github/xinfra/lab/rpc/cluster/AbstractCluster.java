@@ -18,6 +18,7 @@ package io.github.xinfra.lab.rpc.cluster;
 
 import io.github.xinfra.lab.rpc.cluster.directory.DefaultDirectory;
 import io.github.xinfra.lab.rpc.cluster.directory.Directory;
+import io.github.xinfra.lab.rpc.common.Pair;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
@@ -58,6 +59,10 @@ public abstract class AbstractCluster implements Cluster {
 
   @Override
   public void notify(List<ServiceInstance> serviceInstances) {
-    // todo
+    Pair<List<ServiceInstance>, List<ServiceInstance>> refreshed =
+        directory.refreshAll(serviceInstances);
+
+    clientTransportManager.addServiceInstances(refreshed.left());
+    clientTransportManager.removeServiceInstances(refreshed.right());
   }
 }

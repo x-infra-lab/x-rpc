@@ -26,13 +26,6 @@
     <dependencyManagement>
         <dependencies>
 
-            <!-- transport -->
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-all</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-
             <!-- log -->
             <dependency>
                 <groupId>org.slf4j</groupId>

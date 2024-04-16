@@ -17,10 +17,19 @@
 package io.github.xinfra.lab.rpc.transport;
 
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import java.util.List;
 
 public class ClientTransportManager {
   public ClientTransport getClientTransport(ServiceInstance targetServiceInstance) {
     // todo
     return null;
+  }
+
+  public void addServiceInstances(List<ServiceInstance> serviceInstanceList) {
+    // todo
+  }
+
+  public void removeServiceInstances(List<ServiceInstance> serviceInstanceList) {
+    // todo
   }
 }

@@ -30,6 +30,8 @@ import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
 import java.util.List;
 
 public abstract class AbstractClusterInvoker implements ClusterInvoker {
+  private Cluster cluster;
+
   private ReferenceConfig<?> referenceConfig;
 
   private Directory directory;
@@ -54,6 +56,11 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
   }
 
   @Override
+  public Cluster cluster() {
+    return cluster;
+  }
+
+  @Override
   public InvocationResult invoke(Invocation invocation) {
     List<ServiceInstance> serviceInstances = directory.list(invocation);
     LoadBalancer loadBalancer =
@@ -62,10 +69,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
   }
 
   protected ServiceInstance select(
-      LoadBalancer loadBalancer,
-      Invocation invocation,
-      List<ServiceInstance> serviceInstances,
-      List<ServiceInstance> invokedServiceInstances) {
+      LoadBalancer loadBalancer, Invocation invocation, List<ServiceInstance> serviceInstances) {
     // todo
     return loadBalancer.select(serviceInstances, invocation);
   }
