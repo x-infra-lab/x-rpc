@@ -18,7 +18,6 @@ package io.github.xinfra.lab.rpc.filter;
 
 import io.github.xinfra.lab.rpc.cluster.Cluster;
 import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
-import io.github.xinfra.lab.rpc.cluster.naming.NamingService;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
@@ -103,11 +102,6 @@ public class FilterChainBuilder {
                   clusterFilter.onResult(invocationResult);
                 }
               });
-    }
-
-    @Override
-    public NamingService naming() {
-      return nextNode.naming();
     }
 
     @Override

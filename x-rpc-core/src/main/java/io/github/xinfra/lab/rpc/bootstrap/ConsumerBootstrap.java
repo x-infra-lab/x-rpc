@@ -48,13 +48,17 @@ public class ConsumerBootstrap {
   public <T> T refer(ReferenceConfig<T> referenceConfig) {
     referenceConfig.setConsumerConfig(consumerConfig);
 
-    RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
-    Registry registry = registryManager.getRegistry(registryConfig);
-
+    // build cluster
     ClientTransport clientTransport =
         clientTransportManager.getClientTransport(referenceConfig.getTransportType());
     Cluster cluster = ClusterFactory.create(referenceConfig, clientTransport);
-    registry.subscribe(consumerConfig.getApplicationConfig().getAppName(), cluster.naming());
+
+    // cluster subscribe
+    RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
+    Registry registry = registryManager.getRegistry(registryConfig);
+    registry.subscribe(consumerConfig.getApplicationConfig().getAppName(), cluster.namingService());
+
+    // build invoke & proxy
     ClusterInvoker clusterInvoker = cluster.filteringInvoker();
     Proxy proxy = ProxyManager.getProxy(referenceConfig.getProxyType());
     return proxy.createProxyObject(referenceConfig.getServiceClass(), clusterInvoker);

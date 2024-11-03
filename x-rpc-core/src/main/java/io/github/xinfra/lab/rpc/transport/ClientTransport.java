@@ -22,6 +22,11 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
 
 public interface ClientTransport {
+
+  void connect(InetSocketAddress socketAddress);
+
+  void addTransportEventListener(TransportEventListener listener);
+
   CompletableFuture<RpcResponse> sendAsync(
       InetSocketAddress socketAddress, RpcRequest request, int timeoutMills);
 }

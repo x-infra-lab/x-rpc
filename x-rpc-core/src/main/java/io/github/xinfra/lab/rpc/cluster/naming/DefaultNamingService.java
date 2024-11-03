@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.cluster.naming;
 
+import io.github.xinfra.lab.rpc.cluster.Cluster;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
@@ -29,9 +30,9 @@ public class DefaultNamingService implements NamingService {
 
   private ReferenceConfig<?> referenceConfig;
 
-  public DefaultNamingService(ReferenceConfig<?> referenceConfig, ClientTransport clientTransport) {
-    this.referenceConfig = referenceConfig;
-    this.clientTransport = clientTransport;
+  public DefaultNamingService(Cluster cluster) {
+    this.referenceConfig = cluster.referenceConfig();
+    this.clientTransport = cluster.clientTransport();
   }
 
   @Override

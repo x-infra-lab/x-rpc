@@ -29,7 +29,7 @@ public abstract class AbstractCluster implements Cluster {
   public AbstractCluster(ReferenceConfig<?> referenceConfig, ClientTransport clientTransport) {
     this.referenceConfig = referenceConfig;
     this.clientTransport = clientTransport;
-    this.namingService = new DefaultNamingService(referenceConfig, clientTransport);
+    this.namingService = new DefaultNamingService(this);
   }
 
   @Override
@@ -38,7 +38,7 @@ public abstract class AbstractCluster implements Cluster {
   }
 
   @Override
-  public NamingService naming() {
+  public NamingService namingService() {
     return namingService;
   }
 

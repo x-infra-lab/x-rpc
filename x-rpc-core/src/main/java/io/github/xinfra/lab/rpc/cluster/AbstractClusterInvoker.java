@@ -39,16 +39,11 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
 
   public AbstractClusterInvoker(Cluster cluster) {
     this.referenceConfig = cluster.referenceConfig();
-    this.namingService = cluster.naming();
+    this.namingService = cluster.namingService();
     this.filteringConsumerInvoker =
         FilterChainBuilder.buildFilterChainInvoker(
             referenceConfig.getConsumerConfig().getFilters(),
             new ConsumerInvoker(cluster.clientTransport()));
-  }
-
-  @Override
-  public NamingService naming() {
-    return namingService;
   }
 
   @Override

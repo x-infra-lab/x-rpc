@@ -22,7 +22,11 @@ import java.util.List;
 import lombok.Data;
 
 @Data
-public class ConsumerConfig extends BaseConfig {
+public class ConsumerConfig {
+
+  private ApplicationConfig applicationConfig;
+
+  private RegistryConfig<?> registryConfig;
 
   private List<ClusterFilter> clusterFilters;
 

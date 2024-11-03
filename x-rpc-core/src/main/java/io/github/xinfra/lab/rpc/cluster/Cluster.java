@@ -24,7 +24,7 @@ public interface Cluster {
 
   ReferenceConfig<?> referenceConfig();
 
-  NamingService naming();
+  NamingService namingService();
 
   ClientTransport clientTransport();
 
