@@ -11,6 +11,9 @@
     <packaging>pom</packaging>
 
     <name>x-rpc-remoting</name>
+    <modules>
+        <module>x-rpc-transport-remoting</module>
+    </modules>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

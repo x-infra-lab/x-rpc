@@ -12,6 +12,7 @@
         <module>x-rpc-core</module>
         <module>x-rpc-transport</module>
         <module>x-rpc-registry</module>
+        <module>x-rpc-api</module>
     </modules>
 
     <properties>
@@ -25,6 +26,22 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>io.github.xinfra.lab.rpc.api</groupId>
+                <artifactId>x-rpc-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.xinfra.lab</groupId>
+                <artifactId>x-rpc-transport-remoting</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.xinfra.lab</groupId>
+                <artifactId>x-rpc-registry-zookeeper</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
             <!-- log -->
             <dependency>
                 <groupId>org.slf4j</groupId>
