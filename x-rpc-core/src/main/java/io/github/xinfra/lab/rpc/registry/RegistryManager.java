@@ -17,10 +17,13 @@
 package io.github.xinfra.lab.rpc.registry;
 
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
+
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegistryManager {
+public class RegistryManager implements Closeable {
   private Map<RegistryConfig<?>, Registry> registryMap = new HashMap<>();
 
   public synchronized Registry getRegistry(RegistryConfig<?> registryConfig) {
@@ -30,5 +33,10 @@ public class RegistryManager {
       registryMap.put(registryConfig, registry);
     }
     return registry;
+  }
+
+  @Override
+  public void close() throws IOException {
+    registryMap.values().forEach(registry -> registry.shutDown());
   }
 }

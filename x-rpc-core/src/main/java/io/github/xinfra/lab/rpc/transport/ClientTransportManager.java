@@ -16,9 +16,21 @@
  */
 package io.github.xinfra.lab.rpc.transport;
 
-public class ClientTransportManager {
+import io.github.xinfra.lab.transport.XRemotingClientTransport;
+
+import java.io.Closeable;
+import java.io.IOException;
+
+public class ClientTransportManager implements Closeable {
   public ClientTransport getClientTransport(TransportType transportType) {
-    // todo
+    if (transportType == TransportType.X_REMOTING) {
+      return new XRemotingClientTransport();
+    }
     return null;
+  }
+
+  @Override
+  public void close() throws IOException {
+    // todo
   }
 }

@@ -16,4 +16,28 @@
  */
 package io.github.xinfra.lab.transport;
 
-public class RemotingClientTransport {}
+import io.github.xinfra.lab.rpc.invoker.RpcRequest;
+import io.github.xinfra.lab.rpc.invoker.RpcResponse;
+import io.github.xinfra.lab.rpc.transport.ClientTransport;
+import io.github.xinfra.lab.rpc.transport.TransportEventListener;
+
+import java.net.InetSocketAddress;
+import java.util.concurrent.CompletableFuture;
+
+public class XRemotingClientTransport implements ClientTransport {
+    @Override
+    public void connect(InetSocketAddress socketAddress) {
+        // todo
+    }
+
+    @Override
+    public void addTransportEventListener(TransportEventListener listener) {
+        // todo
+    }
+
+    @Override
+    public CompletableFuture<RpcResponse> sendAsync(InetSocketAddress socketAddress, RpcRequest request, int timeoutMills) {
+        // todo
+        return null;
+    }
+}

@@ -29,7 +29,10 @@ import io.github.xinfra.lab.rpc.registry.RegistryManager;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
 import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
 
-public class ConsumerBootstrap {
+import java.io.Closeable;
+import java.io.IOException;
+
+public class ConsumerBootstrap implements Closeable {
 
   private final ConsumerConfig consumerConfig;
 
@@ -56,11 +59,18 @@ public class ConsumerBootstrap {
     // cluster subscribe
     RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);
+    registry.startup();
     registry.subscribe(consumerConfig.getApplicationConfig().getAppName(), cluster.namingService());
 
-    // build invoke & proxy
+    // build invoker & proxy
     ClusterInvoker clusterInvoker = cluster.filteringInvoker();
     Proxy proxy = ProxyManager.getProxy(referenceConfig.getProxyType());
     return proxy.createProxyObject(referenceConfig.getServiceClass(), clusterInvoker);
+  }
+
+  @Override
+  public void close() throws IOException {
+    registryManager.close();
+    clientTransportManager.close();
   }
 }
