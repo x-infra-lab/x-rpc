@@ -16,8 +16,8 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
+import io.github.xinfra.lab.rpc.common.LifeCycle;
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
-
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,6 +37,6 @@ public class RegistryManager implements Closeable {
 
   @Override
   public void close() throws IOException {
-    registryMap.values().forEach(registry -> registry.shutDown());
+    registryMap.values().forEach(LifeCycle::shutdown);
   }
 }

@@ -18,10 +18,11 @@ package io.github.xinfra.lab.rpc.transport;
 
 import io.github.xinfra.lab.rpc.invoker.RpcRequest;
 import io.github.xinfra.lab.rpc.invoker.RpcResponse;
+import java.io.Closeable;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
 
-public interface ClientTransport {
+public interface ClientTransport extends Closeable {
 
   void connect(InetSocketAddress socketAddress);
 

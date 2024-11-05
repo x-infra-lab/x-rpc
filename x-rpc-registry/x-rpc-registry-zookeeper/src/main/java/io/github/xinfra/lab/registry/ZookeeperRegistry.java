@@ -16,4 +16,46 @@
  */
 package io.github.xinfra.lab.registry;
 
-public class ZookeeperRegistry {}
+import io.github.xinfra.lab.rpc.registry.NotifyListener;
+import io.github.xinfra.lab.rpc.registry.Registry;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import io.github.xinfra.lab.rpc.registry.ServiceInstancesChangedListener;
+import java.util.List;
+
+public class ZookeeperRegistry implements Registry {
+  @Override
+  public void startup() {
+    // todo
+  }
+
+  @Override
+  public void shutdown() {}
+
+  @Override
+  public void register(ServiceInstance serviceInstance) {}
+
+  @Override
+  public void update(ServiceInstance serviceInstance) {}
+
+  @Override
+  public void unRegister(ServiceInstance serviceInstance) {}
+
+  @Override
+  public void subscribe(String serviceName, NotifyListener notifyListener) {}
+
+  @Override
+  public void unSubscribe(String serviceName, NotifyListener notifyListener) {}
+
+  @Override
+  public List<ServiceInstance> queryServiceInstances(String serviceName) {
+    return null;
+  }
+
+  @Override
+  public void addServiceInstancesChangedListener(
+      ServiceInstancesChangedListener instancesChangedListener) {}
+
+  @Override
+  public void removeServiceInstancesChangedListener(
+      ServiceInstancesChangedListener instancesChangedListener) {}
+}

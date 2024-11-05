@@ -16,4 +16,10 @@
  */
 package io.github.xinfra.lab.rpc.cluster.router;
 
-public interface Router {}
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import java.util.List;
+
+public interface Router {
+  List<ServiceInstance> route(Invocation invocation, List<ServiceInstance> serviceInstanceList);
+}

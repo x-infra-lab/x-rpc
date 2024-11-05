@@ -16,21 +16,38 @@
  */
 package io.github.xinfra.lab.rpc.transport;
 
-import io.github.xinfra.lab.transport.XRemotingClientTransport;
-
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ClientTransportManager implements Closeable {
-  public ClientTransport getClientTransport(TransportType transportType) {
-    if (transportType == TransportType.X_REMOTING) {
-      return new XRemotingClientTransport();
+  private Map<TransportType, ClientTransport> clientTransportMap = new HashMap<>();
+
+  public synchronized ClientTransport getClientTransport(TransportType transportType) {
+    ClientTransport clientTransport = clientTransportMap.get(transportType);
+    if (clientTransport == null) {
+      clientTransport = ClientTransportFactory.create(transportType);
+      clientTransportMap.put(transportType, clientTransport);
     }
-    return null;
+    return clientTransport;
   }
 
   @Override
   public void close() throws IOException {
-    // todo
+    IOException ex = null;
+    for (ClientTransport clientTransport : clientTransportMap.values()) {
+      try {
+        clientTransport.close();
+      } catch (IOException ioe) {
+        if (ex == null) {
+          ex = new IOException("ClientTransportManager close ex.");
+        }
+        ex.addSuppressed(new IOException(clientTransport + " close ex.", ioe));
+      }
+    }
+    if (ex != null) {
+      throw ex;
+    }
   }
 }

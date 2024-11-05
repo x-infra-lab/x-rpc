@@ -16,4 +16,4 @@
  */
 package io.github.xinfra.lab.rpc.cluster.router;
 
-public interface RouterChain {}
+public interface RouterChain extends Router {}

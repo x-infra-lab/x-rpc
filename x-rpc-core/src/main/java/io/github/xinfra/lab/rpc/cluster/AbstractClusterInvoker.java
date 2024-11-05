@@ -19,6 +19,7 @@ package io.github.xinfra.lab.rpc.cluster;
 import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalancer;
 import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalancerManger;
 import io.github.xinfra.lab.rpc.cluster.naming.NamingService;
+import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.filter.FilterChainBuilder;
 import io.github.xinfra.lab.rpc.invoker.ConsumerInvoker;
@@ -37,13 +38,20 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
 
   protected Invoker filteringConsumerInvoker;
 
+  protected LoadBalancer loadBalancer;
+  // todo init
+  protected RouterChain routerChain;
+
   public AbstractClusterInvoker(Cluster cluster) {
+    this.cluster = cluster;
     this.referenceConfig = cluster.referenceConfig();
     this.namingService = cluster.namingService();
     this.filteringConsumerInvoker =
         FilterChainBuilder.buildFilterChainInvoker(
             referenceConfig.getConsumerConfig().getFilters(),
             new ConsumerInvoker(cluster.clientTransport()));
+
+    this.loadBalancer = LoadBalancerManger.getLoadBalancer(referenceConfig.getLoadBalanceType());
   }
 
   @Override
@@ -54,17 +62,15 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
   @Override
   public InvocationResult invoke(Invocation invocation) {
     List<ServiceInstance> serviceInstances = namingService.queryService(referenceConfig);
-    LoadBalancer loadBalancer =
-        LoadBalancerManger.getLoadBalancer(referenceConfig.getLoadBalanceType());
-    return doInvoke(invocation, serviceInstances, loadBalancer);
+    List<ServiceInstance> routedServiceInstances = routerChain.route(invocation, serviceInstances);
+    return doInvoke(invocation, routedServiceInstances);
   }
 
-  protected ServiceInstance select(
-      LoadBalancer loadBalancer, Invocation invocation, List<ServiceInstance> serviceInstances) {
+  protected ServiceInstance select(Invocation invocation, List<ServiceInstance> serviceInstances) {
     // todo
     return loadBalancer.select(serviceInstances, invocation);
   }
 
   protected abstract InvocationResult doInvoke(
-      Invocation invocation, List<ServiceInstance> serviceInstances, LoadBalancer loadBalancer);
+      Invocation invocation, List<ServiceInstance> serviceInstances);
 }

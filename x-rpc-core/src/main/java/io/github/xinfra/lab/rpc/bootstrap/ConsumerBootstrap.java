@@ -28,7 +28,6 @@ import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.RegistryManager;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
 import io.github.xinfra.lab.rpc.transport.ClientTransportManager;
-
 import java.io.Closeable;
 import java.io.IOException;
 
