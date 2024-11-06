@@ -19,9 +19,9 @@ package io.github.xinfra.lab.rpc.config;
 import io.github.xinfra.lab.rpc.registry.RegistryClientConfig;
 import io.github.xinfra.lab.rpc.registry.RegistryType;
 
-public class RegistryConfig<CONFIG extends RegistryClientConfig> {
+public interface RegistryConfig<CONFIG extends RegistryClientConfig> {
 
-  private RegistryType registryType = RegistryType.ZOOKEEPER;
+  RegistryType getRegistryType();
 
-  private CONFIG registryClientConfig;
+  CONFIG getRegistryClientConfig();
 }

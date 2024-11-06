@@ -14,18 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.registry;
+package io.github.xinfra.lab.registry;
 
-import io.github.xinfra.lab.registry.ZookeeperRegistry;
-import io.github.xinfra.lab.rpc.config.RegistryConfig;
+import io.github.xinfra.lab.rpc.registry.RegistryClientConfig;
+import lombok.Data;
 
-public class RegistryFactory {
+@Data
+public class ZookeeperConfig implements RegistryClientConfig {
 
-  public static Registry create(RegistryConfig<?> registryConfig) {
-    if (registryConfig.getRegistryType() == RegistryType.ZOOKEEPER) {
-      return new ZookeeperRegistry(registryConfig);
-    }
-    throw new IllegalArgumentException(
-        "Unsupported registry type: " + registryConfig.getRegistryType());
-  }
+  private String zkAddress;
+
+  // retry
+  private int sleepMsBetweenRetry = 100;
+
+  private String basePath = "x/services";
+
+  // todo
 }

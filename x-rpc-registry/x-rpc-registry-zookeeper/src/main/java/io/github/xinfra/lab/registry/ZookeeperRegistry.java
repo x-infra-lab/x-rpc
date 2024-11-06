@@ -16,16 +16,61 @@
  */
 package io.github.xinfra.lab.registry;
 
+import io.github.xinfra.lab.rpc.config.RegistryConfig;
 import io.github.xinfra.lab.rpc.registry.NotifyListener;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import io.github.xinfra.lab.rpc.registry.ServiceInstancesChangedListener;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.curator.framework.CuratorFramework;
+import org.apache.curator.framework.CuratorFrameworkFactory;
+import org.apache.curator.retry.RetryOneTime;
+import org.apache.curator.utils.CloseableUtils;
+import org.apache.curator.x.discovery.ServiceDiscovery;
+import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+@Slf4j
 public class ZookeeperRegistry implements Registry {
+  private static final Logger log = LoggerFactory.getLogger(ZookeeperRegistry.class);
+  private ZookeeperRegistryConfig zookeeperRegistryConfig;
+
+  private ZookeeperConfig zookeeperConfig;
+
+  public ZookeeperRegistry(RegistryConfig<?> registryConfig) {
+    if (!(registryConfig instanceof ZookeeperRegistryConfig)) {
+      throw new IllegalArgumentException("registryConfig must be ZookeeperRegistryConfig");
+    }
+    zookeeperRegistryConfig = (ZookeeperRegistryConfig) registryConfig;
+    zookeeperConfig = zookeeperRegistryConfig.getRegistryClientConfig();
+  }
+
   @Override
   public void startup() {
-    // todo
+    CuratorFramework client = null;
+    ServiceDiscovery<String> discovery = null;
+    try {
+      client =
+          CuratorFrameworkFactory.newClient(
+              zookeeperConfig.getZkAddress(),
+              new RetryOneTime(zookeeperConfig.getSleepMsBetweenRetry()));
+      client.start();
+
+      discovery =
+          ServiceDiscoveryBuilder.builder(String.class)
+              .basePath(zookeeperConfig.getBasePath())
+              .client(client)
+              .build();
+      discovery.start();
+      log.info("ZookeeperRegistry started successfully");
+    } catch (Exception e) {
+      log.error("ZookeeperRegistry start failed", e);
+      CloseableUtils.closeQuietly(discovery);
+      CloseableUtils.closeQuietly(client);
+      throw new RuntimeException(e);
+    }
   }
 
   @Override
