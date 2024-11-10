@@ -16,7 +16,6 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
-import io.github.xinfra.lab.rpc.common.LifeCycle;
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
 import java.io.Closeable;
 import java.io.IOException;
@@ -37,6 +36,19 @@ public class RegistryManager implements Closeable {
 
   @Override
   public void close() throws IOException {
-    registryMap.values().forEach(LifeCycle::shutdown);
+    IOException ex = null;
+    for (Registry registry : registryMap.values()) {
+      try {
+        registry.close();
+      } catch (IOException ioe) {
+        if (ex == null) {
+          ex = new IOException("ClientTransportManager close fail.");
+        }
+        ex.addSuppressed(new IOException(registry + " close fail.", ioe));
+      }
+    }
+    if (ex != null) {
+      throw ex;
+    }
   }
 }

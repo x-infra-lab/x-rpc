@@ -21,6 +21,7 @@ import io.github.xinfra.lab.rpc.registry.NotifyListener;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import io.github.xinfra.lab.rpc.registry.ServiceInstancesChangedListener;
+import java.io.IOException;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -45,10 +46,10 @@ public class ZookeeperRegistry implements Registry {
     }
     zookeeperRegistryConfig = (ZookeeperRegistryConfig) registryConfig;
     zookeeperConfig = zookeeperRegistryConfig.getRegistryClientConfig();
+    init();
   }
 
-  @Override
-  public void startup() {
+  private void init() {
     CuratorFramework client = null;
     ServiceDiscovery<String> discovery = null;
     try {
@@ -64,17 +65,21 @@ public class ZookeeperRegistry implements Registry {
               .client(client)
               .build();
       discovery.start();
+
+      // todo ServiceCache
       log.info("ZookeeperRegistry started successfully");
     } catch (Exception e) {
-      log.error("ZookeeperRegistry start failed", e);
+      log.error("ZookeeperRegistry start fail", e);
       CloseableUtils.closeQuietly(discovery);
       CloseableUtils.closeQuietly(client);
-      throw new RuntimeException(e);
+      throw new RuntimeException("ZookeeperRegistry start fail", e);
     }
   }
 
   @Override
-  public void shutdown() {}
+  public void close() throws IOException {
+    // todo
+  }
 
   @Override
   public void register(ServiceInstance serviceInstance) {}

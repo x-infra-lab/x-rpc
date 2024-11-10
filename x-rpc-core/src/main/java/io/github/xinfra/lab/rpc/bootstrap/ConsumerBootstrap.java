@@ -58,7 +58,6 @@ public class ConsumerBootstrap implements Closeable {
     // cluster subscribe
     RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);
-    registry.startup();
     registry.subscribe(consumerConfig.getApplicationConfig().getAppName(), cluster.namingService());
 
     // build invoker & proxy

@@ -16,10 +16,10 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
-import io.github.xinfra.lab.rpc.common.LifeCycle;
+import java.io.Closeable;
 import java.util.List;
 
-public interface Registry extends LifeCycle {
+public interface Registry extends Closeable {
 
   void register(ServiceInstance serviceInstance);
 

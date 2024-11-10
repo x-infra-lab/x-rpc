@@ -41,9 +41,9 @@ public class ClientTransportManager implements Closeable {
         clientTransport.close();
       } catch (IOException ioe) {
         if (ex == null) {
-          ex = new IOException("ClientTransportManager close ex.");
+          ex = new IOException("ClientTransportManager close fail.");
         }
-        ex.addSuppressed(new IOException(clientTransport + " close ex.", ioe));
+        ex.addSuppressed(new IOException(clientTransport + " close fail.", ioe));
       }
     }
     if (ex != null) {
