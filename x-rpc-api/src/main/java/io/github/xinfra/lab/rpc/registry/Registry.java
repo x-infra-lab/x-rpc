@@ -32,9 +32,4 @@ public interface Registry extends Closeable {
   void unSubscribe(String serviceName, NotifyListener notifyListener);
 
   List<ServiceInstance> queryServiceInstances(String serviceName);
-
-  void addServiceInstancesChangedListener(ServiceInstancesChangedListener instancesChangedListener);
-
-  void removeServiceInstancesChangedListener(
-      ServiceInstancesChangedListener instancesChangedListener);
 }
