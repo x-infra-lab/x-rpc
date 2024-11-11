@@ -21,9 +21,11 @@ import io.github.xinfra.lab.rpc.registry.NotifyListener;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
@@ -126,7 +128,13 @@ public class ZookeeperRegistry implements Registry {
 
   @Override
   public List<ServiceInstance> queryServiceInstances(String serviceName) {
-    // todo
-    return null;
+    try {
+      Collection<org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstancePayload>>
+          serviceInstances = serviceDiscovery.queryForInstances(serviceName);
+      return serviceInstances.stream().map(InstanceConverter::convert).collect(Collectors.toList());
+    } catch (Exception e) {
+      log.error("queryForInstances fail. serviceName:{}", serviceName, e);
+      throw new RuntimeException("queryForInstances fail. serviceName:" + serviceName, e);
+    }
   }
 }
