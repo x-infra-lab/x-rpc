@@ -17,6 +17,7 @@
 package io.github.xinfra.lab.registry;
 
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
+import io.github.xinfra.lab.rpc.registry.AppServiceInstancesChanger;
 import io.github.xinfra.lab.rpc.registry.NotifyListener;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
@@ -25,6 +26,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -46,6 +48,7 @@ public class ZookeeperRegistry implements Registry {
 
   private ZookeeperConfig zookeeperConfig;
 
+  private Map<String, AppServiceInstancesChanger> changers = new ConcurrentHashMap<>();
   private Map<String, ZookeeperServiceDiscoveryChangeWatcher> watchers = new ConcurrentHashMap<>();
   private CuratorFramework curatorFramework;
   private ServiceDiscovery<ZookeeperInstancePayload> serviceDiscovery;
@@ -99,42 +102,66 @@ public class ZookeeperRegistry implements Registry {
   public void unRegister(ServiceInstance serviceInstance) {}
 
   @Override
-  public void subscribe(String serviceName, NotifyListener notifyListener) {
-    ZookeeperServiceDiscoveryChangeWatcher watcher =
-        watchers.computeIfAbsent(
-            serviceName,
+  public void subscribe(String appName, NotifyListener notifyListener) {
+    AppServiceInstancesChanger appServiceInstancesChanger =
+        changers.computeIfAbsent(
+            appName,
             name -> {
-              ServiceCache<ZookeeperInstancePayload> serviceCache =
-                  serviceDiscovery.serviceCacheBuilder().name(name).build();
-              ZookeeperServiceDiscoveryChangeWatcher w =
-                  new ZookeeperServiceDiscoveryChangeWatcher(name, serviceCache, this);
-              serviceCache.addListener(w);
-
-              try {
-                serviceCache.start();
-              } catch (Exception e) {
-                log.error("subscribe fail. serviceName:{}", serviceName, e);
-                throw new RuntimeException("subscribe fail. serviceName: " + name, e);
-              }
-
-              return w;
+              AppServiceInstancesChanger changer = new AppServiceInstancesChanger(appName);
+              addAppServiceInstancesChanger(changer);
+              return changer;
             });
 
-    watcher.addNotifyListener(notifyListener);
+    appServiceInstancesChanger.addNotifyListener(notifyListener);
   }
 
   @Override
-  public void unSubscribe(String serviceName, NotifyListener notifyListener) {}
+  public void unSubscribe(String appName, NotifyListener notifyListener) {}
 
   @Override
-  public List<ServiceInstance> queryServiceInstances(String serviceName) {
+  public List<ServiceInstance> queryServiceInstances(String appName) {
     try {
       Collection<org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstancePayload>>
-          serviceInstances = serviceDiscovery.queryForInstances(serviceName);
+          serviceInstances = serviceDiscovery.queryForInstances(appName);
       return serviceInstances.stream().map(InstanceConverter::convert).collect(Collectors.toList());
     } catch (Exception e) {
-      log.error("queryForInstances fail. serviceName:{}", serviceName, e);
-      throw new RuntimeException("queryForInstances fail. serviceName:" + serviceName, e);
+      log.error("queryForInstances fail. appName:{}", appName, e);
+      throw new RuntimeException("queryForInstances fail. appName:" + appName, e);
     }
+  }
+
+  @Override
+  public void addAppServiceInstancesChanger(AppServiceInstancesChanger appServiceInstancesChanger) {
+
+    CountDownLatch latch = new CountDownLatch(1);
+    String appName = appServiceInstancesChanger.getAppName();
+    watchers.computeIfAbsent(
+        appName,
+        name -> {
+          ServiceCache<ZookeeperInstancePayload> serviceCache =
+              serviceDiscovery.serviceCacheBuilder().name(name).build();
+          ZookeeperServiceDiscoveryChangeWatcher w =
+              new ZookeeperServiceDiscoveryChangeWatcher(
+                  name, serviceCache, this, latch, appServiceInstancesChanger);
+          serviceCache.addListener(w);
+
+          try {
+            serviceCache.start();
+          } catch (Exception e) {
+            log.error("subscribe fail. appName:{}", appName, e);
+            throw new RuntimeException("subscribe fail. appName: " + name, e);
+          }
+
+          return w;
+        });
+
+    appServiceInstancesChanger.change(queryServiceInstances(appName));
+    latch.countDown();
+  }
+
+  @Override
+  public void removeAppServiceInstancesChanger(
+      AppServiceInstancesChanger appServiceInstancesChanger) {
+    // todo
   }
 }

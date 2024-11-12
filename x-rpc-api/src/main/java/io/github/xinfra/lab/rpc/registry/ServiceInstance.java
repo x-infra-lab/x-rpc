@@ -16,10 +16,18 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
+import io.github.xinfra.lab.rpc.meta.MetadataInfo;
 import java.net.InetSocketAddress;
-import lombok.Getter;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@NoArgsConstructor
+@Data
 public class ServiceInstance {
 
-  @Getter InetSocketAddress socketAddress;
+  private MetadataInfo metadataInfo;
+  private InetSocketAddress socketAddress;
+  private String revision;
+
+  // todo
 }

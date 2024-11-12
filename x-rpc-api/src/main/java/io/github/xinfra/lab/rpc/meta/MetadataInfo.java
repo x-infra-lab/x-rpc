@@ -14,26 +14,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.registry;
+package io.github.xinfra.lab.rpc.meta;
 
-import java.io.Closeable;
-import java.util.List;
-
-public interface Registry extends Closeable {
-
-  void register(ServiceInstance serviceInstance);
-
-  void update(ServiceInstance serviceInstance);
-
-  void unRegister(ServiceInstance serviceInstance);
-
-  void subscribe(String appName, NotifyListener notifyListener);
-
-  void unSubscribe(String appName, NotifyListener notifyListener);
-
-  List<ServiceInstance> queryServiceInstances(String appName);
-
-  void addAppServiceInstancesChanger(AppServiceInstancesChanger appServiceInstancesChanger);
-
-  void removeAppServiceInstancesChanger(AppServiceInstancesChanger appServiceInstancesChanger);
+public class MetadataInfo {
+  private String appName;
 }

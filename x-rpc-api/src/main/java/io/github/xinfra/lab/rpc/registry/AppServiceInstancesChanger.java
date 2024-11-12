@@ -14,6 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.meta;
+package io.github.xinfra.lab.rpc.registry;
 
-public interface MetaService {}
+import java.util.List;
+import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
+
+/** app level service instances changer */
+@Slf4j
+public class AppServiceInstancesChanger {
+
+  @Getter private String appName;
+
+  private List<NotifyListener> notifyListeners;
+
+  public AppServiceInstancesChanger(String appName) {
+    this.appName = appName;
+  }
+
+  public synchronized void change(List<ServiceInstance> serviceInstances) {
+    log.info("app: {} service instances changed: {}", appName, serviceInstances);
+  }
+
+  public synchronized void addNotifyListener(NotifyListener notifyListener) {
+    // todo
+  }
+}

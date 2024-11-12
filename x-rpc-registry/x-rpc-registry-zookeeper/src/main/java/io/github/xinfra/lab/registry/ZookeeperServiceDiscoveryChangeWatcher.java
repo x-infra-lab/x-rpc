@@ -16,11 +16,11 @@
  */
 package io.github.xinfra.lab.registry;
 
-import io.github.xinfra.lab.rpc.registry.NotifyListener;
+import io.github.xinfra.lab.rpc.registry.AppServiceInstancesChanger;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -32,37 +32,45 @@ import org.apache.curator.x.discovery.details.ServiceCacheListener;
 public class ZookeeperServiceDiscoveryChangeWatcher implements ServiceCacheListener {
 
   private Registry registry;
-  private String serviceName;
+  private String appName;
   @Getter private ServiceCache<ZookeeperInstancePayload> serviceCache;
-  private List<NotifyListener> notifyListeners;
+
+  private AppServiceInstancesChanger appServiceInstancesChanger;
+
+  private CountDownLatch countDownLatch;
 
   public ZookeeperServiceDiscoveryChangeWatcher(
-      String serviceName, ServiceCache<ZookeeperInstancePayload> serviceCache, Registry registry) {
-    this.serviceName = serviceName;
+      String appName,
+      ServiceCache<ZookeeperInstancePayload> serviceCache,
+      Registry registry,
+      CountDownLatch countDownLatch,
+      AppServiceInstancesChanger appServiceInstancesChanger) {
+    this.appName = appName;
     this.serviceCache = serviceCache;
     this.registry = registry;
-    this.notifyListeners = new ArrayList<>();
+    this.countDownLatch = countDownLatch;
+    this.appServiceInstancesChanger = appServiceInstancesChanger;
   }
 
   @Override
   public synchronized void cacheChanged() {
-    List<ServiceInstance> serviceInstances = registry.queryServiceInstances(serviceName);
-    for (NotifyListener listener : notifyListeners) {
-      try {
-        listener.notify(serviceInstances);
-      } catch (Exception e) {
-        log.error("listener.notify fail.", e);
-      }
+    try {
+      countDownLatch.await();
+    } catch (InterruptedException e) {
+      Thread.currentThread().interrupt();
+    }
+
+    List<ServiceInstance> serviceInstances = registry.queryServiceInstances(appName);
+    try {
+      appServiceInstancesChanger.change(serviceInstances);
+    } catch (Exception e) {
+      log.error("{} appServiceInstancesChanger change fail.", appName, e);
+      throw new RuntimeException(appName + " appServiceInstancesChanger change fail.", e);
     }
   }
 
   @Override
   public void stateChanged(CuratorFramework curatorFramework, ConnectionState connectionState) {
     // ignore
-  }
-
-  public synchronized void addNotifyListener(NotifyListener notifyListener) {
-    notifyListener.notify(registry.queryServiceInstances(serviceName));
-    this.notifyListeners.add(notifyListener);
   }
 }

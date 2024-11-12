@@ -16,4 +16,11 @@
  */
 package io.github.xinfra.lab.registry;
 
-public class ZookeeperInstancePayload {}
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+public class ZookeeperInstancePayload {
+  private String revision;
+}
