@@ -19,15 +19,26 @@ package io.github.xinfra.lab.rpc.registry;
 import io.github.xinfra.lab.rpc.meta.MetadataInfo;
 import java.net.InetSocketAddress;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
-@NoArgsConstructor
 @Data
 public class ServiceInstance {
 
-  private MetadataInfo metadataInfo;
-  private InetSocketAddress socketAddress;
-  private String revision;
+  private String appName;
+  private Boolean enabled = true;
+  private String address;
+  private Integer port;
+  private long registrationTimestamp;
 
+  private InetSocketAddress socketAddress;
+  private MetadataInfo metadataInfo;
+  private String revision;
   // todo
+
+  public ServiceInstance(String appName, String address, Integer port) {
+    // todo validate
+    this.appName = appName;
+    this.address = address;
+    this.port = port;
+    this.socketAddress = new InetSocketAddress(address, port);
+  }
 }

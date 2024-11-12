@@ -16,7 +16,10 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,15 +31,30 @@ public class AppServiceInstancesChanger {
 
   private List<NotifyListener> notifyListeners;
 
+  private List<ServiceInstance> lastServiceInstances;
+
   public AppServiceInstancesChanger(String appName) {
     this.appName = appName;
   }
 
   public synchronized void change(List<ServiceInstance> serviceInstances) {
     log.info("app: {} service instances changed: {}", appName, serviceInstances);
+
+    Map<String, List<ServiceInstance>> revisionToInstancesMap = new HashMap<>();
+    serviceInstances.forEach(
+        serviceInstance -> {
+          revisionToInstancesMap
+              .computeIfAbsent(serviceInstance.getRevision(), x -> new ArrayList<>())
+              .add(serviceInstance);
+        });
+
+    // todo
+
+    lastServiceInstances = serviceInstances;
   }
 
   public synchronized void addNotifyListener(NotifyListener notifyListener) {
     // todo
+
   }
 }

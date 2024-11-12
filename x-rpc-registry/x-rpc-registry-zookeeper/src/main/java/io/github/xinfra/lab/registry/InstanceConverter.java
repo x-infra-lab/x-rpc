@@ -20,8 +20,18 @@ import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 
 public class InstanceConverter {
   public static ServiceInstance convert(
-      org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstancePayload> serviceInstance) {
-    // todo
-    return null;
+      org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstancePayload>
+          zookeeperServiceInstance) {
+
+    ServiceInstance serviceInstance =
+        new ServiceInstance(
+            zookeeperServiceInstance.getName(),
+            zookeeperServiceInstance.getAddress(),
+            zookeeperServiceInstance.getPort());
+    serviceInstance.setEnabled(zookeeperServiceInstance.isEnabled());
+    serviceInstance.setRegistrationTimestamp(zookeeperServiceInstance.getRegistrationTimeUTC());
+
+    serviceInstance.setRevision(zookeeperServiceInstance.getPayload().getRevision());
+    return serviceInstance;
   }
 }

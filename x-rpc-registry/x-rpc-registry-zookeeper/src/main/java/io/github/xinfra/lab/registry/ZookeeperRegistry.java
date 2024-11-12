@@ -148,6 +148,7 @@ public class ZookeeperRegistry implements Registry {
           try {
             serviceCache.start();
           } catch (Exception e) {
+            CloseableUtils.closeQuietly(serviceCache);
             log.error("subscribe fail. appName:{}", appName, e);
             throw new RuntimeException("subscribe fail. appName: " + name, e);
           }
