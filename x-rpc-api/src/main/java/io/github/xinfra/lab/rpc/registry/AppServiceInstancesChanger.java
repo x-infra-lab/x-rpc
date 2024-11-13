@@ -16,61 +16,13 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
 
-import io.github.xinfra.lab.rpc.meta.MetadataInfo;
-import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
+public interface AppServiceInstancesChanger {
 
-/** app level service instances changer */
-@Slf4j
-public class AppServiceInstancesChanger {
+  void change(List<ServiceInstance> serviceInstances);
 
-  @Getter private String appName;
+  String getAppName();
 
-  private List<NotifyListener> notifyListeners;
-
-  private List<ServiceInstance> lastServiceInstances;
-
-  public AppServiceInstancesChanger(String appName) {
-    this.appName = appName;
-  }
-
-  public synchronized void change(List<ServiceInstance> serviceInstances) {
-    log.info("app: {} service instances changed: {}", appName, serviceInstances);
-
-    Map<String, List<ServiceInstance>> revisionToInstancesMap = new HashMap<>();
-    serviceInstances.forEach(
-        serviceInstance -> {
-          revisionToInstancesMap
-              .computeIfAbsent(serviceInstance.getRevision(), x -> new ArrayList<>())
-              .add(serviceInstance);
-        });
-      for (Map.Entry<String, List<ServiceInstance>> entry : revisionToInstancesMap.entrySet()) {
-          String revision = entry.getKey();
-          List<ServiceInstance> subInstances = entry.getValue();
-
-          // todo
-          MetadataInfo metadataInfo = subInstances.stream()
-                  .map(ServiceInstance::getMetadataInfo)
-                  .filter(Objects::nonNull)
-                  .filter(meta -> Objects.equals(revision, meta.getRevision()))
-                  .findFirst()
-                  .orElse(null);
-
-      }
-
-    // todo
-
-    lastServiceInstances = serviceInstances;
-  }
-
-  public synchronized void addNotifyListener(NotifyListener notifyListener) {
-    // todo
-
-  }
+  void addNotifyListener(NotifyListener notifyListener);
 }

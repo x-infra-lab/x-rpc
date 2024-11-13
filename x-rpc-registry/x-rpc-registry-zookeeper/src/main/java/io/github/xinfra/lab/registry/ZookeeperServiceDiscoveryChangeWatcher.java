@@ -35,7 +35,7 @@ public class ZookeeperServiceDiscoveryChangeWatcher implements ServiceCacheListe
   private String appName;
   @Getter private ServiceCache<ZookeeperInstancePayload> serviceCache;
 
-  private AppServiceInstancesChanger appServiceInstancesChanger;
+  @Getter private AppServiceInstancesChanger appServiceInstancesChanger;
 
   private CountDownLatch countDownLatch;
 

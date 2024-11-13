@@ -48,7 +48,6 @@ public class ZookeeperRegistry implements Registry {
 
   private ZookeeperConfig zookeeperConfig;
 
-  private Map<String, AppServiceInstancesChanger> changers = new ConcurrentHashMap<>();
   private Map<String, ZookeeperServiceDiscoveryChangeWatcher> watchers = new ConcurrentHashMap<>();
   private CuratorFramework curatorFramework;
   private ServiceDiscovery<ZookeeperInstancePayload> serviceDiscovery;
@@ -104,13 +103,7 @@ public class ZookeeperRegistry implements Registry {
   @Override
   public void subscribe(String appName, NotifyListener notifyListener) {
     AppServiceInstancesChanger appServiceInstancesChanger =
-        changers.computeIfAbsent(
-            appName,
-            name -> {
-              AppServiceInstancesChanger changer = new AppServiceInstancesChanger(appName);
-              addAppServiceInstancesChanger(changer);
-              return changer;
-            });
+        watchers.get(appName).getAppServiceInstancesChanger();
 
     appServiceInstancesChanger.addNotifyListener(notifyListener);
   }
@@ -131,10 +124,15 @@ public class ZookeeperRegistry implements Registry {
   }
 
   @Override
-  public void addAppServiceInstancesChanger(AppServiceInstancesChanger appServiceInstancesChanger) {
+  public synchronized void addAppServiceInstancesChanger(
+      AppServiceInstancesChanger appServiceInstancesChanger) {
+    String appName = appServiceInstancesChanger.getAppName();
+
+    if (watchers.containsKey(appName)) {
+      return;
+    }
 
     CountDownLatch latch = new CountDownLatch(1);
-    String appName = appServiceInstancesChanger.getAppName();
     watchers.computeIfAbsent(
         appName,
         name -> {

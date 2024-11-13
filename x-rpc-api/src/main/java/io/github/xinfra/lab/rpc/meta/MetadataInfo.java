@@ -25,5 +25,4 @@ public class MetadataInfo {
 
   private String appName;
   private String revision;
-
 }

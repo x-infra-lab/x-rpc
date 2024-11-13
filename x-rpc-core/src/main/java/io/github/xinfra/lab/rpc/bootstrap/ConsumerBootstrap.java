@@ -24,6 +24,7 @@ import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
 import io.github.xinfra.lab.rpc.proxy.Proxy;
 import io.github.xinfra.lab.rpc.proxy.ProxyManager;
+import io.github.xinfra.lab.rpc.registry.DefaultAppServiceInstancesChanger;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.RegistryManager;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
@@ -58,6 +59,8 @@ public class ConsumerBootstrap implements Closeable {
     // cluster subscribe
     RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);
+    registry.addAppServiceInstancesChanger(
+        new DefaultAppServiceInstancesChanger(consumerConfig.getApplicationConfig().getAppName()));
     registry.subscribe(consumerConfig.getApplicationConfig().getAppName(), cluster.namingService());
 
     // build invoker & proxy
