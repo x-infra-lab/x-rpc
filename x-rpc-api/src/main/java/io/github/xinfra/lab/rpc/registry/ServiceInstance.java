@@ -16,7 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
-import io.github.xinfra.lab.rpc.meta.MetadataInfo;
+import io.github.xinfra.lab.rpc.metadata.MetadataInfo;
 import java.net.InetSocketAddress;
 import lombok.Data;
 

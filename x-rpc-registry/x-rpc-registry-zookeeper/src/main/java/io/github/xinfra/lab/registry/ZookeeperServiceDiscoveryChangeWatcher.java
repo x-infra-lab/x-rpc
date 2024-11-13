@@ -16,7 +16,7 @@
  */
 package io.github.xinfra.lab.registry;
 
-import io.github.xinfra.lab.rpc.registry.AppServiceInstancesChanger;
+import io.github.xinfra.lab.rpc.registry.AppServiceInstancesWatcher;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.util.List;
@@ -35,7 +35,7 @@ public class ZookeeperServiceDiscoveryChangeWatcher implements ServiceCacheListe
   private String appName;
   @Getter private ServiceCache<ZookeeperInstancePayload> serviceCache;
 
-  @Getter private AppServiceInstancesChanger appServiceInstancesChanger;
+  @Getter private AppServiceInstancesWatcher appServiceInstancesWatcher;
 
   private CountDownLatch countDownLatch;
 
@@ -44,12 +44,12 @@ public class ZookeeperServiceDiscoveryChangeWatcher implements ServiceCacheListe
       ServiceCache<ZookeeperInstancePayload> serviceCache,
       Registry registry,
       CountDownLatch countDownLatch,
-      AppServiceInstancesChanger appServiceInstancesChanger) {
+      AppServiceInstancesWatcher appServiceInstancesWatcher) {
     this.appName = appName;
     this.serviceCache = serviceCache;
     this.registry = registry;
     this.countDownLatch = countDownLatch;
-    this.appServiceInstancesChanger = appServiceInstancesChanger;
+    this.appServiceInstancesWatcher = appServiceInstancesWatcher;
   }
 
   @Override
@@ -62,10 +62,10 @@ public class ZookeeperServiceDiscoveryChangeWatcher implements ServiceCacheListe
 
     List<ServiceInstance> serviceInstances = registry.queryServiceInstances(appName);
     try {
-      appServiceInstancesChanger.change(serviceInstances);
+      appServiceInstancesWatcher.change(serviceInstances);
     } catch (Exception e) {
-      log.error("{} appServiceInstancesChanger change fail.", appName, e);
-      throw new RuntimeException(appName + " appServiceInstancesChanger change fail.", e);
+      log.error("{} appServiceInstancesWatcher change fail.", appName, e);
+      throw new RuntimeException(appName + " appServiceInstancesWatcher change fail.", e);
     }
   }
 

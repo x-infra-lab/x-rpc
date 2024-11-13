@@ -17,7 +17,7 @@
 package io.github.xinfra.lab.registry;
 
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
-import io.github.xinfra.lab.rpc.registry.AppServiceInstancesChanger;
+import io.github.xinfra.lab.rpc.registry.AppServiceInstancesWatcher;
 import io.github.xinfra.lab.rpc.registry.NotifyListener;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
@@ -102,10 +102,13 @@ public class ZookeeperRegistry implements Registry {
 
   @Override
   public void subscribe(String appName, NotifyListener notifyListener) {
-    AppServiceInstancesChanger appServiceInstancesChanger =
-        watchers.get(appName).getAppServiceInstancesChanger();
+    if (!watchers.containsKey(appName)) {
+      throw new RuntimeException("you need addAppServiceInstancesWatcher first");
+    }
+    AppServiceInstancesWatcher appServiceInstancesWatcher =
+        watchers.get(appName).getAppServiceInstancesWatcher();
 
-    appServiceInstancesChanger.addNotifyListener(notifyListener);
+    appServiceInstancesWatcher.addNotifyListener(notifyListener);
   }
 
   @Override
@@ -124,9 +127,9 @@ public class ZookeeperRegistry implements Registry {
   }
 
   @Override
-  public synchronized void addAppServiceInstancesChanger(
-      AppServiceInstancesChanger appServiceInstancesChanger) {
-    String appName = appServiceInstancesChanger.getAppName();
+  public synchronized void addAppServiceInstancesWatcher(
+      AppServiceInstancesWatcher appServiceInstancesWatcher) {
+    String appName = appServiceInstancesWatcher.getAppName();
 
     if (watchers.containsKey(appName)) {
       return;
@@ -140,7 +143,7 @@ public class ZookeeperRegistry implements Registry {
               serviceDiscovery.serviceCacheBuilder().name(name).build();
           ZookeeperServiceDiscoveryChangeWatcher w =
               new ZookeeperServiceDiscoveryChangeWatcher(
-                  name, serviceCache, this, latch, appServiceInstancesChanger);
+                  name, serviceCache, this, latch, appServiceInstancesWatcher);
           serviceCache.addListener(w);
 
           try {
@@ -154,13 +157,13 @@ public class ZookeeperRegistry implements Registry {
           return w;
         });
 
-    appServiceInstancesChanger.change(queryServiceInstances(appName));
+    appServiceInstancesWatcher.change(queryServiceInstances(appName));
     latch.countDown();
   }
 
   @Override
-  public void removeAppServiceInstancesChanger(
-      AppServiceInstancesChanger appServiceInstancesChanger) {
+  public void removeAppServiceInstancesWatcher(
+      AppServiceInstancesWatcher appServiceInstancesWatcher) {
     // todo
   }
 }

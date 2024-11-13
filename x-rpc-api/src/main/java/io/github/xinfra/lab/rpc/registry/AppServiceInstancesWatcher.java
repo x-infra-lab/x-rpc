@@ -14,6 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.meta;
+package io.github.xinfra.lab.rpc.registry;
 
-public interface MetadataService {}
+import java.util.List;
+
+public interface AppServiceInstancesWatcher {
+
+  void change(List<ServiceInstance> serviceInstances);
+
+  String getAppName();
+
+  void addNotifyListener(NotifyListener notifyListener);
+}

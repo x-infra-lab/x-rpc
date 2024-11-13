@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.registry;
+package io.github.xinfra.lab.rpc.metadata;
 
-import java.util.List;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-public interface AppServiceInstancesChanger {
+@Data
+@NoArgsConstructor
+public class MetadataInfo {
 
-  void change(List<ServiceInstance> serviceInstances);
-
-  String getAppName();
-
-  void addNotifyListener(NotifyListener notifyListener);
+  private String appName;
+  private String revision;
 }

@@ -14,15 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.meta;
+package io.github.xinfra.lab.rpc.metadata;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-public class MetadataInfo {
-
-  private String appName;
-  private String revision;
-}
+public class MetadataServiceImpl implements MetadataService {}
