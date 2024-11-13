@@ -16,6 +16,14 @@
  */
 package io.github.xinfra.lab.rpc.meta;
 
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
 public class MetadataInfo {
+
   private String appName;
+  private String revision;
+
 }

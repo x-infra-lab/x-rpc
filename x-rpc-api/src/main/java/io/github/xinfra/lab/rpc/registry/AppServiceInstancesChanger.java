@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+
+import io.github.xinfra.lab.rpc.meta.MetadataInfo;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -47,6 +50,19 @@ public class AppServiceInstancesChanger {
               .computeIfAbsent(serviceInstance.getRevision(), x -> new ArrayList<>())
               .add(serviceInstance);
         });
+      for (Map.Entry<String, List<ServiceInstance>> entry : revisionToInstancesMap.entrySet()) {
+          String revision = entry.getKey();
+          List<ServiceInstance> subInstances = entry.getValue();
+
+          // todo
+          MetadataInfo metadataInfo = subInstances.stream()
+                  .map(ServiceInstance::getMetadataInfo)
+                  .filter(Objects::nonNull)
+                  .filter(meta -> Objects.equals(revision, meta.getRevision()))
+                  .findFirst()
+                  .orElse(null);
+
+      }
 
     // todo
 
