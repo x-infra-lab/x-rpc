@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.config;
 
+import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
 import io.github.xinfra.lab.rpc.filter.ClusterFilter;
 import io.github.xinfra.lab.rpc.filter.Filter;
 import java.util.List;
@@ -31,4 +32,6 @@ public class ConsumerConfig {
   private List<ClusterFilter> clusterFilters;
 
   private List<Filter> filters;
+
+  private RouterChain routerChain;
 }

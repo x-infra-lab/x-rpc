@@ -26,6 +26,10 @@ public interface ClientTransport extends Closeable {
 
   void connect(InetSocketAddress socketAddress);
 
+  void disconnect(InetSocketAddress socketAddress);
+
+  void reconnect(InetSocketAddress socketAddress);
+
   void addTransportEventListener(TransportEventListener listener);
 
   CompletableFuture<RpcResponse> sendAsync(

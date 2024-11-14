@@ -16,7 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.cluster;
 
-import io.github.xinfra.lab.rpc.cluster.naming.NamingService;
+import io.github.xinfra.lab.rpc.cluster.naming.NameService;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
 
@@ -24,7 +24,7 @@ public interface Cluster {
 
   ReferenceConfig<?> referenceConfig();
 
-  NamingService namingService();
+  NameService nameService();
 
   ClientTransport clientTransport();
 

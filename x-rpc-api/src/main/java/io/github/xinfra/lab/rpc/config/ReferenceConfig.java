@@ -18,13 +18,13 @@ package io.github.xinfra.lab.rpc.config;
 
 import io.github.xinfra.lab.rpc.cluster.ClusterType;
 import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalanceType;
-import io.github.xinfra.lab.rpc.cluster.router.Router;
 import io.github.xinfra.lab.rpc.proxy.ProxyType;
 import io.github.xinfra.lab.rpc.transport.TransportType;
 import lombok.Data;
 
 @Data
 public class ReferenceConfig<T> extends ServiceConfig<T> {
+
   public ReferenceConfig(Class<T> serviceClass) {
     super(serviceClass);
   }
@@ -41,6 +41,5 @@ public class ReferenceConfig<T> extends ServiceConfig<T> {
 
   private LoadBalanceType loadBalanceType = LoadBalanceType.RANDOM;
 
-  // todo
-  private Router router;
+  private String tag;
 }

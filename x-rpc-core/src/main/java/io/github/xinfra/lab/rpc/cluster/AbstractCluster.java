@@ -16,20 +16,20 @@
  */
 package io.github.xinfra.lab.rpc.cluster;
 
-import io.github.xinfra.lab.rpc.cluster.naming.DefaultNamingService;
-import io.github.xinfra.lab.rpc.cluster.naming.NamingService;
+import io.github.xinfra.lab.rpc.cluster.naming.DefaultNameService;
+import io.github.xinfra.lab.rpc.cluster.naming.NameService;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
 
 public abstract class AbstractCluster implements Cluster {
   protected ReferenceConfig<?> referenceConfig;
-  protected NamingService namingService;
+  protected NameService nameService;
   protected ClientTransport clientTransport;
 
   public AbstractCluster(ReferenceConfig<?> referenceConfig, ClientTransport clientTransport) {
     this.referenceConfig = referenceConfig;
     this.clientTransport = clientTransport;
-    this.namingService = new DefaultNamingService(this);
+    this.nameService = new DefaultNameService(this);
   }
 
   @Override
@@ -38,8 +38,8 @@ public abstract class AbstractCluster implements Cluster {
   }
 
   @Override
-  public NamingService namingService() {
-    return namingService;
+  public NameService nameService() {
+    return nameService;
   }
 
   @Override

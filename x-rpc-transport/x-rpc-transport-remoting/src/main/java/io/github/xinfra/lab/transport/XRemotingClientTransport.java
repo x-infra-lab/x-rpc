@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.transport;
 
+import io.github.xinfra.lab.remoting.connection.ConnectionManager;
 import io.github.xinfra.lab.remoting.rpc.client.RpcClient;
 import io.github.xinfra.lab.rpc.invoker.RpcRequest;
 import io.github.xinfra.lab.rpc.invoker.RpcResponse;
@@ -26,10 +27,26 @@ import java.util.concurrent.CompletableFuture;
 import javax.xml.ws.WebServiceException;
 
 public class XRemotingClientTransport implements ClientTransport {
-  private RpcClient rpcClient = new RpcClient();
+  private RpcClient rpcClient;
+  private ConnectionManager connectionManager;
+
+  public XRemotingClientTransport() {
+    this.rpcClient = new RpcClient();
+    this.connectionManager = rpcClient.getConnectionManager();
+  }
 
   @Override
   public void connect(InetSocketAddress socketAddress) {
+    // todo
+  }
+
+  @Override
+  public void disconnect(InetSocketAddress socketAddress) {
+    // todo
+  }
+
+  @Override
+  public void reconnect(InetSocketAddress socketAddress) {
     // todo
   }
 

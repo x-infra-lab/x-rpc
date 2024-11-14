@@ -18,7 +18,7 @@ package io.github.xinfra.lab.rpc.cluster;
 
 import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalancer;
 import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalancerManger;
-import io.github.xinfra.lab.rpc.cluster.naming.NamingService;
+import io.github.xinfra.lab.rpc.cluster.naming.NameService;
 import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.filter.FilterChainBuilder;
@@ -34,7 +34,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
 
   private ReferenceConfig<?> referenceConfig;
 
-  private NamingService namingService;
+  private NameService nameService;
 
   protected Invoker filteringConsumerInvoker;
 
@@ -45,7 +45,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
   public AbstractClusterInvoker(Cluster cluster) {
     this.cluster = cluster;
     this.referenceConfig = cluster.referenceConfig();
-    this.namingService = cluster.namingService();
+    this.nameService = cluster.nameService();
     this.filteringConsumerInvoker =
         FilterChainBuilder.buildFilterChainInvoker(
             referenceConfig.getConsumerConfig().getFilters(),
@@ -61,7 +61,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
 
   @Override
   public InvocationResult invoke(Invocation invocation) {
-    List<ServiceInstance> serviceInstances = namingService.queryService(referenceConfig);
+    List<ServiceInstance> serviceInstances = nameService.getInstances(invocation);
     List<ServiceInstance> routedServiceInstances = routerChain.route(invocation, serviceInstances);
     return doInvoke(invocation, routedServiceInstances);
   }
