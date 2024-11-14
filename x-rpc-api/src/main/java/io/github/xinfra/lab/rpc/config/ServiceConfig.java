@@ -17,15 +17,24 @@
 package io.github.xinfra.lab.rpc.config;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceConfig<T> {
 
   private Class<T> serviceClass;
 
-  private String group;
+  public ServiceConfig(Class<T> serviceClass) {
+    this.serviceClass = serviceClass;
+    this.serviceName = serviceClass.getName();
+  }
 
-  private String version;
+  @EqualsAndHashCode.Include private String serviceName;
 
-  private String protocol;
+  @EqualsAndHashCode.Include private String group;
+
+  @EqualsAndHashCode.Include private String version;
+
+  @EqualsAndHashCode.Include private String protocol;
 }

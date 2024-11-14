@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.metadata.MetadataInfo;
 import io.github.xinfra.lab.rpc.metadata.Metadatas;
 import java.util.ArrayList;
@@ -32,7 +33,10 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
 
   @Getter private String appName;
 
-  private List<NotifyListener> notifyListeners;
+  private List<NotifyListener> notifyListeners = new ArrayList<>();
+
+  private volatile Map<ServiceConfig<?>, List<ServiceInstance>> serviceToInstancesMap =
+      new HashMap<>();
 
   public DefaultAppServiceInstancesWatcher(String appName) {
     this.appName = appName;
@@ -41,6 +45,8 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
   public synchronized void change(List<ServiceInstance> serviceInstances) {
     log.info("app: {} service instances changed: {}", appName, serviceInstances);
 
+    Map<ServiceConfig<?>, List<ServiceInstance>> newServiceToInstancesMap = new HashMap<>();
+
     Map<String, List<ServiceInstance>> revisionToInstancesMap = new HashMap<>();
     serviceInstances.forEach(
         serviceInstance -> {
@@ -48,7 +54,6 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
               .computeIfAbsent(serviceInstance.getRevision(), x -> new ArrayList<>())
               .add(serviceInstance);
         });
-
     for (Map.Entry<String, List<ServiceInstance>> entry : revisionToInstancesMap.entrySet()) {
       String revision = entry.getKey();
       List<ServiceInstance> subInstances = entry.getValue();
@@ -61,14 +66,33 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
               .filter(meta -> Objects.equals(revision, meta.getRevision()))
               .findFirst()
               .orElse(Metadatas.getMetadataInfo(revision, subInstances));
+
+      subInstances.forEach(instance -> instance.setMetadataInfo(metadataInfo));
+
+      metadataInfo
+          .getServiceConfigs()
+          .forEach(
+              serviceConfig ->
+                  newServiceToInstancesMap
+                      .computeIfAbsent(serviceConfig, x -> new ArrayList<>())
+                      .addAll(subInstances));
     }
+    serviceToInstancesMap = newServiceToInstancesMap;
 
-    // todo
-
+    for (NotifyListener notifyListener : notifyListeners) {
+      try {
+        notifyListener.notify(serviceToInstancesMap.get(notifyListener.serviceConfig()));
+      } catch (Exception e) {
+        // todo retry?
+        log.error("notify listener fail. service config: {} ", notifyListener.serviceConfig(), e);
+      }
+    }
   }
 
   public synchronized void addNotifyListener(NotifyListener notifyListener) {
-    // todo
-
+    if (!notifyListeners.contains(notifyListener)) {
+      notifyListeners.add(notifyListener);
+      notifyListener.notify(serviceToInstancesMap.get(notifyListener.serviceConfig()));
+    }
   }
 }

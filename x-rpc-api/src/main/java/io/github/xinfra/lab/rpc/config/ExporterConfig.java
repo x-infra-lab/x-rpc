@@ -16,4 +16,15 @@
  */
 package io.github.xinfra.lab.rpc.config;
 
-public class ExporterConfig<T> extends ServiceConfig<T> {}
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+
+@Getter
+@Setter
+@ToString
+public class ExporterConfig<T> extends ServiceConfig<T> {
+  public ExporterConfig(Class<T> serviceClass) {
+    super(serviceClass);
+  }
+}

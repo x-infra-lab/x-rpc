@@ -25,6 +25,9 @@ import lombok.Data;
 
 @Data
 public class ReferenceConfig<T> extends ServiceConfig<T> {
+  public ReferenceConfig(Class<T> serviceClass) {
+    super(serviceClass);
+  }
 
   private ConsumerConfig consumerConfig;
 

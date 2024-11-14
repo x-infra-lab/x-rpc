@@ -38,7 +38,7 @@ public class Metadatas {
       }
 
       // todo invoke
-        // todo fail and retry
+      // todo fail and retry
       metadataInfo = null;
 
       metadataCache.put(revision, metadataInfo);
