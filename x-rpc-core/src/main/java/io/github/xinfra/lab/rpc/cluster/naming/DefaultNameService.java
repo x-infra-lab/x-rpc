@@ -26,7 +26,9 @@ import io.github.xinfra.lab.rpc.transport.ClientTransport;
 import io.github.xinfra.lab.rpc.transport.TransportEvent;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -38,11 +40,11 @@ public class DefaultNameService implements NameService {
 
   private RouterChain routerChain;
 
-  private List<ServiceInstance> allServiceInstances = new ArrayList<>();
+  private Set<ServiceInstance> allServiceInstances = new HashSet<>();
 
-  private List<ServiceInstance> healthServiceInstances = new ArrayList<>();
+  private Set<ServiceInstance> healthServiceInstances = new HashSet<>();
 
-  private List<ServiceInstance> unHealthServiceInstances = new ArrayList<>();
+  private Set<ServiceInstance> unHealthServiceInstances = new HashSet<>();
 
   public DefaultNameService(Cluster cluster) {
     this.referenceConfig = cluster.referenceConfig();
