@@ -20,6 +20,7 @@ import io.github.xinfra.lab.rpc.cluster.Cluster;
 import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
+import io.github.xinfra.lab.rpc.exception.NoAvailableProviderException;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
@@ -58,10 +59,12 @@ public class DefaultNameService implements NameService {
     ArrayList<ServiceInstance> copiedInstances = new ArrayList<>(healthServiceInstances);
     List<ServiceInstance> availableInstances = routerChain.route(invocation, copiedInstances);
     if (availableInstances.isEmpty()) {
-      //      throw new RpcException("");
+      throw new NoAvailableProviderException(
+          "No available instance for invocation:"
+              + invocation
+              + ". Please check if the providers have been started and registered.");
     }
-    // todo
-    return null;
+    return availableInstances;
   }
 
   // notifyListener

@@ -17,11 +17,9 @@
 package io.github.xinfra.lab.rpc.invoker;
 
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Setter
-@Getter
+@Data
 public class Invocation {
 
   private ServiceInstance targetServiceInstance;

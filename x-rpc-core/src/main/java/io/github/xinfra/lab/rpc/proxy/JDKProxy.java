@@ -17,8 +17,7 @@
 package io.github.xinfra.lab.rpc.proxy;
 
 import io.github.xinfra.lab.rpc.common.ClassUtils;
-import io.github.xinfra.lab.rpc.exception.ErrorCode;
-import io.github.xinfra.lab.rpc.exception.RpcException;
+import io.github.xinfra.lab.rpc.exception.RpcServerException;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
@@ -62,7 +61,7 @@ public class JDKProxy implements Proxy {
 
       if (invocationResult.isError()) {
         // todo
-        throw new RpcException(ErrorCode.SERVER_UNDEFINED_ERROR, invocationResult.getErrorMsg());
+        throw new RpcServerException(invocationResult.getErrorMsg());
       }
 
       Object result = invocationResult.getResult();

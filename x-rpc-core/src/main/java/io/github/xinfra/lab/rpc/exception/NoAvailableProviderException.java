@@ -16,9 +16,23 @@
  */
 package io.github.xinfra.lab.rpc.exception;
 
-public interface ErrorCode {
-  int UNKNOWN = 0;
-  // 500 - 599
+public class NoAvailableProviderException extends RpcException {
+  public NoAvailableProviderException() {}
 
-  int SERVER_UNDEFINED_ERROR = 599;
+  public NoAvailableProviderException(String message) {
+    super(message);
+  }
+
+  public NoAvailableProviderException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public NoAvailableProviderException(Throwable cause) {
+    super(cause);
+  }
+
+  public NoAvailableProviderException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

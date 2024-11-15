@@ -16,22 +16,22 @@
  */
 package io.github.xinfra.lab.rpc.exception;
 
-public class RpcException extends RuntimeException {
-  public RpcException() {}
+public class RpcServerException extends RpcException {
+  public RpcServerException() {}
 
-  public RpcException(String message) {
+  public RpcServerException(String message) {
     super(message);
   }
 
-  public RpcException(String message, Throwable cause) {
+  public RpcServerException(String message, Throwable cause) {
     super(message, cause);
   }
 
-  public RpcException(Throwable cause) {
+  public RpcServerException(Throwable cause) {
     super(cause);
   }
 
-  public RpcException(
+  public RpcServerException(
       String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
     super(message, cause, enableSuppression, writableStackTrace);
   }
