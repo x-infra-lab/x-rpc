@@ -16,11 +16,21 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
+import io.github.xinfra.lab.rpc.exception.RpcRemotingException;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 public class ConsumerInvoker implements Invoker {
+
+  // too
+  private static ExecutorService invokeCallBackExecutor =
+      new ThreadPoolExecutor(10, 100, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(1024));
+
   private ClientTransport clientTransport;
 
   public ConsumerInvoker(ClientTransport clientTransport) {
@@ -30,14 +40,19 @@ public class ConsumerInvoker implements Invoker {
   @Override
   public InvocationResult invoke(Invocation invocation) {
     ServiceInstance targetServiceInstance = invocation.getTargetServiceInstance();
-
-    // todo
-    RpcRequest request = new RpcRequest();
-    CompletableFuture<RpcResponse> future =
-        clientTransport.sendAsync(
-            targetServiceInstance.getSocketAddress(), request, invocation.getTimeoutMills());
-    // todo
-    InvocationResult result = new InvocationResult(future);
-    return result;
+    try {
+      RpcRequest request = new RpcRequest();
+      // todo build request
+      CompletableFuture<RpcResponse> future =
+          clientTransport.sendAsync(
+              targetServiceInstance.getSocketAddress(),
+              request,
+              invocation.getTimeoutMills(),
+              invokeCallBackExecutor);
+      InvocationResult result = new InvocationResult(future);
+      return result;
+    } catch (Exception e) {
+      throw new RpcRemotingException("send RpcRequest fail. invocation:" + invocation, e);
+    }
   }
 }

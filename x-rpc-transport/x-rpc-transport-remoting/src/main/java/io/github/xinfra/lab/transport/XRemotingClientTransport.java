@@ -16,15 +16,22 @@
  */
 package io.github.xinfra.lab.transport;
 
+import io.github.xinfra.lab.remoting.connection.Connection;
+import io.github.xinfra.lab.remoting.connection.ConnectionEvent;
+import io.github.xinfra.lab.remoting.connection.ConnectionEventListener;
 import io.github.xinfra.lab.remoting.connection.ConnectionManager;
 import io.github.xinfra.lab.remoting.rpc.client.RpcClient;
+import io.github.xinfra.lab.remoting.rpc.client.RpcInvokeCallBack;
 import io.github.xinfra.lab.rpc.invoker.RpcRequest;
 import io.github.xinfra.lab.rpc.invoker.RpcResponse;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
+import io.github.xinfra.lab.rpc.transport.TransportEvent;
 import io.github.xinfra.lab.rpc.transport.TransportEventListener;
+import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.concurrent.CompletableFuture;
-import javax.xml.ws.WebServiceException;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
 public class XRemotingClientTransport implements ClientTransport {
   private RpcClient rpcClient;
@@ -36,34 +43,73 @@ public class XRemotingClientTransport implements ClientTransport {
   }
 
   @Override
-  public void connect(InetSocketAddress socketAddress) {
-    // todo
+  public void connect(InetSocketAddress socketAddress) throws Exception {
+    this.connectionManager.connect(socketAddress);
   }
 
   @Override
   public void disconnect(InetSocketAddress socketAddress) {
-    // todo
+    connectionManager.disconnect(socketAddress);
   }
 
   @Override
   public void reconnect(InetSocketAddress socketAddress) {
-    // todo
+    connectionManager.reconnector().reconnect(socketAddress);
   }
 
   @Override
   public void addTransportEventListener(TransportEventListener listener) {
-    // todo
+    connectionManager
+        .connectionEventProcessor()
+        .addConnectionEventListener(
+            new ConnectionEventListener() {
+              @Override
+              public void onEvent(ConnectionEvent connectionEvent, Connection connection) {
+                if (connectionEvent == ConnectionEvent.CONNECT) {
+                  listener.onEvent(
+                      TransportEvent.CONNECT, (InetSocketAddress) connection.remoteAddress());
+                }
+                if (connectionEvent == ConnectionEvent.CLOSE) {
+                  listener.onEvent(
+                      TransportEvent.DISCONNECT, (InetSocketAddress) connection.remoteAddress());
+                }
+              }
+            });
   }
 
   @Override
   public CompletableFuture<RpcResponse> sendAsync(
-      InetSocketAddress socketAddress, RpcRequest request, int timeoutMills) {
-    // todo
-    return null;
+      InetSocketAddress socketAddress,
+      RpcRequest request,
+      int timeoutMills,
+      ExecutorService invokeCallBackExecutor)
+      throws Exception {
+    CompletableFuture completableFuture = new CompletableFuture();
+    RpcInvokeCallBack<RpcResponse> rpcResponseRpcInvokeCallBack =
+        new RpcInvokeCallBack<RpcResponse>() {
+
+          @Override
+          public void onException(Throwable t) {
+            completableFuture.completeExceptionally(t);
+          }
+
+          @Override
+          public void onResponse(RpcResponse response) {
+            completableFuture.complete(response);
+          }
+
+          @Override
+          public Executor executor() {
+            return invokeCallBackExecutor;
+          }
+        };
+
+    rpcClient.asyncCall(request, socketAddress, timeoutMills, rpcResponseRpcInvokeCallBack);
+    return completableFuture;
   }
 
   @Override
-  public void close() throws WebServiceException {
-    // todo
+  public void close() throws IOException {
+    rpcClient.shutdown();
   }
 }

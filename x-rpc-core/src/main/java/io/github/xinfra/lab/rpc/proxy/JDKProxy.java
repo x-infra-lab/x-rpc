@@ -57,6 +57,7 @@ public class JDKProxy implements Proxy {
           (String[]) Arrays.stream(method.getParameterTypes()).map(Class::getName).toArray();
       invocation.setArgSigns(argSigns);
 
+      // todo: handle throw exception?
       InvocationResult invocationResult = invoker.invoke(invocation);
 
       if (invocationResult.isError()) {

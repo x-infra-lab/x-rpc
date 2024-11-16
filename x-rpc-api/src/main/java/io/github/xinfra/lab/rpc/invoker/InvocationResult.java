@@ -38,6 +38,13 @@ public class InvocationResult {
 
   public InvocationResult(CompletableFuture<RpcResponse> responseCompletableFuture) {
     this.responseCompletableFuture = responseCompletableFuture;
+    this.invocationResultCompletableFuture =
+        responseCompletableFuture.thenApply(rpcResponse -> InvocationResult.from(rpcResponse));
+  }
+
+  private static InvocationResult from(RpcResponse rpcResponse) {
+    // todo
+    return null;
   }
 
   public InvocationResult whenComplete(

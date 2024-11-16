@@ -51,6 +51,8 @@ public class DefaultNameService implements NameService {
     this.referenceConfig = cluster.referenceConfig();
     this.clientTransport = cluster.clientTransport();
     this.routerChain = referenceConfig.getConsumerConfig().getRouterChain();
+
+    this.clientTransport.addTransportEventListener(this);
   }
 
   @Override
@@ -67,17 +69,16 @@ public class DefaultNameService implements NameService {
     return availableInstances;
   }
 
-  // notifyListener
   @Override
   public ServiceConfig<?> serviceConfig() {
     return referenceConfig;
   }
 
   @Override
-  public synchronized void notify(List<ServiceInstance> serviceInstances) {
-    for (ServiceInstance serviceInstance : serviceInstances) {
-      if (allServiceInstances.contains(serviceInstance)) {
-        // add new instance
+  public synchronized void notify(List<ServiceInstance> newServiceInstances) {
+    // add new instance
+    for (ServiceInstance serviceInstance : newServiceInstances) {
+      if (!allServiceInstances.contains(serviceInstance)) {
         allServiceInstances.add(serviceInstance);
         try {
           clientTransport.connect(serviceInstance.getSocketAddress());
@@ -90,21 +91,50 @@ public class DefaultNameService implements NameService {
       }
     }
 
+    // remove instance
+    Set<ServiceInstance> removedServiceInstances = new HashSet<>();
     for (ServiceInstance serviceInstance : allServiceInstances) {
-      if (!serviceInstances.contains(serviceInstance)) {
-        // remove old instance
-        healthServiceInstances.remove(serviceInstance);
-        unHealthServiceInstances.remove(serviceInstance);
-        clientTransport.disconnect(serviceInstance.getSocketAddress());
+      if (!newServiceInstances.contains(serviceInstance)) {
+        removedServiceInstances.add(serviceInstance);
       }
+    }
+
+    healthServiceInstances.removeAll(removedServiceInstances);
+    unHealthServiceInstances.removeAll(removedServiceInstances);
+    allServiceInstances.removeAll(removedServiceInstances);
+    for (ServiceInstance serviceInstance : removedServiceInstances) {
+      clientTransport.disconnect(serviceInstance.getSocketAddress());
     }
   }
 
-  // notifyListener
-
-  // TransportEventListener
   @Override
-  public void onEvent(TransportEvent event, InetSocketAddress socketAddress) {}
+  public synchronized void onEvent(TransportEvent event, InetSocketAddress socketAddress) {
+    if (TransportEvent.CONNECT == event) {
+      ServiceInstance targetServiceInstance = null;
+      for (ServiceInstance serviceInstance : unHealthServiceInstances) {
+        if (serviceInstance.getSocketAddress().equals(socketAddress)) {
+          targetServiceInstance = serviceInstance;
+          break;
+        }
+      }
+      if (targetServiceInstance != null) {
+        unHealthServiceInstances.remove(targetServiceInstance);
+        healthServiceInstances.add(targetServiceInstance);
+      }
+    }
 
-  // TransportEventListener
+    if (TransportEvent.DISCONNECT == event) {
+      ServiceInstance targetServiceInstance = null;
+      for (ServiceInstance serviceInstance : healthServiceInstances) {
+        if (serviceInstance.getSocketAddress().equals(socketAddress)) {
+          targetServiceInstance = serviceInstance;
+          break;
+        }
+      }
+      if (targetServiceInstance != null) {
+        healthServiceInstances.remove(targetServiceInstance);
+        unHealthServiceInstances.add(targetServiceInstance);
+      }
+    }
+  }
 }

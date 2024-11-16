@@ -67,16 +67,21 @@ public class FilterChainBuilder {
 
     @Override
     public InvocationResult invoke(Invocation invocation) {
-      return filter
-          .filter(nextNode, invocation)
-          .whenComplete(
-              (invocationResult, throwable) -> {
-                if (throwable != null) {
-                  filter.onError(throwable);
-                } else {
-                  filter.onResult(invocationResult);
-                }
-              });
+      InvocationResult invocationResult = null;
+      try {
+        invocationResult = filter.filter(nextNode, invocation);
+      } catch (Exception t) {
+        filter.onError(t);
+        throw t;
+      }
+      return invocationResult.whenComplete(
+          (result, throwable) -> {
+            if (throwable != null) {
+              filter.onError(throwable);
+            } else {
+              filter.onResult(result);
+            }
+          });
     }
   }
 
@@ -92,16 +97,21 @@ public class FilterChainBuilder {
 
     @Override
     public InvocationResult invoke(Invocation invocation) {
-      return clusterFilter
-          .filter(nextNode, invocation)
-          .whenComplete(
-              (invocationResult, throwable) -> {
-                if (throwable != null) {
-                  clusterFilter.onError(throwable);
-                } else {
-                  clusterFilter.onResult(invocationResult);
-                }
-              });
+      InvocationResult invocationResult = null;
+      try {
+        invocationResult = clusterFilter.filter(nextNode, invocation);
+      } catch (Throwable t) {
+        clusterFilter.onError(t);
+        throw t;
+      }
+      return invocationResult.whenComplete(
+          (result, throwable) -> {
+            if (throwable != null) {
+              clusterFilter.onError(throwable);
+            } else {
+              clusterFilter.onResult(result);
+            }
+          });
     }
 
     @Override
