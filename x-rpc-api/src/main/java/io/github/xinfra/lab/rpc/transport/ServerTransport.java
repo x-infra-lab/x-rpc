@@ -14,20 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.config;
+package io.github.xinfra.lab.rpc.transport;
 
-import io.github.xinfra.lab.rpc.transport.TransportType;
-import lombok.Data;
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
+import io.github.xinfra.lab.rpc.invoker.Invoker;
+import java.io.Closeable;
+import java.net.InetSocketAddress;
 
-@Data
-public class ExporterConfig<T> extends ServiceConfig<T> {
-  public ExporterConfig(Class<T> serviceClass) {
-    super(serviceClass);
-  }
+public interface ServerTransport extends Closeable {
 
-  private ProviderConfig providerConfig;
+  void bind(InetSocketAddress socketAddress);
 
-  private T serviceImpl;
+  void register(ServiceConfig<?> serviceConfig, Invoker invoker);
 
-  private TransportType transportType = TransportType.X_REMOTING;
+  void unRegister(ServiceConfig<?> serviceConfig, Invoker invoker);
 }

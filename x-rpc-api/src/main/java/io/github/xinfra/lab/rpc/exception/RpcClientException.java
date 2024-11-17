@@ -14,20 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.config;
+package io.github.xinfra.lab.rpc.exception;
 
-import io.github.xinfra.lab.rpc.transport.TransportType;
-import lombok.Data;
+public class RpcClientException extends RpcException {
+  public RpcClientException() {}
 
-@Data
-public class ExporterConfig<T> extends ServiceConfig<T> {
-  public ExporterConfig(Class<T> serviceClass) {
-    super(serviceClass);
+  public RpcClientException(String message) {
+    super(message);
   }
 
-  private ProviderConfig providerConfig;
+  public RpcClientException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-  private T serviceImpl;
+  public RpcClientException(Throwable cause) {
+    super(cause);
+  }
 
-  private TransportType transportType = TransportType.X_REMOTING;
+  public RpcClientException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
+  }
 }

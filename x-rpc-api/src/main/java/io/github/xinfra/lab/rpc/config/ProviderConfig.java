@@ -16,9 +16,14 @@
  */
 package io.github.xinfra.lab.rpc.config;
 
+import lombok.Data;
+
+@Data
 public class ProviderConfig {
 
   private ApplicationConfig applicationConfig;
 
   private RegistryConfig<?> registryConfig;
+
+  private int serverPort;
 }

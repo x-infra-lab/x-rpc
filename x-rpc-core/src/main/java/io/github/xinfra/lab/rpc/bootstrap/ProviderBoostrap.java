@@ -14,25 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.exception;
+package io.github.xinfra.lab.rpc.bootstrap;
 
-public class RpcRemotingException extends RpcException {
-  public RpcRemotingException() {}
+import io.github.xinfra.lab.rpc.config.ExporterConfig;
+import io.github.xinfra.lab.rpc.config.ProviderConfig;
+import java.io.Closeable;
+import java.io.IOException;
 
-  public RpcRemotingException(String message) {
-    super(message);
+public class ProviderBoostrap implements Closeable {
+  private ProviderConfig providerConfig;
+
+  public ProviderBoostrap(ProviderConfig providerConfig) {
+    this.providerConfig = providerConfig;
   }
 
-  public RpcRemotingException(String message, Throwable cause) {
-    super(message, cause);
+  public static ProviderBoostrap form(ProviderConfig providerConfig) {
+    return new ProviderBoostrap(providerConfig);
   }
 
-  public RpcRemotingException(Throwable cause) {
-    super(cause);
+  public void export(ExporterConfig<?> exporterConfig) {
+    exporterConfig.setProviderConfig(providerConfig);
+    // todo
   }
 
-  public RpcRemotingException(
-      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-    super(message, cause, enableSuppression, writableStackTrace);
+  public void unExport(ExporterConfig<?> exporterConfig) {
+    // too
+  }
+
+  @Override
+  public void close() throws IOException {
+    // todo
   }
 }

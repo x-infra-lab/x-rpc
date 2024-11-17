@@ -39,6 +39,7 @@ public class XRemotingClientTransport implements ClientTransport {
 
   public XRemotingClientTransport() {
     this.rpcClient = new RpcClient();
+    this.rpcClient.startup();
     this.connectionManager = rpcClient.getConnectionManager();
   }
 

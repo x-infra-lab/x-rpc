@@ -16,7 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
-import io.github.xinfra.lab.rpc.exception.RpcRemotingException;
+import io.github.xinfra.lab.rpc.exception.RpcClientException;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
 import java.util.concurrent.ArrayBlockingQueue;
@@ -52,7 +52,7 @@ public class ConsumerInvoker implements Invoker {
       InvocationResult result = new InvocationResult(future);
       return result;
     } catch (Exception e) {
-      throw new RpcRemotingException("send RpcRequest fail. invocation:" + invocation, e);
+      throw new RpcClientException("send RpcRequest fail. invocation:" + invocation, e);
     }
   }
 }
