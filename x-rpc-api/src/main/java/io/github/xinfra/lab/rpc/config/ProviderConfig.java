@@ -16,7 +16,11 @@
  */
 package io.github.xinfra.lab.rpc.config;
 
+import io.github.xinfra.lab.rpc.filter.Filter;
 import lombok.Data;
+
+import java.util.List;
+
 
 @Data
 public class ProviderConfig {
@@ -25,5 +29,7 @@ public class ProviderConfig {
 
   private RegistryConfig<?> registryConfig;
 
-  private int serverPort;
+  private List<ServerConfig> serverConfigs;
+
+  private List<Filter> filters;
 }

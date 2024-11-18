@@ -16,8 +16,8 @@
  */
 package io.github.xinfra.lab.rpc.config;
 
-import io.github.xinfra.lab.rpc.transport.TransportType;
 import lombok.Data;
+
 
 @Data
 public class ExporterConfig<T> extends ServiceConfig<T> {
@@ -29,5 +29,4 @@ public class ExporterConfig<T> extends ServiceConfig<T> {
 
   private T serviceImpl;
 
-  private TransportType transportType = TransportType.X_REMOTING;
 }
