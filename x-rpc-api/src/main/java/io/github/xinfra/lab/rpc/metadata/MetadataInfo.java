@@ -16,9 +16,9 @@
  */
 package io.github.xinfra.lab.rpc.metadata;
 
-import io.github.xinfra.lab.rpc.config.ServiceConfig;
-import java.util.List;
 import java.util.Map;
+import java.util.Set;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -27,9 +27,22 @@ import lombok.NoArgsConstructor;
 public class MetadataInfo {
 
   private String appName;
-  private String revision;
-  List<ServiceConfig<?>> serviceConfigs;
 
-  /** Additional extended attributes */
+  private String revision;
+
+  private Map<String, ServiceInfo> serviceInfos;
+
+  /**
+   * Additional extended attributes
+   */
   private Map<String, String> props;
+
+
+  @Data
+  public static class ServiceInfo {
+    private String interfaceName;
+    private Set<String> version;
+    private Set<String> group;
+    private Set<String> protocol;
+  }
 }

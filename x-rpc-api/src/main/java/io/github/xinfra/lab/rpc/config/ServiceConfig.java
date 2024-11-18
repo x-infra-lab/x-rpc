@@ -17,24 +17,23 @@
 package io.github.xinfra.lab.rpc.config;
 
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.util.Set;
 
 @Data
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ServiceConfig<T> {
 
-  private Class<T> serviceClass;
+    private Class<T> serviceInterfaceClass;
 
-  public ServiceConfig(Class<T> serviceClass) {
-    this.serviceClass = serviceClass;
-    this.serviceName = serviceClass.getName();
-  }
+    /**
+     * use for generic call
+     */
+    private String serviceInterfaceName;
 
-  @EqualsAndHashCode.Include private String serviceName;
+    private Set<String> group;
 
-  @EqualsAndHashCode.Include private String group;
+    private Set<String> version;
 
-  @EqualsAndHashCode.Include private String version;
+    private Set<String> protocol;
 
-  @EqualsAndHashCode.Include private String protocol;
 }

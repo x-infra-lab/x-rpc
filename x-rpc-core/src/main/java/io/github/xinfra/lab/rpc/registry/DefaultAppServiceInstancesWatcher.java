@@ -35,8 +35,12 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
 
   private List<NotifyListener> notifyListeners = new ArrayList<>();
 
-  private volatile Map<ServiceConfig<?>, List<ServiceInstance>> serviceToInstancesMap =
-      new HashMap<>();
+  /**
+   * key: interface name
+   * value: service config <--> instances
+   */
+  private volatile Map<String, Map<ServiceConfig<?>, List<ServiceInstance>>>  serviceToInstancesMap = new HashMap<>();
+
 
   public DefaultAppServiceInstancesWatcher(String appName) {
     this.appName = appName;

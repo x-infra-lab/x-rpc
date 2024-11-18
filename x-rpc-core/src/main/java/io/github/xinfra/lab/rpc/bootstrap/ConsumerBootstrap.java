@@ -66,7 +66,7 @@ public class ConsumerBootstrap implements Closeable {
     // build invoker & proxy
     ClusterInvoker clusterInvoker = cluster.filteringInvoker();
     Proxy proxy = ProxyManager.getProxy(referenceConfig.getProxyType());
-    return proxy.createProxyObject(referenceConfig.getServiceClass(), clusterInvoker);
+    return proxy.createProxyObject(referenceConfig.getServiceInterfaceClass(), clusterInvoker);
   }
 
   @Override
