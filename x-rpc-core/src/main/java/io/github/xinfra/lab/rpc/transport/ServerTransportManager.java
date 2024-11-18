@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.config;
+package io.github.xinfra.lab.rpc.transport;
 
-import io.github.xinfra.lab.rpc.filter.Filter;
-import java.util.List;
-import lombok.Data;
+import io.github.xinfra.lab.rpc.config.ServerConfig;
+import java.util.HashMap;
+import java.util.Map;
 
-@Data
-public class ProviderConfig {
+public class ServerTransportManager {
+  private Map<ServerConfig, ServerTransport> serverTransportMap = new HashMap<>();
 
-  private ApplicationConfig applicationConfig;
-
-  private RegistryConfig<?> registryConfig;
-
-  private List<ServerConfig> serverConfigs;
-
-  private List<Filter> filters;
+  public synchronized ServerTransport getServerTransport(ServerConfig serverConfig) {
+    ServerTransport serverTransport = serverTransportMap.get(serverConfig);
+    if (serverTransport == null) {
+      serverTransport = ServerTransportFactory.create(serverConfig);
+      serverTransportMap.put(serverConfig, serverTransport);
+    }
+    return serverTransport;
+  }
 }

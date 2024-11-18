@@ -19,20 +19,19 @@ package io.github.xinfra.lab.rpc.registry;
 import io.github.xinfra.lab.rpc.metadata.MetadataInfo;
 import java.net.InetSocketAddress;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
 @Data
 public class ServiceInstance {
 
-  @EqualsAndHashCode.Include private String appName;
+  private String appName;
   private Boolean enabled = true;
-  @EqualsAndHashCode.Include private String address;
-  @EqualsAndHashCode.Include private Integer port;
+  private String address;
+  private Integer port;
   private long registrationTimestamp;
+  private String revision;
 
   private InetSocketAddress socketAddress;
   private MetadataInfo metadataInfo;
-  @EqualsAndHashCode.Include private String revision;
   // todo
 
   public ServiceInstance(String appName, String address, Integer port) {
@@ -41,5 +40,6 @@ public class ServiceInstance {
     this.address = address;
     this.port = port;
     this.socketAddress = new InetSocketAddress(address, port);
+    this.metadataInfo = new MetadataInfo();
   }
 }

@@ -16,9 +16,11 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
+import io.github.xinfra.lab.rpc.common.ServiceMatcher;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.metadata.MetadataInfo;
 import io.github.xinfra.lab.rpc.metadata.Metadatas;
+import io.github.xinfra.lab.rpc.metadata.ServiceInfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -35,12 +37,9 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
 
   private List<NotifyListener> notifyListeners = new ArrayList<>();
 
-  /**
-   * key: interface name
-   * value: service config <--> instances
-   */
-  private volatile Map<String, Map<ServiceConfig<?>, List<ServiceInstance>>>  serviceToInstancesMap = new HashMap<>();
-
+  /** key: interface name value: service info <--> instances */
+  private volatile Map<String, Map<ServiceInfo, List<ServiceInstance>>> serviceToInstancesMap =
+      new HashMap<>();
 
   public DefaultAppServiceInstancesWatcher(String appName) {
     this.appName = appName;
@@ -49,7 +48,7 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
   public synchronized void change(List<ServiceInstance> serviceInstances) {
     log.info("app: {} service instances changed: {}", appName, serviceInstances);
 
-    Map<ServiceConfig<?>, List<ServiceInstance>> newServiceToInstancesMap = new HashMap<>();
+    Map<String, Map<ServiceInfo, List<ServiceInstance>>> newServiceToInstancesMap = new HashMap<>();
 
     Map<String, List<ServiceInstance>> revisionToInstancesMap = new HashMap<>();
     serviceInstances.forEach(
@@ -74,18 +73,21 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
       subInstances.forEach(instance -> instance.setMetadataInfo(metadataInfo));
 
       metadataInfo
-          .getServiceConfigs()
+          .getServiceInfos()
           .forEach(
-              serviceConfig ->
-                  newServiceToInstancesMap
-                      .computeIfAbsent(serviceConfig, x -> new ArrayList<>())
-                      .addAll(subInstances));
+              (interfaceName, serviceInfo) -> {
+                Map<ServiceInfo, List<ServiceInstance>> map =
+                    newServiceToInstancesMap.computeIfAbsent(interfaceName, (k) -> new HashMap<>());
+                List<ServiceInstance> instances =
+                    map.computeIfAbsent(serviceInfo, (k) -> new ArrayList<>());
+                instances.addAll(subInstances);
+              });
     }
     serviceToInstancesMap = newServiceToInstancesMap;
 
     for (NotifyListener notifyListener : notifyListeners) {
       try {
-        notifyListener.notify(serviceToInstancesMap.get(notifyListener.serviceConfig()));
+        notifyListener.notify(matchedServiceInstances(notifyListener.serviceConfig()));
       } catch (Exception e) {
         // todo retry?
         log.error("notify listener fail. service config: {} ", notifyListener.serviceConfig(), e);
@@ -96,7 +98,23 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
   public synchronized void addNotifyListener(NotifyListener notifyListener) {
     if (!notifyListeners.contains(notifyListener)) {
       notifyListeners.add(notifyListener);
-      notifyListener.notify(serviceToInstancesMap.get(notifyListener.serviceConfig()));
+      notifyListener.notify(matchedServiceInstances(notifyListener.serviceConfig()));
     }
+  }
+
+  private List<ServiceInstance> matchedServiceInstances(ServiceConfig<?> serviceConfig) {
+    List<ServiceInstance> serviceInstances = new ArrayList<>();
+    String interfaceName = serviceConfig.getServiceInterfaceName();
+
+    Map<ServiceInfo, List<ServiceInstance>> serviceInfoToInstancesMap =
+        serviceToInstancesMap.get(interfaceName);
+    for (Map.Entry<ServiceInfo, List<ServiceInstance>> entry :
+        serviceInfoToInstancesMap.entrySet()) {
+      ServiceInfo serviceInfo = entry.getKey();
+      if (ServiceMatcher.isMatch(serviceInfo, serviceConfig)) {
+        serviceInstances.addAll(entry.getValue());
+      }
+    }
+    return serviceInstances;
   }
 }

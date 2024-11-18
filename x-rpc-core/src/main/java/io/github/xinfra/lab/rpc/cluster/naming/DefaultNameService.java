@@ -29,6 +29,7 @@ import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
 
@@ -77,34 +78,55 @@ public class DefaultNameService implements NameService {
   @Override
   public synchronized void notify(List<ServiceInstance> newServiceInstances) {
     // add new instance
-    for (ServiceInstance serviceInstance : newServiceInstances) {
-      if (!allServiceInstances.contains(serviceInstance)) {
-        allServiceInstances.add(serviceInstance);
-        try {
-          clientTransport.connect(serviceInstance.getSocketAddress());
-          healthServiceInstances.add(serviceInstance);
-        } catch (Exception e) {
-          log.warn("connect serviceInstance:{} fail.", serviceInstance, e);
-          unHealthServiceInstances.add(serviceInstance);
-          clientTransport.reconnect(serviceInstance.getSocketAddress());
+    Set<ServiceInstance> addedServiceInstances = new HashSet<>();
+    for (ServiceInstance newServiceInstance : newServiceInstances) {
+      boolean found = false;
+      for (ServiceInstance oldServiceInstance : allServiceInstances) {
+        if (Objects.equals(newServiceInstance.getAddress(), oldServiceInstance.getAddress())
+            && Objects.equals(newServiceInstance.getPort(), oldServiceInstance.getPort())) {
+          found = true;
+          break;
         }
+      }
+      if (!found) {
+        addedServiceInstances.add(newServiceInstance);
+      }
+    }
+
+    for (ServiceInstance serviceInstance : addedServiceInstances) {
+      try {
+        clientTransport.connect(serviceInstance.getSocketAddress());
+        healthServiceInstances.add(serviceInstance);
+      } catch (Exception e) {
+        log.warn("connect serviceInstance:{} fail.", serviceInstance, e);
+        unHealthServiceInstances.add(serviceInstance);
+        clientTransport.reconnect(serviceInstance.getSocketAddress());
       }
     }
 
     // remove instance
     Set<ServiceInstance> removedServiceInstances = new HashSet<>();
-    for (ServiceInstance serviceInstance : allServiceInstances) {
-      if (!newServiceInstances.contains(serviceInstance)) {
-        removedServiceInstances.add(serviceInstance);
+    for (ServiceInstance oldServiceInstance : allServiceInstances) {
+      boolean found = false;
+      for (ServiceInstance newServiceInstance : newServiceInstances) {
+        if (Objects.equals(newServiceInstance.getAddress(), oldServiceInstance.getAddress())
+            && Objects.equals(newServiceInstance.getPort(), oldServiceInstance.getPort())) {
+          found = true;
+          break;
+        }
+      }
+      if (!found) {
+        removedServiceInstances.add(oldServiceInstance);
       }
     }
 
     healthServiceInstances.removeAll(removedServiceInstances);
     unHealthServiceInstances.removeAll(removedServiceInstances);
-    allServiceInstances.removeAll(removedServiceInstances);
     for (ServiceInstance serviceInstance : removedServiceInstances) {
       clientTransport.disconnect(serviceInstance.getSocketAddress());
     }
+
+    allServiceInstances = new HashSet<>(newServiceInstances);
   }
 
   @Override

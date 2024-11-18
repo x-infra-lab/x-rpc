@@ -18,15 +18,14 @@ package io.github.xinfra.lab.rpc.config;
 
 import lombok.Data;
 
-
 @Data
 public class ExporterConfig<T> extends ServiceConfig<T> {
-  public ExporterConfig(Class<T> serviceClass) {
-    super(serviceClass);
+
+  public ExporterConfig(Class<T> serviceInterfaceClass) {
+    super(serviceInterfaceClass);
   }
 
   private ProviderConfig providerConfig;
 
   private T serviceImpl;
-
 }

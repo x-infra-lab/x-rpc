@@ -16,24 +16,26 @@
  */
 package io.github.xinfra.lab.rpc.config;
 
-import lombok.Data;
-
+import java.util.HashSet;
 import java.util.Set;
+import lombok.Data;
 
 @Data
 public class ServiceConfig<T> {
 
-    private Class<T> serviceInterfaceClass;
+  public ServiceConfig(Class<T> serviceInterfaceClass) {
+    this.serviceInterfaceClass = serviceInterfaceClass;
+    this.serviceInterfaceName = serviceInterfaceClass.getName();
+  }
 
-    /**
-     * use for generic call
-     */
-    private String serviceInterfaceName;
+  private Class<T> serviceInterfaceClass;
 
-    private Set<String> group;
+  /** use for generic call */
+  private String serviceInterfaceName;
 
-    private Set<String> version;
+  private Set<String> group = new HashSet<>();
 
-    private Set<String> protocol;
+  private Set<String> version = new HashSet<>();
 
+  private Set<String> protocol = new HashSet<>();
 }

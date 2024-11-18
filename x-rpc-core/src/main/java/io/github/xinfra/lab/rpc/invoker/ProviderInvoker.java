@@ -14,20 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.config;
+package io.github.xinfra.lab.rpc.invoker;
 
-import io.github.xinfra.lab.rpc.filter.Filter;
-import java.util.List;
-import lombok.Data;
+import io.github.xinfra.lab.rpc.config.ExporterConfig;
 
-@Data
-public class ProviderConfig {
+public class ProviderInvoker implements Invoker {
 
-  private ApplicationConfig applicationConfig;
+  private ExporterConfig<?> exporterConfig;
 
-  private RegistryConfig<?> registryConfig;
+  public ProviderInvoker(ExporterConfig<?> exporterConfig) {
+    this.exporterConfig = exporterConfig;
+  }
 
-  private List<ServerConfig> serverConfigs;
-
-  private List<Filter> filters;
+  @Override
+  public InvocationResult invoke(Invocation invocation) {
+    // todo
+    return null;
+  }
 }

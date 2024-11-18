@@ -56,6 +56,9 @@ public class ConsumerBootstrap implements Closeable {
         clientTransportManager.getClientTransport(referenceConfig.getTransportType());
     Cluster cluster = ClusterFactory.create(referenceConfig, clientTransport);
 
+    // add protocol
+    referenceConfig.getProtocol().add(referenceConfig.getTransportType().name());
+
     // cluster subscribe
     RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);

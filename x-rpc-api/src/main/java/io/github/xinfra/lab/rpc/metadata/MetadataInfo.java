@@ -16,9 +16,8 @@
  */
 package io.github.xinfra.lab.rpc.metadata;
 
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import java.util.Map;
-import java.util.Set;
-
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -32,17 +31,10 @@ public class MetadataInfo {
 
   private Map<String, ServiceInfo> serviceInfos;
 
-  /**
-   * Additional extended attributes
-   */
+  /** Additional extended attributes */
   private Map<String, String> props;
 
-
-  @Data
-  public static class ServiceInfo {
-    private String interfaceName;
-    private Set<String> version;
-    private Set<String> group;
-    private Set<String> protocol;
+  public void addService(ServiceConfig<?> serviceConfig) {
+    // how to get right protocol??
   }
 }

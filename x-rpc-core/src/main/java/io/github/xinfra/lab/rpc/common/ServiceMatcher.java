@@ -14,15 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.transport;
+package io.github.xinfra.lab.rpc.common;
 
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
-import io.github.xinfra.lab.rpc.invoker.Invoker;
-import java.io.Closeable;
+import io.github.xinfra.lab.rpc.metadata.ServiceInfo;
+import java.util.Objects;
 
-public interface ServerTransport extends Closeable {
+public class ServiceMatcher {
 
-  void register(ServiceConfig<?> serviceConfig, Invoker invoker);
-
-  void unRegister(ServiceConfig<?> serviceConfig, Invoker invoker);
+  public static boolean isMatch(ServiceInfo serviceInfo, ServiceConfig<?> serviceConfig) {
+    // match interfaceName
+    if (!Objects.equals(serviceInfo.getInterfaceName(), serviceConfig.getServiceInterfaceName())) {
+      return false;
+    }
+    // match group
+    if (!serviceInfo.getGroup().containsAll(serviceConfig.getGroup())) {
+      return false;
+    }
+    // match version
+    if (!serviceInfo.getVersion().containsAll(serviceConfig.getVersion())) {
+      return false;
+    }
+    // match protocol
+    if (!serviceInfo.getProtocol().containsAll(serviceConfig.getProtocol())) {
+      return false;
+    }
+    return true;
+  }
 }

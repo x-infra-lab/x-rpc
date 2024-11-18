@@ -14,20 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.config;
+package io.github.xinfra.lab.rpc.transport;
 
-import io.github.xinfra.lab.rpc.filter.Filter;
-import java.util.List;
-import lombok.Data;
+import io.github.xinfra.lab.rpc.config.ServerConfig;
+import io.github.xinfra.lab.transport.XRemotingServerTransport;
 
-@Data
-public class ProviderConfig {
-
-  private ApplicationConfig applicationConfig;
-
-  private RegistryConfig<?> registryConfig;
-
-  private List<ServerConfig> serverConfigs;
-
-  private List<Filter> filters;
+public class ServerTransportFactory {
+  public static ServerTransport create(ServerConfig serverConfig) {
+    if (serverConfig.transportType() == TransportType.X_REMOTING) {
+      return new XRemotingServerTransport(serverConfig);
+    }
+    throw new IllegalStateException("unsupported transportType:" + serverConfig.transportType());
+  }
 }
