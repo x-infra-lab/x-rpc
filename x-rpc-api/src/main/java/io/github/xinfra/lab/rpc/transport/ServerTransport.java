@@ -23,7 +23,6 @@ import java.net.InetSocketAddress;
 
 public interface ServerTransport extends Closeable {
 
-  void bind(InetSocketAddress socketAddress);
 
   void register(ServiceConfig<?> serviceConfig, Invoker invoker);
 
