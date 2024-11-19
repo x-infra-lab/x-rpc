@@ -19,7 +19,6 @@ package io.github.xinfra.lab.rpc.config;
 import io.github.xinfra.lab.rpc.cluster.ClusterType;
 import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalanceType;
 import io.github.xinfra.lab.rpc.proxy.ProxyType;
-import io.github.xinfra.lab.rpc.transport.TransportType;
 import lombok.Data;
 
 @Data
@@ -35,11 +34,7 @@ public class ReferenceConfig<T> extends ServiceConfig<T> {
 
   private ClusterType clusterType = ClusterType.FAST_FAIL;
 
-  private TransportType transportType = TransportType.X_REMOTING;
-
   private String directUrl;
 
   private LoadBalanceType loadBalanceType = LoadBalanceType.RANDOM;
-
-  private String tag;
 }

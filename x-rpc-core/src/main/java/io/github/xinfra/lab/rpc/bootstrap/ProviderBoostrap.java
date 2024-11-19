@@ -19,7 +19,6 @@ package io.github.xinfra.lab.rpc.bootstrap;
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
 import io.github.xinfra.lab.rpc.config.ProviderConfig;
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
-import io.github.xinfra.lab.rpc.config.ServerConfig;
 import io.github.xinfra.lab.rpc.filter.FilterChainBuilder;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import io.github.xinfra.lab.rpc.invoker.ProviderInvoker;
@@ -30,9 +29,7 @@ import io.github.xinfra.lab.rpc.transport.ServerTransport;
 import io.github.xinfra.lab.rpc.transport.ServerTransportManager;
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class ProviderBoostrap implements Closeable {
   private ProviderConfig providerConfig;
@@ -54,35 +51,20 @@ public class ProviderBoostrap implements Closeable {
   public void export(ExporterConfig<?> exporterConfig) {
     exporterConfig.setProviderConfig(providerConfig);
 
+    // build invoker
     Invoker providerInvoker = new ProviderInvoker(exporterConfig);
     Invoker filteringInvoker =
         FilterChainBuilder.buildFilterChainInvoker(providerConfig.getFilters(), providerInvoker);
 
     // start server
-    Map<ServerConfig, ServiceInstance> serviceInstanceMap = new HashMap<>();
-    for (ServerConfig serverConfig : providerConfig.getServerConfigs()) {
-      exporterConfig.getProtocol().add(serverConfig.transportType().name());
-      ServerTransport serverTransport = serverTransportManager.getServerTransport(serverConfig);
-      serverTransport.register(exporterConfig, filteringInvoker);
-      ServiceInstance serviceInstance =
-          serviceInstanceMap.computeIfAbsent(
-              serverConfig,
-              config ->
-                  new ServiceInstance(
-                      providerConfig.getApplicationConfig().getAppName(),
-                      config.host(),
-                      config.port()));
-
-      serviceInstance.getMetadataInfo().addService(exporterConfig);
-    }
+    ServerTransport serverTransport =
+        serverTransportManager.getServerTransport(exporterConfig.getProtocolConfig());
+    serverTransport.register(exporterConfig, filteringInvoker);
 
     // register
     RegistryConfig<?> registryConfig = providerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);
-    for (ServiceInstance serviceInstance : serviceInstanceMap.values()) {
-      // todo calc reversion ??
-      registry.register(serviceInstance);
-    }
+    registry.register(exporterConfig);
   }
 
   public void unExport(ExporterConfig<?> exporterConfig) {

@@ -19,7 +19,7 @@ package io.github.xinfra.lab.transport;
 import io.github.xinfra.lab.remoting.processor.UserProcessor;
 import io.github.xinfra.lab.remoting.rpc.server.RpcServer;
 import io.github.xinfra.lab.remoting.rpc.server.RpcServerConfig;
-import io.github.xinfra.lab.rpc.config.ServerConfig;
+import io.github.xinfra.lab.rpc.config.ProtocolConfig;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import io.github.xinfra.lab.rpc.invoker.RpcRequest;
@@ -27,17 +27,17 @@ import io.github.xinfra.lab.rpc.transport.ServerTransport;
 import java.io.IOException;
 
 public class XRemotingServerTransport implements ServerTransport {
-  private XRemotingServerConfig serverConfig;
+  private XRemotingProtocolConfig protocolConfig;
   private RpcServer rpcServer;
 
-  public XRemotingServerTransport(ServerConfig serverConfig) {
-    if (!(serverConfig instanceof XRemotingServerConfig)) {
-      throw new IllegalArgumentException("serverConfig must be XRemotingServerConfig");
+  public XRemotingServerTransport(ProtocolConfig protocolConfig) {
+    if (!(protocolConfig instanceof XRemotingProtocolConfig)) {
+      throw new IllegalArgumentException("protocolConfig must be XRemotingProtocolConfig");
     }
-    this.serverConfig = (XRemotingServerConfig) serverConfig;
+    this.protocolConfig = (XRemotingProtocolConfig) protocolConfig;
 
     RpcServerConfig rpcServerConfig = new RpcServerConfig();
-    rpcServerConfig.setPort(serverConfig.port());
+    rpcServerConfig.setPort(protocolConfig.port());
     this.rpcServer = new RpcServer(rpcServerConfig);
     rpcServer.registerUserProcessor(new RpcProcessor());
     this.rpcServer.startup();

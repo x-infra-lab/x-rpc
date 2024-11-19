@@ -27,7 +27,5 @@ public class ProviderConfig {
 
   private RegistryConfig<?> registryConfig;
 
-  private List<ServerConfig> serverConfigs;
-
   private List<Filter> filters;
 }

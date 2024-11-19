@@ -16,18 +16,18 @@
  */
 package io.github.xinfra.lab.rpc.transport;
 
-import io.github.xinfra.lab.rpc.config.ServerConfig;
+import io.github.xinfra.lab.rpc.config.ProtocolConfig;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ServerTransportManager {
-  private Map<ServerConfig, ServerTransport> serverTransportMap = new HashMap<>();
+  private Map<ProtocolConfig, ServerTransport> serverTransportMap = new HashMap<>();
 
-  public synchronized ServerTransport getServerTransport(ServerConfig serverConfig) {
-    ServerTransport serverTransport = serverTransportMap.get(serverConfig);
+  public synchronized ServerTransport getServerTransport(ProtocolConfig protocolConfig) {
+    ServerTransport serverTransport = serverTransportMap.get(protocolConfig);
     if (serverTransport == null) {
-      serverTransport = ServerTransportFactory.create(serverConfig);
-      serverTransportMap.put(serverConfig, serverTransport);
+      serverTransport = ServerTransportFactory.create(protocolConfig);
+      serverTransportMap.put(protocolConfig, serverTransport);
     }
     return serverTransport;
   }

@@ -18,6 +18,7 @@ package io.github.xinfra.lab.rpc.metadata;
 
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import java.util.Map;
+import java.util.TreeMap;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -29,12 +30,16 @@ public class MetadataInfo {
 
   private String revision;
 
-  private Map<String, ServiceInfo> serviceInfos;
+  private TreeMap<String, ServiceInfo> serviceInfos;
 
   /** Additional extended attributes */
   private Map<String, String> props;
 
   public void addService(ServiceConfig<?> serviceConfig) {
     // how to get right protocol??
+  }
+
+  public void calculateRevision() {
+    // todo
   }
 }

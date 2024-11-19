@@ -38,4 +38,11 @@ public class ServiceConfig<T> {
   private Set<String> version = new HashSet<>();
 
   private Set<String> protocol = new HashSet<>();
+
+  private ProtocolConfig protocolConfig;
+
+  public void setProtocolConfig(ProtocolConfig protocolConfig) {
+    this.protocolConfig = protocolConfig;
+    this.protocol.add(protocolConfig.protocol());
+  }
 }

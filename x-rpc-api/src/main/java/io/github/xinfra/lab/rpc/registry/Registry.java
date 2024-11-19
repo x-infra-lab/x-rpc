@@ -16,12 +16,13 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import java.io.Closeable;
 import java.util.List;
 
 public interface Registry extends Closeable {
 
-  void register(ServiceInstance serviceInstance);
+  void register(ServiceConfig<?> serviceConfig);
 
   void update(ServiceInstance serviceInstance);
 

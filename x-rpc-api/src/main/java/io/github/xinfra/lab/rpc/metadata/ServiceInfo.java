@@ -16,13 +16,13 @@
  */
 package io.github.xinfra.lab.rpc.metadata;
 
-import java.util.Set;
+import java.util.TreeSet;
 import lombok.Data;
 
 @Data
 public class ServiceInfo {
   private String interfaceName;
-  private Set<String> version;
-  private Set<String> group;
-  private Set<String> protocol;
+  private TreeSet<String> version;
+  private TreeSet<String> group;
+  private TreeSet<String> protocol;
 }

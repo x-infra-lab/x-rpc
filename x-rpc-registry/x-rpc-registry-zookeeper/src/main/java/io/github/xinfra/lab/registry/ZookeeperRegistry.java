@@ -17,6 +17,7 @@
 package io.github.xinfra.lab.registry;
 
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.registry.AppServiceInstancesWatcher;
 import io.github.xinfra.lab.rpc.registry.NotifyListener;
 import io.github.xinfra.lab.rpc.registry.Registry;
@@ -92,7 +93,9 @@ public class ZookeeperRegistry implements Registry {
   }
 
   @Override
-  public void register(ServiceInstance serviceInstance) {}
+  public void register(ServiceConfig<?> serviceConfig) {
+    // todo
+  }
 
   @Override
   public void update(ServiceInstance serviceInstance) {}

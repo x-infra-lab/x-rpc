@@ -16,14 +16,22 @@
  */
 package io.github.xinfra.lab.transport;
 
-import io.github.xinfra.lab.rpc.config.ServerConfig;
+import io.github.xinfra.lab.rpc.config.ProtocolConfig;
 import io.github.xinfra.lab.rpc.transport.TransportType;
 import java.net.Inet4Address;
 import java.net.UnknownHostException;
+import lombok.Setter;
 
-public class XRemotingServerConfig implements ServerConfig {
+public class XRemotingProtocolConfig implements ProtocolConfig {
 
-  private int serverPort;
+  public static final String PROTOCOL_NAME = "x-remoting";
+
+  @Setter private int serverPort;
+
+  @Override
+  public String protocol() {
+    return PROTOCOL_NAME;
+  }
 
   @Override
   public int port() {
