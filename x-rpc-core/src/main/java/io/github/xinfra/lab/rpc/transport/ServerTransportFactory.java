@@ -16,14 +16,16 @@
  */
 package io.github.xinfra.lab.rpc.transport;
 
-import io.github.xinfra.lab.rpc.config.ProtocolConfig;
+import io.github.xinfra.lab.rpc.config.TransportServerConfig;
 import io.github.xinfra.lab.transport.XRemotingServerTransport;
 
 public class ServerTransportFactory {
-  public static ServerTransport create(ProtocolConfig protocolConfig) {
-    if (protocolConfig.transportType() == TransportType.X_REMOTING) {
-      return new XRemotingServerTransport(protocolConfig);
+
+  public static ServerTransport create(
+      TransportType transportType, TransportServerConfig transportServerConfig) {
+    if (transportType == TransportType.X_REMOTING) {
+      return new XRemotingServerTransport(transportServerConfig);
     }
-    throw new IllegalStateException("unsupported transportType:" + protocolConfig.transportType());
+    throw new IllegalStateException("unsupported transportType:" + transportType);
   }
 }

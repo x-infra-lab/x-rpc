@@ -19,10 +19,13 @@ package io.github.xinfra.lab.rpc.transport;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import java.io.Closeable;
+import java.net.InetSocketAddress;
 
 public interface ServerTransport extends Closeable {
 
   void register(ServiceConfig<?> serviceConfig, Invoker invoker);
 
   void unRegister(ServiceConfig<?> serviceConfig, Invoker invoker);
+
+  InetSocketAddress address();
 }

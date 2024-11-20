@@ -30,6 +30,8 @@ public class ReferenceConfig<T> extends ServiceConfig<T> {
 
   private ConsumerConfig consumerConfig;
 
+  private String appName;
+
   private ProxyType proxyType = ProxyType.JDK;
 
   private ClusterType clusterType = ClusterType.FAST_FAIL;
@@ -37,4 +39,9 @@ public class ReferenceConfig<T> extends ServiceConfig<T> {
   private String directUrl;
 
   private LoadBalanceType loadBalanceType = LoadBalanceType.RANDOM;
+
+  public void setConsumerConfig(ConsumerConfig consumerConfig) {
+    this.consumerConfig = consumerConfig;
+    this.protocol.add(consumerConfig.getProtocolConfig().protocol());
+  }
 }

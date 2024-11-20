@@ -18,9 +18,11 @@ package io.github.xinfra.lab.rpc.registry;
 
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import java.io.Closeable;
+import java.net.InetSocketAddress;
 import java.util.List;
 
 public interface Registry extends Closeable {
+  void initInstance(InetSocketAddress address);
 
   void register(ServiceConfig<?> serviceConfig);
 

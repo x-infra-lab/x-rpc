@@ -33,16 +33,9 @@ public class ServiceConfig<T> {
   /** use for generic call */
   private String serviceInterfaceName;
 
-  private Set<String> group = new HashSet<>();
+  protected Set<String> group = new HashSet<>();
 
-  private Set<String> version = new HashSet<>();
+  protected Set<String> version = new HashSet<>();
 
-  private Set<String> protocol = new HashSet<>();
-
-  private ProtocolConfig protocolConfig;
-
-  public void setProtocolConfig(ProtocolConfig protocolConfig) {
-    this.protocolConfig = protocolConfig;
-    this.protocol.add(protocolConfig.protocol());
-  }
+  protected Set<String> protocol = new HashSet<>();
 }

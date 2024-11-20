@@ -58,12 +58,15 @@ public class ProviderBoostrap implements Closeable {
 
     // start server
     ServerTransport serverTransport =
-        serverTransportManager.getServerTransport(exporterConfig.getProtocolConfig());
+        serverTransportManager.getServerTransport(
+            providerConfig.getProtocolConfig().transportConfig());
     serverTransport.register(exporterConfig, filteringInvoker);
 
     // register
     RegistryConfig<?> registryConfig = providerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);
+
+    registry.initInstance(serverTransport.address());
     registry.register(exporterConfig);
   }
 

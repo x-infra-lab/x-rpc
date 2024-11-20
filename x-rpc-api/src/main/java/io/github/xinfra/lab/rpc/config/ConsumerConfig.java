@@ -29,6 +29,8 @@ public class ConsumerConfig {
 
   private RegistryConfig<?> registryConfig;
 
+  private ProtocolConfig protocolConfig;
+
   private List<ClusterFilter> clusterFilters;
 
   private List<Filter> filters;

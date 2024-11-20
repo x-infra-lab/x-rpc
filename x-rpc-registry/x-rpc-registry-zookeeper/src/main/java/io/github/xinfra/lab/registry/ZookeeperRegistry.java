@@ -23,11 +23,13 @@ import io.github.xinfra.lab.rpc.registry.NotifyListener;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
@@ -46,8 +48,10 @@ public class ZookeeperRegistry implements Registry {
   private static final Logger log = LoggerFactory.getLogger(ZookeeperRegistry.class);
 
   private ZookeeperRegistryConfig zookeeperRegistryConfig;
-
   private ZookeeperConfig zookeeperConfig;
+
+  private AtomicBoolean instanceInited = new AtomicBoolean(false);
+  private ServiceInstance serviceInstance;
 
   private Map<String, ZookeeperServiceDiscoveryChangeWatcher> watchers = new ConcurrentHashMap<>();
   private CuratorFramework curatorFramework;
@@ -90,6 +94,14 @@ public class ZookeeperRegistry implements Registry {
     }
     CloseableUtils.closeQuietly(serviceDiscovery);
     CloseableUtils.closeQuietly(curatorFramework);
+  }
+
+  @Override
+  public void initInstance(InetSocketAddress address) {
+    if (instanceInited.compareAndSet(false, true)) {
+      // todo init it
+      this.serviceInstance = null;
+    }
   }
 
   @Override

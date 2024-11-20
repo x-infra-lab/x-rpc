@@ -14,20 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.config;
+package io.github.xinfra.lab.rpc.protocol;
 
-import io.github.xinfra.lab.rpc.filter.Filter;
-import java.util.List;
-import lombok.Data;
+import io.github.xinfra.lab.rpc.config.ProtocolConfig;
+import io.github.xinfra.lab.transport.XRemotingTransportConfig;
+import lombok.Setter;
 
-@Data
-public class ProviderConfig {
+public class XProtocolConfig implements ProtocolConfig {
+  @Setter private XRemotingTransportConfig xRemotingTransportConfig;
 
-  private ApplicationConfig applicationConfig;
+  @Override
+  public String protocol() {
+    return "x";
+  }
 
-  private RegistryConfig<?> registryConfig;
-
-  private ProtocolConfig protocolConfig;
-
-  private List<Filter> filters;
+  @Override
+  public XRemotingTransportConfig transportConfig() {
+    return xRemotingTransportConfig;
+  }
 }

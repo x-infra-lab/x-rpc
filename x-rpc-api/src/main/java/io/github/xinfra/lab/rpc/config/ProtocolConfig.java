@@ -16,15 +16,9 @@
  */
 package io.github.xinfra.lab.rpc.config;
 
-import io.github.xinfra.lab.rpc.transport.TransportType;
-
 public interface ProtocolConfig {
 
   String protocol();
 
-  int port();
-
-  String host();
-
-  TransportType transportType();
+  TransportConfig transportConfig();
 }

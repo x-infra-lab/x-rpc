@@ -16,19 +16,23 @@
  */
 package io.github.xinfra.lab.rpc.transport;
 
+import io.github.xinfra.lab.rpc.config.TransportClientConfig;
+import io.github.xinfra.lab.rpc.config.TransportConfig;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class ClientTransportManager implements Closeable {
-  private Map<TransportType, ClientTransport> clientTransportMap = new HashMap<>();
+  private Map<TransportClientConfig, ClientTransport> clientTransportMap = new HashMap<>();
 
-  public synchronized ClientTransport getClientTransport(TransportType transportType) {
-    ClientTransport clientTransport = clientTransportMap.get(transportType);
+  public synchronized ClientTransport getClientTransport(TransportConfig transportConfig) {
+    TransportClientConfig transportClientConfig = transportConfig.transportClientConfig();
+    ClientTransport clientTransport = clientTransportMap.get(transportClientConfig);
     if (clientTransport == null) {
-      clientTransport = ClientTransportFactory.create(transportType);
-      clientTransportMap.put(transportType, clientTransport);
+      clientTransport =
+          ClientTransportFactory.create(transportConfig.transportType(), transportClientConfig);
+      clientTransportMap.put(transportClientConfig, clientTransport);
     }
     return clientTransport;
   }

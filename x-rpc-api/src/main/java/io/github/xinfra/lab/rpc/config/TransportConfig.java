@@ -16,18 +16,13 @@
  */
 package io.github.xinfra.lab.rpc.config;
 
-import io.github.xinfra.lab.rpc.filter.Filter;
-import java.util.List;
-import lombok.Data;
+import io.github.xinfra.lab.rpc.transport.TransportType;
 
-@Data
-public class ProviderConfig {
+public interface TransportConfig {
 
-  private ApplicationConfig applicationConfig;
+  TransportClientConfig transportClientConfig();
 
-  private RegistryConfig<?> registryConfig;
+  TransportServerConfig transportServerConfig();
 
-  private ProtocolConfig protocolConfig;
-
-  private List<Filter> filters;
+  TransportType transportType();
 }

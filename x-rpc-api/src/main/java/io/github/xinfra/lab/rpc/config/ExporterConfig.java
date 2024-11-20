@@ -28,4 +28,9 @@ public class ExporterConfig<T> extends ServiceConfig<T> {
   private ProviderConfig providerConfig;
 
   private T serviceImpl;
+
+  public void setProviderConfig(ProviderConfig providerConfig) {
+    this.providerConfig = providerConfig;
+    this.protocol.add(providerConfig.getProtocolConfig().protocol());
+  }
 }

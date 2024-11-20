@@ -22,6 +22,7 @@ import io.github.xinfra.lab.remoting.connection.ConnectionEventListener;
 import io.github.xinfra.lab.remoting.connection.ConnectionManager;
 import io.github.xinfra.lab.remoting.rpc.client.RpcClient;
 import io.github.xinfra.lab.remoting.rpc.client.RpcInvokeCallBack;
+import io.github.xinfra.lab.rpc.config.TransportClientConfig;
 import io.github.xinfra.lab.rpc.invoker.RpcRequest;
 import io.github.xinfra.lab.rpc.invoker.RpcResponse;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
@@ -34,10 +35,15 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 
 public class XRemotingClientTransport implements ClientTransport {
+  private XRemotingTransportClientConfig transportClientConfig;
   private RpcClient rpcClient;
   private ConnectionManager connectionManager;
 
-  public XRemotingClientTransport() {
+  public XRemotingClientTransport(TransportClientConfig transportClientConfig) {
+    if (!(transportClientConfig instanceof XRemotingTransportClientConfig)) {
+      throw new IllegalArgumentException(
+          "transportClientConfig must be XRemotingTransportClientConfig");
+    }
     this.rpcClient = new RpcClient();
     this.rpcClient.startup();
     this.connectionManager = rpcClient.getConnectionManager();

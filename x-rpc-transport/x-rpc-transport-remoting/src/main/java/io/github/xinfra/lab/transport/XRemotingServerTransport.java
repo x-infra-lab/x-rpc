@@ -19,25 +19,27 @@ package io.github.xinfra.lab.transport;
 import io.github.xinfra.lab.remoting.processor.UserProcessor;
 import io.github.xinfra.lab.remoting.rpc.server.RpcServer;
 import io.github.xinfra.lab.remoting.rpc.server.RpcServerConfig;
-import io.github.xinfra.lab.rpc.config.ProtocolConfig;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
+import io.github.xinfra.lab.rpc.config.TransportServerConfig;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import io.github.xinfra.lab.rpc.invoker.RpcRequest;
 import io.github.xinfra.lab.rpc.transport.ServerTransport;
 import java.io.IOException;
+import java.net.InetSocketAddress;
 
 public class XRemotingServerTransport implements ServerTransport {
-  private XRemotingProtocolConfig protocolConfig;
+  private XRemotingTransportServerConfig transportServerConfig;
   private RpcServer rpcServer;
 
-  public XRemotingServerTransport(ProtocolConfig protocolConfig) {
-    if (!(protocolConfig instanceof XRemotingProtocolConfig)) {
-      throw new IllegalArgumentException("protocolConfig must be XRemotingProtocolConfig");
+  public XRemotingServerTransport(TransportServerConfig transportServerConfig) {
+    if (!(transportServerConfig instanceof XRemotingTransportServerConfig)) {
+      throw new IllegalArgumentException(
+          "transportServerConfig must be XRemotingTransportServerConfig");
     }
-    this.protocolConfig = (XRemotingProtocolConfig) protocolConfig;
+    this.transportServerConfig = (XRemotingTransportServerConfig) transportServerConfig;
 
     RpcServerConfig rpcServerConfig = new RpcServerConfig();
-    rpcServerConfig.setPort(protocolConfig.port());
+    rpcServerConfig.setPort(transportServerConfig.port());
     this.rpcServer = new RpcServer(rpcServerConfig);
     rpcServer.registerUserProcessor(new RpcProcessor());
     this.rpcServer.startup();
@@ -51,6 +53,11 @@ public class XRemotingServerTransport implements ServerTransport {
   @Override
   public void unRegister(ServiceConfig<?> serviceConfig, Invoker invoker) {
     // todo
+  }
+
+  @Override
+  public InetSocketAddress address() {
+    return (InetSocketAddress) rpcServer.localAddress();
   }
 
   @Override
