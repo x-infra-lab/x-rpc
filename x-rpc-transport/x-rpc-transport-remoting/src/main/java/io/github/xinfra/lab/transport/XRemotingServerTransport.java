@@ -16,20 +16,21 @@
  */
 package io.github.xinfra.lab.transport;
 
-import io.github.xinfra.lab.remoting.processor.UserProcessor;
 import io.github.xinfra.lab.remoting.rpc.server.RpcServer;
 import io.github.xinfra.lab.remoting.rpc.server.RpcServerConfig;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.config.TransportServerConfig;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
-import io.github.xinfra.lab.rpc.invoker.RpcRequest;
 import io.github.xinfra.lab.rpc.transport.ServerTransport;
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class XRemotingServerTransport implements ServerTransport {
   private XRemotingTransportServerConfig transportServerConfig;
   private RpcServer rpcServer;
+  protected Map<String, Invoker> invokerMap = new ConcurrentHashMap<>();
 
   public XRemotingServerTransport(TransportServerConfig transportServerConfig) {
     if (!(transportServerConfig instanceof XRemotingTransportServerConfig)) {
@@ -41,13 +42,17 @@ public class XRemotingServerTransport implements ServerTransport {
     RpcServerConfig rpcServerConfig = new RpcServerConfig();
     rpcServerConfig.setPort(transportServerConfig.port());
     this.rpcServer = new RpcServer(rpcServerConfig);
-    rpcServer.registerUserProcessor(new RpcProcessor());
+    rpcServer.registerUserProcessor(new RpcRequestProcessor(this));
     this.rpcServer.startup();
   }
 
   @Override
   public void register(ServiceConfig<?> serviceConfig, Invoker invoker) {
-    // todo
+    String serviceInterfaceName = serviceConfig.getServiceInterfaceName();
+    Invoker prevInvoker = invokerMap.putIfAbsent(serviceInterfaceName, invoker);
+    if (prevInvoker != null) {
+      throw new IllegalStateException("duplicate register service: " + serviceInterfaceName);
+    }
   }
 
   @Override
@@ -63,18 +68,5 @@ public class XRemotingServerTransport implements ServerTransport {
   @Override
   public void close() throws IOException {
     rpcServer.shutdown();
-  }
-
-  static class RpcProcessor implements UserProcessor<RpcRequest> {
-    @Override
-    public String interest() {
-      return RpcRequest.class.getName();
-    }
-
-    @Override
-    public Object handRequest(RpcRequest request) {
-      // todo
-      return null;
-    }
   }
 }

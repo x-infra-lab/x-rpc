@@ -122,8 +122,9 @@ public class ZookeeperRegistry implements Registry {
       if (changed) {
         if (instanceRegistered.compareAndSet(false, true)) {
           registerInstance();
+        } else {
+          updateInstance();
         }
-        updateInstance();
       }
     } catch (Exception e) {
       log.error("register service failed:{}", serviceConfig, e);

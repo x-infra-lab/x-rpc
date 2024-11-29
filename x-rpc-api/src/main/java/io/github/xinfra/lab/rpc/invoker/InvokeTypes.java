@@ -16,13 +16,19 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
-import java.io.Serializable;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public class InvokeTypes {
+  public static RpcRequest convertRpcRequest(Invocation invocation) {
+    // todo
+    return new RpcRequest();
+  }
 
-@Data
-@NoArgsConstructor
-public class RpcRequest implements Serializable {
-  private String serviceName;
-  private String methodName;
+  public static Invocation convertInvocation(RpcRequest rpcRequest) {
+    // todo
+    return new Invocation();
+  }
+
+  public static RpcResponse convertRpcResponse(InvocationResult invocationResult) {
+    // todo
+    return new RpcResponse();
+  }
 }

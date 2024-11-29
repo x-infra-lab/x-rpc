@@ -41,7 +41,7 @@ public class ConsumerInvoker implements Invoker {
   public InvocationResult invoke(Invocation invocation) {
     ServiceInstance targetServiceInstance = invocation.getTargetServiceInstance();
     try {
-      RpcRequest request = new RpcRequest();
+      RpcRequest request = InvokeTypes.convertRpcRequest(invocation);
       // todo build request
       CompletableFuture<RpcResponse> future =
           clientTransport.sendAsync(
