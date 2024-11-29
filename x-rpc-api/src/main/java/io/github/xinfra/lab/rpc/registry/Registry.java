@@ -22,7 +22,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 public interface Registry extends Closeable {
-  void initInstance(InetSocketAddress address);
+  void initInstance(String appName, InetSocketAddress address);
 
   void register(ServiceConfig<?> serviceConfig);
 

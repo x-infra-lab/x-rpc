@@ -14,34 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.metadata;
+package io.github.xinfra.lab.rpc.exception;
 
-import io.github.xinfra.lab.rpc.config.ServiceConfig;
-import java.util.Map;
-import java.util.TreeMap;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public class RegistryException extends RpcException {
+  public RegistryException() {}
 
-@Data
-@NoArgsConstructor
-public class MetadataInfo {
-
-  private String appName;
-
-  private String revision;
-
-  private TreeMap<String, ServiceInfo> serviceInfos;
-
-  /** Additional extended attributes */
-  private Map<String, String> props;
-
-  public void addService(ServiceConfig<?> serviceConfig) {
-    // how to get right protocol??
+  public RegistryException(String message) {
+    super(message);
   }
 
-  /** @return revision is changed or not */
-  public boolean calculateRevision() {
-    // todo
-    return false;
+  public RegistryException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public RegistryException(Throwable cause) {
+    super(cause);
+  }
+
+  public RegistryException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
   }
 }

@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.registry;
 
+import io.github.xinfra.lab.rpc.exception.RegistryException;
 import io.github.xinfra.lab.rpc.registry.AppServiceInstancesWatcher;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
@@ -65,7 +66,7 @@ public class ZookeeperServiceDiscoveryChangeWatcher implements ServiceCacheListe
       appServiceInstancesWatcher.change(serviceInstances);
     } catch (Exception e) {
       log.error("{} appServiceInstancesWatcher change fail.", appName, e);
-      throw new RuntimeException(appName + " appServiceInstancesWatcher change fail.", e);
+      throw new RegistryException(appName + " appServiceInstancesWatcher change fail.", e);
     }
   }
 

@@ -28,18 +28,32 @@ public class ServiceInstance {
   private String address;
   private Integer port;
   private long registrationTimestamp;
-  private String revision;
 
   private InetSocketAddress socketAddress;
   private MetadataInfo metadataInfo;
   // todo
 
   public ServiceInstance(String appName, String address, Integer port) {
-    // todo validate
     this.appName = appName;
     this.address = address;
     this.port = port;
     this.socketAddress = new InetSocketAddress(address, port);
     this.metadataInfo = new MetadataInfo();
+  }
+
+  public ServiceInstance(String appName, InetSocketAddress address) {
+    this.appName = appName;
+    this.socketAddress = address;
+    this.address = socketAddress.getAddress().getHostAddress();
+    this.port = socketAddress.getPort();
+    this.metadataInfo = new MetadataInfo();
+  }
+
+  public String getRevision() {
+    return metadataInfo.getRevision();
+  }
+
+  public void setRevision(String revision) {
+    metadataInfo.setRevision(revision);
   }
 }

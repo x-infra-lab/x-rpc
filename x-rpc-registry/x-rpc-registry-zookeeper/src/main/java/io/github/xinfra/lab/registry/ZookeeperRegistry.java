@@ -18,6 +18,7 @@ package io.github.xinfra.lab.registry;
 
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
+import io.github.xinfra.lab.rpc.exception.RegistryException;
 import io.github.xinfra.lab.rpc.registry.AppServiceInstancesWatcher;
 import io.github.xinfra.lab.rpc.registry.NotifyListener;
 import io.github.xinfra.lab.rpc.registry.Registry;
@@ -51,6 +52,8 @@ public class ZookeeperRegistry implements Registry {
   private ZookeeperConfig zookeeperConfig;
 
   private AtomicBoolean instanceInited = new AtomicBoolean(false);
+  private AtomicBoolean instanceRegistered = new AtomicBoolean(false);
+
   private ServiceInstance serviceInstance;
 
   private Map<String, ZookeeperServiceDiscoveryChangeWatcher> watchers = new ConcurrentHashMap<>();
@@ -83,7 +86,7 @@ public class ZookeeperRegistry implements Registry {
       log.error("ZookeeperRegistry init fail", e);
       CloseableUtils.closeQuietly(serviceDiscovery);
       CloseableUtils.closeQuietly(curatorFramework);
-      throw new RuntimeException("ZookeeperRegistry start fail", e);
+      throw new RegistryException("ZookeeperRegistry start fail", e);
     }
   }
 
@@ -97,16 +100,35 @@ public class ZookeeperRegistry implements Registry {
   }
 
   @Override
-  public void initInstance(InetSocketAddress address) {
+  public void initInstance(String appName, InetSocketAddress address) {
     if (instanceInited.compareAndSet(false, true)) {
-      // todo init it
-      this.serviceInstance = null;
+      this.serviceInstance = new ServiceInstance(appName, address);
     }
+  }
+
+  private void registerInstance() throws Exception {
+    serviceDiscovery.registerService(InstanceConverter.convert(serviceInstance));
+  }
+
+  private void updateInstance() throws Exception {
+    serviceDiscovery.updateService(InstanceConverter.convert(serviceInstance));
   }
 
   @Override
   public void register(ServiceConfig<?> serviceConfig) {
-    // todo
+    try {
+      serviceInstance.getMetadataInfo().addService(serviceConfig);
+      boolean changed = serviceInstance.getMetadataInfo().calculateRevision();
+      if (changed) {
+        if (instanceRegistered.compareAndSet(false, true)) {
+          registerInstance();
+        }
+        updateInstance();
+      }
+    } catch (Exception e) {
+      log.error("register service failed:{}", serviceConfig, e);
+      throw new RegistryException("register service failed", e);
+    }
   }
 
   @Override
@@ -118,7 +140,7 @@ public class ZookeeperRegistry implements Registry {
   @Override
   public void subscribe(String appName, NotifyListener notifyListener) {
     if (!watchers.containsKey(appName)) {
-      throw new RuntimeException("you need addAppServiceInstancesWatcher first");
+      throw new RegistryException("you need addAppServiceInstancesWatcher first");
     }
     AppServiceInstancesWatcher appServiceInstancesWatcher =
         watchers.get(appName).getAppServiceInstancesWatcher();
@@ -137,7 +159,7 @@ public class ZookeeperRegistry implements Registry {
       return serviceInstances.stream().map(InstanceConverter::convert).collect(Collectors.toList());
     } catch (Exception e) {
       log.error("queryForInstances fail. appName:{}", appName, e);
-      throw new RuntimeException("queryForInstances fail. appName:" + appName, e);
+      throw new RegistryException("queryForInstances fail. appName:" + appName, e);
     }
   }
 
@@ -166,7 +188,7 @@ public class ZookeeperRegistry implements Registry {
           } catch (Exception e) {
             CloseableUtils.closeQuietly(serviceCache);
             log.error("subscribe fail. appName:{}", appName, e);
-            throw new RuntimeException("subscribe fail. appName: " + name, e);
+            throw new RegistryException("subscribe fail. appName: " + name, e);
           }
 
           return w;

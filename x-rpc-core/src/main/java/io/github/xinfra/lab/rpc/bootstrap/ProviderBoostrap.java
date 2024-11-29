@@ -66,7 +66,8 @@ public class ProviderBoostrap implements Closeable {
     RegistryConfig<?> registryConfig = providerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);
 
-    registry.initInstance(serverTransport.address());
+    registry.initInstance(
+        providerConfig.getApplicationConfig().getAppName(), serverTransport.address());
     registry.register(exporterConfig);
   }
 

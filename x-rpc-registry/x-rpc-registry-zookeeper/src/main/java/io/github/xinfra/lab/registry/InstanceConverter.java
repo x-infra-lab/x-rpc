@@ -34,4 +34,23 @@ public class InstanceConverter {
     serviceInstance.setRevision(zookeeperServiceInstance.getPayload().getRevision());
     return serviceInstance;
   }
+
+  public static org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstancePayload> convert(
+      ServiceInstance serviceInstance) throws Exception {
+
+    ZookeeperInstancePayload zookeeperInstancePayload = new ZookeeperInstancePayload();
+    zookeeperInstancePayload.setRevision(serviceInstance.getRevision());
+
+    org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstancePayload>
+        zookeeperServiceInstance =
+            org.apache.curator.x.discovery.ServiceInstance.<ZookeeperInstancePayload>builder()
+                .name(serviceInstance.getAppName())
+                .address(serviceInstance.getAddress())
+                .port(serviceInstance.getPort())
+                .enabled(serviceInstance.getEnabled())
+                .payload(zookeeperInstancePayload)
+                .build();
+
+    return zookeeperServiceInstance;
+  }
 }
