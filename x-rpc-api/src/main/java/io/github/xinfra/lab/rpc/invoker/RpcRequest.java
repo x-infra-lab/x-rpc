@@ -16,13 +16,29 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
-import java.io.Serializable;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 public class RpcRequest implements Serializable {
-  private String serviceName;
-  private String methodName;
+    /**
+     * eg: com.github.xinfra.lab.rpc.exanple.EchoService
+     */
+    private String serviceName;
+
+    /**
+     * eg:echo
+     */
+    private String methodName;
+
+    /**
+     * eg: java.lang.String;java.lang.String
+     */
+    private String[] methodArgSigns;
+
+
+    private Object[] methodArgs;
 }

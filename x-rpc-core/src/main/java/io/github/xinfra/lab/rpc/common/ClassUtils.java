@@ -16,6 +16,10 @@
  */
 package io.github.xinfra.lab.rpc.common;
 
+import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class ClassUtils {
 
   public static Object getDefaultPrimitiveValue(Class<?> clazz) {
@@ -38,5 +42,13 @@ public class ClassUtils {
     } else {
       return null;
     }
+  }
+
+  public static String genMethodSign(Method method){
+      return method.getName() +
+              "(" +
+              Arrays.stream(method.getParameterTypes()).map(Class::getName)
+                      .collect(Collectors.joining(";")) +
+              ")";
   }
 }

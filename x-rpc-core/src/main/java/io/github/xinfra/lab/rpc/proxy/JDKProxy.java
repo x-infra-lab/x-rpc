@@ -23,7 +23,6 @@ import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import java.util.Arrays;
 
 public class JDKProxy implements Proxy {
   @Override
@@ -51,15 +50,13 @@ public class JDKProxy implements Proxy {
 
       Invocation invocation = new Invocation();
       invocation.setArgs(args);
-      invocation.setInterfaceName(serviceClass.getName());
-      invocation.setMethodName(method.getName());
-      String[] argSigns =
-          (String[]) Arrays.stream(method.getParameterTypes()).map(Class::getName).toArray();
-      invocation.setArgSigns(argSigns);
+      invocation.setServiceClass(serviceClass);
+      invocation.setMethod(method);
 
       // todo: handle throw exception?
       InvocationResult invocationResult = invoker.invoke(invocation);
 
+      // todo
       if (invocationResult.isError()) {
         // todo
         throw new RpcServerException(invocationResult.getErrorMsg());
@@ -72,6 +69,7 @@ public class JDKProxy implements Proxy {
         throw (Throwable) result;
       }
 
+      // todo
       if (result == null) {
         return ClassUtils.getDefaultPrimitiveValue(method.getReturnType());
       }

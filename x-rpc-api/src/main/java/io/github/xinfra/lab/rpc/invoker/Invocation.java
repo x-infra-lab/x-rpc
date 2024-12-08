@@ -19,14 +19,15 @@ package io.github.xinfra.lab.rpc.invoker;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import lombok.Data;
 
+import java.lang.reflect.Method;
+
 @Data
 public class Invocation {
 
-  private ServiceInstance targetServiceInstance;
-  private int timeoutMills;
+    private ServiceInstance targetServiceInstance;
+    private int timeoutMills;
 
-  private String interfaceName;
-  private String methodName;
-  private String[] argSigns;
-  private transient Object[] args;
+    private Class<?> serviceClass;
+    private Method method;
+    private Object[] args;
 }
