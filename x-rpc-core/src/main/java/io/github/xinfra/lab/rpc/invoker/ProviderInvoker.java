@@ -22,7 +22,6 @@ public class ProviderInvoker implements Invoker {
 
   private ExporterConfig<?> exporterConfig;
 
-
   public ProviderInvoker(ExporterConfig<?> exporterConfig) {
     this.exporterConfig = exporterConfig;
   }

@@ -44,12 +44,13 @@ public class ClassUtils {
     }
   }
 
-  public static String genMethodSign(Method method){
-      return method.getName() +
-              "(" +
-              Arrays.stream(method.getParameterTypes()).map(Class::getName)
-                      .collect(Collectors.joining(";")) +
-              ")";
+  public static String genMethodSign(Method method) {
+    return method.getName()
+        + "("
+        + Arrays.stream(method.getParameterTypes())
+            .map(Class::getName)
+            .collect(Collectors.joining(";"))
+        + ")";
   }
 
   public static String genMethodSign(String methodName, String[] methodArgTypes) {

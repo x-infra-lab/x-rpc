@@ -35,7 +35,6 @@ public class XRemotingServerTransport implements ServerTransport {
 
   protected ReflectCache reflectCache = new ReflectCache();
 
-
   public XRemotingServerTransport(TransportServerConfig transportServerConfig) {
     if (!(transportServerConfig instanceof XRemotingTransportServerConfig)) {
       throw new IllegalArgumentException(

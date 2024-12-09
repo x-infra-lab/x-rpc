@@ -23,13 +23,10 @@ import io.github.xinfra.lab.rpc.invoker.InvokeTypes;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import io.github.xinfra.lab.rpc.invoker.RpcRequest;
 import io.github.xinfra.lab.rpc.invoker.RpcResponse;
-
 import java.lang.reflect.Method;
 
 public class RpcRequestProcessor implements UserProcessor<RpcRequest> {
   private final XRemotingServerTransport xremotingServerTransport;
-
-
 
   public RpcRequestProcessor(XRemotingServerTransport xremotingServerTransport) {
     this.xremotingServerTransport = xremotingServerTransport;
@@ -48,8 +45,9 @@ public class RpcRequestProcessor implements UserProcessor<RpcRequest> {
         // todo
         return null;
       }
-      Method method = xremotingServerTransport.reflectCache.find(request.getServiceName(),
-              request.getMethodName(), request.getMethodArgTypes());
+      Method method =
+          xremotingServerTransport.reflectCache.find(
+              request.getServiceName(), request.getMethodName(), request.getMethodArgTypes());
       if (method == null) {
         // todo
         return null;
