@@ -16,40 +16,61 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.function.BiConsumer;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.concurrent.CompletableFuture;
+import java.util.function.BiConsumer;
 
 @Setter
 @Getter
 public class InvocationResult {
-  // todo
-  private boolean isError;
-  // todo
-  private String errorMsg;
-  private Object result;
-
-  // todo
-  CompletableFuture<InvocationResult> invocationResultCompletableFuture;
-
-  // todo
-  CompletableFuture<RpcResponse> responseCompletableFuture;
-
-  public InvocationResult(CompletableFuture<RpcResponse> responseCompletableFuture) {
-    this.responseCompletableFuture = responseCompletableFuture;
-    this.invocationResultCompletableFuture =
-        responseCompletableFuture.thenApply(rpcResponse -> InvocationResult.from(rpcResponse));
-  }
-
-  private static InvocationResult from(RpcResponse rpcResponse) {
     // todo
-    return null;
-  }
+    private boolean isError;
+    // todo
+    private String errorMsg;
+    // todo
+    private Object result;
 
-  public InvocationResult whenComplete(
-      BiConsumer<? super InvocationResult, ? super Throwable> action) {
-    invocationResultCompletableFuture.whenComplete(action);
-    return this;
-  }
+    // todo
+    CompletableFuture<InvocationResult> invocationResultCompletableFuture;
+
+
+    public InvocationResult(CompletableFuture<RpcResponse> responseCompletableFuture) {
+        this.invocationResultCompletableFuture =
+                responseCompletableFuture.thenApply(rpcResponse -> InvocationResult.from(rpcResponse));
+    }
+
+    public InvocationResult() {
+        this.invocationResultCompletableFuture =
+                new CompletableFuture<>();
+    }
+
+    public InvocationResult complete(Object result) {
+        invocationResultCompletableFuture.complete(from(result));
+        return this;
+    }
+
+    public InvocationResult completeExceptionally(Throwable throwable) {
+        invocationResultCompletableFuture.completeExceptionally(throwable);
+        return this;
+    }
+
+    public InvocationResult whenComplete(
+            BiConsumer<? super InvocationResult, ? super Throwable> action) {
+        invocationResultCompletableFuture.whenComplete(action);
+        return this;
+    }
+
+
+    private static InvocationResult from(Object result) {
+        // todo
+        return null;
+    }
+
+    private static InvocationResult from(RpcResponse rpcResponse) {
+        // todo
+        return null;
+    }
+
 }
