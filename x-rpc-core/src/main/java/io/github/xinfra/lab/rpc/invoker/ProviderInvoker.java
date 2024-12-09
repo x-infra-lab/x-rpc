@@ -16,18 +16,15 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
-import io.github.xinfra.lab.rpc.common.ReflectCache;
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
 
 public class ProviderInvoker implements Invoker {
 
   private ExporterConfig<?> exporterConfig;
 
-  private ReflectCache reflectCache = new ReflectCache();
 
   public ProviderInvoker(ExporterConfig<?> exporterConfig) {
     this.exporterConfig = exporterConfig;
-    reflectCache.loadClass(exporterConfig.getServiceInterfaceClass());
   }
 
   @Override

@@ -35,9 +35,9 @@ public class RpcRequest implements Serializable {
     private String methodName;
 
     /**
-     * eg: java.lang.String;java.lang.String
+     * eg: java.lang.String
      */
-    private String[] methodArgSigns;
+    private String[] methodArgTypes;
 
 
     private Object[] methodArgs;

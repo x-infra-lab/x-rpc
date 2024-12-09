@@ -17,14 +17,19 @@
 package io.github.xinfra.lab.transport;
 
 import io.github.xinfra.lab.remoting.processor.UserProcessor;
+import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.InvokeTypes;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import io.github.xinfra.lab.rpc.invoker.RpcRequest;
 import io.github.xinfra.lab.rpc.invoker.RpcResponse;
 
+import java.lang.reflect.Method;
+
 public class RpcRequestProcessor implements UserProcessor<RpcRequest> {
   private final XRemotingServerTransport xremotingServerTransport;
+
+
 
   public RpcRequestProcessor(XRemotingServerTransport xremotingServerTransport) {
     this.xremotingServerTransport = xremotingServerTransport;
@@ -43,7 +48,20 @@ public class RpcRequestProcessor implements UserProcessor<RpcRequest> {
         // todo
         return null;
       }
-      InvocationResult invocationResult = invoker.invoke(InvokeTypes.convertInvocation(request));
+      Method method = xremotingServerTransport.reflectCache.find(request.getServiceName(),
+              request.getMethodName(), request.getMethodArgTypes());
+      if (method == null) {
+        // todo
+        return null;
+      }
+
+      // todo
+      Invocation invocation = new Invocation();
+      invocation.setServiceClass(method.getDeclaringClass());
+      invocation.setMethod(method);
+      invocation.setArgs(request.getMethodArgs());
+
+      InvocationResult invocationResult = invoker.invoke(invocation);
       return InvokeTypes.convertRpcResponse(invocationResult);
     } catch (Throwable e) {
       // todo

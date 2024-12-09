@@ -22,10 +22,6 @@ public class InvokeTypes {
     return new RpcRequest();
   }
 
-  public static Invocation convertInvocation(RpcRequest rpcRequest) {
-    // todo
-    return new Invocation();
-  }
 
   public static RpcResponse convertRpcResponse(InvocationResult invocationResult) {
     // todo

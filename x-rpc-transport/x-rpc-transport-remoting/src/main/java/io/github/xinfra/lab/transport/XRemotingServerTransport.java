@@ -18,6 +18,7 @@ package io.github.xinfra.lab.transport;
 
 import io.github.xinfra.lab.remoting.rpc.server.RpcServer;
 import io.github.xinfra.lab.remoting.rpc.server.RpcServerConfig;
+import io.github.xinfra.lab.rpc.common.ReflectCache;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.config.TransportServerConfig;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
@@ -31,6 +32,9 @@ public class XRemotingServerTransport implements ServerTransport {
   private XRemotingTransportServerConfig transportServerConfig;
   private RpcServer rpcServer;
   protected Map<String, Invoker> invokerMap = new ConcurrentHashMap<>();
+
+  protected ReflectCache reflectCache = new ReflectCache();
+
 
   public XRemotingServerTransport(TransportServerConfig transportServerConfig) {
     if (!(transportServerConfig instanceof XRemotingTransportServerConfig)) {
@@ -53,6 +57,7 @@ public class XRemotingServerTransport implements ServerTransport {
     if (prevInvoker != null) {
       throw new IllegalStateException("duplicate register service: " + serviceInterfaceName);
     }
+    reflectCache.loadClass(serviceConfig.getServiceInterfaceClass());
   }
 
   @Override

@@ -30,4 +30,12 @@ public class ReflectCache {
         Map<String, Method> methodSignMap = overrideMethodMap.computeIfAbsent(clazz.getName(), k -> new ConcurrentHashMap<>());
         methodSignMap.put(ClassUtils.genMethodSign(method), method);
     }
+
+    public Method find(String serviceName, String methodName, String[] methodArgTypes) {
+        Map<String, Method> methodMap = overrideMethodMap.get(serviceName);
+        if (methodMap == null) {
+            return null;
+        }
+        return methodMap.get(ClassUtils.genMethodSign(methodName, methodArgTypes));
+    }
 }

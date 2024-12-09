@@ -51,4 +51,8 @@ public class ClassUtils {
                       .collect(Collectors.joining(";")) +
               ")";
   }
+
+  public static String genMethodSign(String methodName, String[] methodArgTypes) {
+    return methodName + "(" + String.join(";", methodArgTypes) + ")";
+  }
 }
