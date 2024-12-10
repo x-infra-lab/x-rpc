@@ -18,8 +18,6 @@ package io.github.xinfra.lab.rpc.invoker;
 
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
 
-import java.util.concurrent.CompletableFuture;
-
 public class ProviderInvoker implements Invoker {
 
   private ExporterConfig<?> exporterConfig;
@@ -32,10 +30,10 @@ public class ProviderInvoker implements Invoker {
   public InvocationResult invoke(Invocation invocation) {
     InvocationResult invocationResult = new InvocationResult();
     try {
-      Object result = invocation.getMethod().invoke(exporterConfig.getServiceImpl(),
-              invocation.getArgs());
+      Object result =
+          invocation.getMethod().invoke(exporterConfig.getServiceImpl(), invocation.getArgs());
       return invocationResult.complete(result);
-    }catch (Throwable t){
+    } catch (Throwable t) {
       // todo
       return invocationResult.completeExceptionally(t);
     }

@@ -21,6 +21,7 @@ import io.github.xinfra.lab.transport.XRemotingTransportConfig;
 import lombok.Setter;
 
 public class XProtocolConfig implements ProtocolConfig {
+
   @Setter private XRemotingTransportConfig xRemotingTransportConfig;
 
   @Override

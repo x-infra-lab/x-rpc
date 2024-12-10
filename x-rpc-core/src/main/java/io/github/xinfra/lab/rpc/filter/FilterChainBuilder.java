@@ -46,12 +46,17 @@ public class FilterChainBuilder {
   }
 
   public static Invoker buildFilterChainInvoker(List<Filter> filters, Invoker invoker) {
-
+    if (filters.isEmpty()) {
+      return invoker;
+    }
     return buildFilterChainInvoker(filters, invoker, FilterChainNodeInvoker.class);
   }
 
   public static ClusterInvoker buildClusterFilterChainInvoker(
       List<ClusterFilter> clusterFilters, ClusterInvoker clusterInvoker) {
+    if (clusterFilters.isEmpty()) {
+      return clusterInvoker;
+    }
     return buildFilterChainInvoker(
         clusterFilters, clusterInvoker, ClusterFilterChainNodeInvoker.class);
   }

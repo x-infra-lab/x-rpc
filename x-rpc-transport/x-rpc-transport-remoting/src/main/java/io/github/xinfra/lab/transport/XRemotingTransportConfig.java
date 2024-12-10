@@ -21,6 +21,7 @@ import io.github.xinfra.lab.rpc.transport.TransportType;
 import lombok.Setter;
 
 public class XRemotingTransportConfig implements TransportConfig {
+
   @Setter private XRemotingTransportClientConfig transportClientConfig;
   @Setter private XRemotingTransportServerConfig transportServerConfig;
 

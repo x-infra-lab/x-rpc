@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
+import com.google.common.collect.Lists;
 import io.github.xinfra.lab.rpc.common.ServiceMatcher;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.metadata.MetadataInfo;
@@ -108,6 +109,9 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
 
     Map<ServiceInfo, List<ServiceInstance>> serviceInfoToInstancesMap =
         serviceToInstancesMap.get(interfaceName);
+    if (serviceInfoToInstancesMap == null) {
+      return Lists.newArrayList();
+    }
     for (Map.Entry<ServiceInfo, List<ServiceInstance>> entry :
         serviceInfoToInstancesMap.entrySet()) {
       ServiceInfo serviceInfo = entry.getKey();

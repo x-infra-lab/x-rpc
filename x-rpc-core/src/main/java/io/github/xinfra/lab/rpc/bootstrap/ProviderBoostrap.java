@@ -30,6 +30,7 @@ import io.github.xinfra.lab.rpc.transport.ServerTransportManager;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.List;
+import org.apache.commons.lang3.Validate;
 
 public class ProviderBoostrap implements Closeable {
   private ProviderConfig providerConfig;
@@ -41,6 +42,11 @@ public class ProviderBoostrap implements Closeable {
   private List<ServiceInstance> serviceInstances;
 
   public ProviderBoostrap(ProviderConfig providerConfig) {
+    Validate.notNull(providerConfig);
+    Validate.notNull(providerConfig.getApplicationConfig());
+    Validate.notNull(providerConfig.getRegistryConfig());
+    Validate.notNull(providerConfig.getProtocolConfig());
+    Validate.notNull(providerConfig.getFilters());
     this.providerConfig = providerConfig;
   }
 

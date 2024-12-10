@@ -45,8 +45,8 @@ public class XRemotingServerTransport implements ServerTransport {
     RpcServerConfig rpcServerConfig = new RpcServerConfig();
     rpcServerConfig.setPort(transportServerConfig.port());
     this.rpcServer = new RpcServer(rpcServerConfig);
-    rpcServer.registerUserProcessor(new RpcRequestProcessor(this));
     this.rpcServer.startup();
+    rpcServer.registerUserProcessor(new RpcRequestProcessor(this));
   }
 
   @Override

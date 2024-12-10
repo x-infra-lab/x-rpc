@@ -41,6 +41,7 @@ public class ConsumerInvoker implements Invoker {
   public InvocationResult invoke(Invocation invocation) {
     ServiceInstance targetServiceInstance = invocation.getTargetServiceInstance();
     try {
+      InvocationResult result = new InvocationResult();
       RpcRequest request = InvokeTypes.convertRpcRequest(invocation);
       // todo build request
       CompletableFuture<RpcResponse> future =
@@ -49,7 +50,16 @@ public class ConsumerInvoker implements Invoker {
               request,
               invocation.getTimeoutMills(),
               invokeCallBackExecutor);
-      InvocationResult result = new InvocationResult(future);
+
+      future.whenComplete(
+          (rpcResponse, throwable) -> {
+            if (throwable != null) {
+              result.completeExceptionally(throwable);
+            } else {
+              result.complete(rpcResponse);
+            }
+          });
+
       return result;
     } catch (Exception e) {
       throw new RpcClientException("send RpcRequest fail. invocation:" + invocation, e);

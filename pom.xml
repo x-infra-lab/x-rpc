@@ -13,15 +13,18 @@
         <module>x-rpc-transport</module>
         <module>x-rpc-registry</module>
         <module>x-rpc-api</module>
+        <module>x-rpc-test</module>
     </modules>
 
     <properties>
         <java.version>1.8</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <slf4j.version>1.7.25</slf4j.version>
+        <slf4j.version>2.0.7</slf4j.version>
         <lombok.version>1.18.28</lombok.version>
-        <junit.version>4.13</junit.version>
-        <logback.version>1.4.11</logback.version>
+
+        <logback.version>1.3.11</logback.version>
+        <mockito.version>4.11.0</mockito.version>
+        <junit5.version>5.9.1</junit5.version>
     </properties>
 
     <dependencyManagement>
@@ -29,6 +32,11 @@
             <dependency>
                 <groupId>io.github.xinfra.lab.rpc.api</groupId>
                 <artifactId>x-rpc-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.x-infra-lab</groupId>
+                <artifactId>x-rpc-core</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -59,19 +67,27 @@
 
             <!-- test scope start -->
             <dependency>
-                <groupId>junit</groupId>
-                <artifactId>junit</artifactId>
-                <version>${junit.version}</version>
+                <groupId>org.mockito</groupId>
+                <artifactId>mockito-junit-jupiter</artifactId>
+                <version>${mockito.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter</artifactId>
+                <version>${junit5.version}</version>
                 <scope>test</scope>
             </dependency>
 
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
-                <version>${logback.version}</version>
                 <scope>test</scope>
+                <version>${logback.version}</version>
             </dependency>
             <!-- test scope end -->
+
         </dependencies>
     </dependencyManagement>
 

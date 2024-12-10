@@ -30,8 +30,6 @@ public class ReferenceConfig<T> extends ServiceConfig<T> {
 
   private ConsumerConfig consumerConfig;
 
-  private String appName;
-
   private ProxyType proxyType = ProxyType.JDK;
 
   private ClusterType clusterType = ClusterType.FAST_FAIL;

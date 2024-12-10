@@ -14,20 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.registry;
+package io.github.xinfra.lab.rpc.api;
 
-import io.github.xinfra.lab.rpc.registry.RegistryClientConfig;
-import lombok.Data;
+public interface EchoService {
 
-@Data
-public class ZookeeperConfig implements RegistryClientConfig {
-
-  private String zkAddress;
-
-  /** retry */
-  private int sleepMsBetweenRetry = 100;
-
-  private String basePath = "/x/services";
-
-  // todo
+  String hello(String str);
 }
