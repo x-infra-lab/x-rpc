@@ -19,6 +19,7 @@ package io.github.xinfra.lab.rpc.config;
 import io.github.xinfra.lab.rpc.cluster.ClusterType;
 import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalanceType;
 import io.github.xinfra.lab.rpc.proxy.ProxyType;
+import java.net.InetSocketAddress;
 import lombok.Data;
 
 @Data
@@ -34,7 +35,7 @@ public class ReferenceConfig<T> extends ServiceConfig<T> {
 
   private ClusterType clusterType = ClusterType.FAST_FAIL;
 
-  private String directUrl;
+  private InetSocketAddress directAddress;
 
   private LoadBalanceType loadBalanceType = LoadBalanceType.RANDOM;
 

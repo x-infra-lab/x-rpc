@@ -16,14 +16,14 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
-import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
 import lombok.Data;
 
 @Data
 public class Invocation {
 
-  private ServiceInstance targetServiceInstance;
+  private InetSocketAddress targetAddress;
   private int timeoutMills;
 
   private Class<?> serviceClass;

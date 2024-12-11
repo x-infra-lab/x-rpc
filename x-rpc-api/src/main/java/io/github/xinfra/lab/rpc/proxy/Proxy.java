@@ -17,8 +17,12 @@
 package io.github.xinfra.lab.rpc.proxy;
 
 import io.github.xinfra.lab.rpc.invoker.Invoker;
+import java.net.InetSocketAddress;
 
 public interface Proxy {
 
   <T> T createProxyObject(Class<T> serviceClass, Invoker invoker);
+
+  <T> T createProxyObject(
+      Class<T> serviceInterfaceClass, Invoker invoker, InetSocketAddress socketAddress);
 }

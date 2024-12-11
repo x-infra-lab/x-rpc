@@ -22,6 +22,9 @@ import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
 import io.github.xinfra.lab.rpc.config.ConsumerConfig;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
+import io.github.xinfra.lab.rpc.filter.FilterChainBuilder;
+import io.github.xinfra.lab.rpc.invoker.ConsumerInvoker;
+import io.github.xinfra.lab.rpc.invoker.Invoker;
 import io.github.xinfra.lab.rpc.proxy.Proxy;
 import io.github.xinfra.lab.rpc.proxy.ProxyManager;
 import io.github.xinfra.lab.rpc.registry.DefaultAppServiceInstancesWatcher;
@@ -51,23 +54,39 @@ public class ConsumerBootstrap implements Closeable {
   public <T> T refer(ReferenceConfig<T> referenceConfig) {
     referenceConfig.setConsumerConfig(consumerConfig);
 
-    // build cluster
+    // build client transport
     ClientTransport clientTransport =
         clientTransportManager.getClientTransport(
             consumerConfig.getProtocolConfig().transportConfig());
-    Cluster cluster = ClusterFactory.create(referenceConfig, clientTransport);
 
-    // cluster subscribe
-    RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
-    Registry registry = registryManager.getRegistry(registryConfig);
-    registry.addAppServiceInstancesWatcher(
-        new DefaultAppServiceInstancesWatcher(consumerConfig.getApplicationConfig().getAppName()));
-    registry.subscribe(consumerConfig.getApplicationConfig().getAppName(), cluster.nameService());
-
-    // build invoker & proxy
-    ClusterInvoker clusterInvoker = cluster.filteringInvoker();
+    // build proxy
     Proxy proxy = ProxyManager.getProxy(referenceConfig.getProxyType());
-    return proxy.createProxyObject(referenceConfig.getServiceInterfaceClass(), clusterInvoker);
+
+    if (referenceConfig.getDirectAddress() != null) {
+      Invoker filteringInvoker =
+          FilterChainBuilder.buildFilterChainInvoker(
+              referenceConfig.getConsumerConfig().getFilters(),
+              new ConsumerInvoker(clientTransport));
+      return proxy.createProxyObject(
+          referenceConfig.getServiceInterfaceClass(),
+          filteringInvoker,
+          referenceConfig.getDirectAddress());
+    } else {
+      // build cluster
+      Cluster cluster = ClusterFactory.create(referenceConfig, clientTransport);
+
+      // cluster subscribe
+      RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
+      Registry registry = registryManager.getRegistry(registryConfig);
+      registry.addAppServiceInstancesWatcher(
+          new DefaultAppServiceInstancesWatcher(
+              consumerConfig.getApplicationConfig().getAppName()));
+      registry.subscribe(consumerConfig.getApplicationConfig().getAppName(), cluster.nameService());
+
+      // build invoker & proxy
+      ClusterInvoker clusterInvoker = cluster.filteringInvoker();
+      return proxy.createProxyObject(referenceConfig.getServiceInterfaceClass(), clusterInvoker);
+    }
   }
 
   @Override

@@ -23,6 +23,7 @@ import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.net.InetSocketAddress;
 
 public class JDKProxy implements Proxy {
   @Override
@@ -35,13 +36,31 @@ public class JDKProxy implements Proxy {
             new JDKInvocationHandler(invoker, serviceClass));
   }
 
+  @Override
+  public <T> T createProxyObject(
+      Class<T> serviceClass, Invoker invoker, InetSocketAddress socketAddress) {
+    return (T)
+        java.lang.reflect.Proxy.newProxyInstance(
+            Thread.currentThread().getContextClassLoader(),
+            new Class[] {serviceClass},
+            new JDKInvocationHandler(invoker, serviceClass, socketAddress));
+  }
+
   public static class JDKInvocationHandler implements InvocationHandler {
     private Invoker invoker;
     private Class<?> serviceClass;
+    private InetSocketAddress socketAddress;
 
     public JDKInvocationHandler(Invoker invoker, Class<?> serviceClass) {
       this.invoker = invoker;
       this.serviceClass = serviceClass;
+    }
+
+    public <T> JDKInvocationHandler(
+        Invoker invoker, Class<T> serviceClass, InetSocketAddress socketAddress) {
+      this.invoker = invoker;
+      this.serviceClass = serviceClass;
+      this.socketAddress = socketAddress;
     }
 
     @Override
@@ -52,6 +71,9 @@ public class JDKProxy implements Proxy {
       invocation.setArgs(args);
       invocation.setServiceClass(serviceClass);
       invocation.setMethod(method);
+      if (socketAddress != null) {
+        invocation.setTargetAddress(socketAddress);
+      }
 
       // todo: handle throw exception?
       InvocationResult invocationResult = invoker.invoke(invocation);

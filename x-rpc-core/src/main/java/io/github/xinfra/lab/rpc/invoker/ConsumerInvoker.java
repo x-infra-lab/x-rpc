@@ -17,7 +17,6 @@
 package io.github.xinfra.lab.rpc.invoker;
 
 import io.github.xinfra.lab.rpc.exception.RpcClientException;
-import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
@@ -27,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 public class ConsumerInvoker implements Invoker {
 
-  // too
+  // todo
   private static ExecutorService invokeCallBackExecutor =
       new ThreadPoolExecutor(10, 100, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(1024));
 
@@ -39,14 +38,13 @@ public class ConsumerInvoker implements Invoker {
 
   @Override
   public InvocationResult invoke(Invocation invocation) {
-    ServiceInstance targetServiceInstance = invocation.getTargetServiceInstance();
     try {
       InvocationResult result = new InvocationResult();
       RpcRequest request = InvokeTypes.convertRpcRequest(invocation);
       // todo build request
       CompletableFuture<RpcResponse> future =
           clientTransport.sendAsync(
-              targetServiceInstance.getSocketAddress(),
+              invocation.getTargetAddress(),
               request,
               invocation.getTimeoutMills(),
               invokeCallBackExecutor);

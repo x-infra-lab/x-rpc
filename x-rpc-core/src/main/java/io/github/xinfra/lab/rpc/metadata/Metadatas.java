@@ -16,10 +16,19 @@
  */
 package io.github.xinfra.lab.rpc.metadata;
 
+import io.github.xinfra.lab.rpc.invoker.ConsumerInvoker;
+import io.github.xinfra.lab.rpc.proxy.ProxyManager;
+import io.github.xinfra.lab.rpc.proxy.ProxyType;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import io.github.xinfra.lab.rpc.transport.ClientTransport;
+import io.github.xinfra.lab.rpc.transport.ClientTransportFactory;
+import io.github.xinfra.lab.rpc.transport.TransportType;
+import io.github.xinfra.lab.transport.XRemotingTransportClientConfig;
+import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import org.apache.curator.utils.CloseableUtils;
 
 public class Metadatas {
 
@@ -37,12 +46,39 @@ public class Metadatas {
         return metadataInfo;
       }
 
+      ServiceInstance serviceInstance = select(serviceInstances);
+
       // todo invoke
       // todo fail and retry
-      metadataInfo = null;
+      ClientTransport clientTransport = null;
+      try {
+        clientTransport =
+            ClientTransportFactory.create(
+                TransportType.X_REMOTING, new XRemotingTransportClientConfig());
+        MetadataService metadataService =
+            referMetadataService(clientTransport, serviceInstance.getSocketAddress());
+        metadataInfo = metadataService.getMetadataInfo();
+      } finally {
+        if (clientTransport != null) {
+          CloseableUtils.closeQuietly(clientTransport);
+        }
+      }
 
       metadataCache.put(revision, metadataInfo);
       return metadataInfo;
     }
+  }
+
+  private static MetadataService referMetadataService(
+      ClientTransport clientTransport, InetSocketAddress socketAddress) {
+    ConsumerInvoker consumerInvoker = new ConsumerInvoker(clientTransport);
+    return ProxyManager.getProxy(ProxyType.JDK)
+        .createProxyObject(MetadataService.class, consumerInvoker, socketAddress);
+  }
+
+  public static ServiceInstance select(List<ServiceInstance> serviceInstances) {
+    // todo
+
+    return null;
   }
 }

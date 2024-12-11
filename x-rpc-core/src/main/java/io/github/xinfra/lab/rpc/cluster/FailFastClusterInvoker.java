@@ -31,7 +31,7 @@ public class FailFastClusterInvoker extends AbstractClusterInvoker {
   protected InvocationResult doInvoke(
       Invocation invocation, List<ServiceInstance> serviceInstances) {
     ServiceInstance serviceInstance = select(invocation, serviceInstances);
-    invocation.setTargetServiceInstance(serviceInstance);
+    invocation.setTargetAddress(serviceInstance.getSocketAddress());
     return filteringConsumerInvoker.invoke(invocation);
   }
 }

@@ -22,14 +22,15 @@ import io.github.xinfra.lab.rpc.config.RegistryConfig;
 import io.github.xinfra.lab.rpc.filter.FilterChainBuilder;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import io.github.xinfra.lab.rpc.invoker.ProviderInvoker;
+import io.github.xinfra.lab.rpc.metadata.MetadataService;
+import io.github.xinfra.lab.rpc.metadata.MetadataServiceImpl;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.RegistryManager;
-import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import io.github.xinfra.lab.rpc.transport.ServerTransport;
 import io.github.xinfra.lab.rpc.transport.ServerTransportManager;
 import java.io.Closeable;
 import java.io.IOException;
-import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang3.Validate;
 
 public class ProviderBoostrap implements Closeable {
@@ -39,7 +40,7 @@ public class ProviderBoostrap implements Closeable {
 
   private RegistryManager registryManager = new RegistryManager();
 
-  private List<ServiceInstance> serviceInstances;
+  private AtomicBoolean metadataServiceExported = new AtomicBoolean(false);
 
   public ProviderBoostrap(ProviderConfig providerConfig) {
     Validate.notNull(providerConfig);
@@ -68,6 +69,11 @@ public class ProviderBoostrap implements Closeable {
             providerConfig.getProtocolConfig().transportConfig());
     serverTransport.register(exporterConfig, filteringInvoker);
 
+    // export metadata service
+    if (metadataServiceExported.compareAndSet(false, true)) {
+      exportMetadataService(serverTransport);
+    }
+
     // register
     RegistryConfig<?> registryConfig = providerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);
@@ -75,6 +81,13 @@ public class ProviderBoostrap implements Closeable {
     registry.initInstance(
         providerConfig.getApplicationConfig().getAppName(), serverTransport.address());
     registry.register(exporterConfig);
+  }
+
+  private void exportMetadataService(ServerTransport serverTransport) {
+    ExporterConfig exporterConfig = new ExporterConfig(MetadataService.class);
+    exporterConfig.setServiceImpl(new MetadataServiceImpl());
+    Invoker providerInvoker = new ProviderInvoker(exporterConfig);
+    serverTransport.register(exporterConfig, providerInvoker);
   }
 
   public void unExport(ExporterConfig<?> exporterConfig) {

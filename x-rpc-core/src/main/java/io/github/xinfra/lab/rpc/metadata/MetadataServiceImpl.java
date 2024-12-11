@@ -16,4 +16,10 @@
  */
 package io.github.xinfra.lab.rpc.metadata;
 
-public class MetadataServiceImpl implements MetadataService {}
+public class MetadataServiceImpl implements MetadataService {
+  @Override
+  public MetadataInfo getMetadataInfo() {
+    // todo
+    return null;
+  }
+}

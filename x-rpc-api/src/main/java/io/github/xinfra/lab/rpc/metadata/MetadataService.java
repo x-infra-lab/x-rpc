@@ -16,4 +16,6 @@
  */
 package io.github.xinfra.lab.rpc.metadata;
 
-public interface MetadataService {}
+public interface MetadataService {
+  MetadataInfo getMetadataInfo();
+}
