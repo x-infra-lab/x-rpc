@@ -17,13 +17,12 @@
 package io.github.xinfra.lab.rpc.metadata;
 
 import io.github.xinfra.lab.rpc.invoker.ConsumerInvoker;
+import io.github.xinfra.lab.rpc.invoker.DirectConnectInvoker;
 import io.github.xinfra.lab.rpc.proxy.ProxyManager;
 import io.github.xinfra.lab.rpc.proxy.ProxyType;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
-import io.github.xinfra.lab.rpc.transport.ClientTransportFactory;
-import io.github.xinfra.lab.rpc.transport.TransportType;
-import io.github.xinfra.lab.transport.XRemotingTransportClientConfig;
+import io.github.xinfra.lab.rpc.transport.Transports;
 import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
@@ -52,9 +51,7 @@ public class Metadatas {
       // todo fail and retry
       ClientTransport clientTransport = null;
       try {
-        clientTransport =
-            ClientTransportFactory.create(
-                TransportType.X_REMOTING, new XRemotingTransportClientConfig());
+        clientTransport = Transports.getClientTransport(serviceInstance.getProtocol());
         MetadataService metadataService =
             referMetadataService(clientTransport, serviceInstance.getSocketAddress());
         metadataInfo = metadataService.getMetadataInfo();
@@ -72,8 +69,10 @@ public class Metadatas {
   private static MetadataService referMetadataService(
       ClientTransport clientTransport, InetSocketAddress socketAddress) {
     ConsumerInvoker consumerInvoker = new ConsumerInvoker(clientTransport);
+    DirectConnectInvoker directConnectInvoker =
+        new DirectConnectInvoker(socketAddress, consumerInvoker);
     return ProxyManager.getProxy(ProxyType.JDK)
-        .createProxyObject(MetadataService.class, consumerInvoker, socketAddress);
+        .createProxyObject(MetadataService.class, directConnectInvoker);
   }
 
   public static ServiceInstance select(List<ServiceInstance> serviceInstances) {

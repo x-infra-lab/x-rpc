@@ -14,14 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.registry;
+package io.github.xinfra.lab.rpc.invoker;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.net.InetSocketAddress;
 
-@Data
-@NoArgsConstructor
-public class ZookeeperInstancePayload {
-  private String revision;
-  private String protocol;
+/** direct connect provider */
+public class DirectConnectInvoker implements Invoker {
+
+  private InetSocketAddress directSocketAddress;
+
+  private Invoker invoker;
+
+  public DirectConnectInvoker(InetSocketAddress directSocketAddress, Invoker invoker) {
+    this.directSocketAddress = directSocketAddress;
+    this.invoker = invoker;
+  }
+
+  @Override
+  public InvocationResult invoke(Invocation invocation) {
+    invocation.setTargetAddress(directSocketAddress);
+    return invoker.invoke(invocation);
+  }
 }

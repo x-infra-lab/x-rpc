@@ -14,14 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.registry;
+package io.github.xinfra.lab.rpc.transport;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.github.xinfra.lab.rpc.protocol.XProtocolConfig;
+import io.github.xinfra.lab.transport.XRemotingTransportClientConfig;
 
-@Data
-@NoArgsConstructor
-public class ZookeeperInstancePayload {
-  private String revision;
-  private String protocol;
+public class Transports {
+  public static ClientTransport getClientTransport(String protocol) {
+    if (XProtocolConfig.PROTOCL_NAME.equals(protocol)) {
+      return ClientTransportFactory.create(
+          TransportType.X_REMOTING, new XRemotingTransportClientConfig());
+    }
+    throw new UnsupportedOperationException("unsupport protocol:" + protocol);
+  }
 }

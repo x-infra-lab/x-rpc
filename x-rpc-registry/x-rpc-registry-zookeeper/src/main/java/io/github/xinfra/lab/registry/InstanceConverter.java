@@ -32,6 +32,7 @@ public class InstanceConverter {
     serviceInstance.setRegistrationTimestamp(zookeeperServiceInstance.getRegistrationTimeUTC());
 
     serviceInstance.setRevision(zookeeperServiceInstance.getPayload().getRevision());
+    serviceInstance.setProtocol(zookeeperServiceInstance.getPayload().getProtocol());
     return serviceInstance;
   }
 

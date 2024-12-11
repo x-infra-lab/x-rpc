@@ -24,6 +24,7 @@ import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
 import io.github.xinfra.lab.rpc.filter.FilterChainBuilder;
 import io.github.xinfra.lab.rpc.invoker.ConsumerInvoker;
+import io.github.xinfra.lab.rpc.invoker.DirectConnectInvoker;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import io.github.xinfra.lab.rpc.proxy.Proxy;
 import io.github.xinfra.lab.rpc.proxy.ProxyManager;
@@ -67,10 +68,10 @@ public class ConsumerBootstrap implements Closeable {
           FilterChainBuilder.buildFilterChainInvoker(
               referenceConfig.getConsumerConfig().getFilters(),
               new ConsumerInvoker(clientTransport));
+      DirectConnectInvoker directConnectInvoker =
+          new DirectConnectInvoker(referenceConfig.getDirectAddress(), filteringInvoker);
       return proxy.createProxyObject(
-          referenceConfig.getServiceInterfaceClass(),
-          filteringInvoker,
-          referenceConfig.getDirectAddress());
+          referenceConfig.getServiceInterfaceClass(), directConnectInvoker);
     } else {
       // build cluster
       Cluster cluster = ClusterFactory.create(referenceConfig, clientTransport);

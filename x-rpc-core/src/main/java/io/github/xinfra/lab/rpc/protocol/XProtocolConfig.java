@@ -22,11 +22,13 @@ import lombok.Setter;
 
 public class XProtocolConfig implements ProtocolConfig {
 
+  public static final String PROTOCL_NAME = "x-rpc";
+
   @Setter private XRemotingTransportConfig xRemotingTransportConfig;
 
   @Override
   public String protocol() {
-    return "x";
+    return PROTOCL_NAME;
   }
 
   @Override

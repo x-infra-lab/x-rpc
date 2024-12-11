@@ -41,12 +41,13 @@ public class ServiceInstance {
     this.metadataInfo = new MetadataInfo();
   }
 
-  public ServiceInstance(String appName, InetSocketAddress address) {
+  public ServiceInstance(String appName, String protocol, InetSocketAddress address) {
     this.appName = appName;
     this.socketAddress = address;
     this.address = socketAddress.getAddress().getHostAddress();
     this.port = socketAddress.getPort();
     this.metadataInfo = new MetadataInfo();
+    this.metadataInfo.setProtocol(protocol);
   }
 
   public String getRevision() {
@@ -55,5 +56,13 @@ public class ServiceInstance {
 
   public void setRevision(String revision) {
     metadataInfo.setRevision(revision);
+  }
+
+  public void setProtocol(String protocol) {
+    metadataInfo.setProtocol(protocol);
+  }
+
+  public String getProtocol() {
+    return metadataInfo.getProtocol();
   }
 }

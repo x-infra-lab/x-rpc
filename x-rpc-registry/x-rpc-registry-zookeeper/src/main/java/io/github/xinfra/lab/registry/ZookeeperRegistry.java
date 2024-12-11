@@ -100,9 +100,9 @@ public class ZookeeperRegistry implements Registry {
   }
 
   @Override
-  public void initInstance(String appName, InetSocketAddress address) {
+  public void initInstance(String appName, String protocol, InetSocketAddress address) {
     if (instanceInited.compareAndSet(false, true)) {
-      this.serviceInstance = new ServiceInstance(appName, address);
+      this.serviceInstance = new ServiceInstance(appName, protocol, address);
     }
   }
 

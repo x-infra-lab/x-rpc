@@ -30,6 +30,8 @@ public class MetadataInfo {
 
   private String revision;
 
+  private String protocol;
+
   private TreeMap<String, ServiceInfo> serviceInfos;
 
   /** Additional extended attributes */
