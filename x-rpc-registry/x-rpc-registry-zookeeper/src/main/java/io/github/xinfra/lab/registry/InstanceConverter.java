@@ -41,6 +41,7 @@ public class InstanceConverter {
 
     ZookeeperInstancePayload zookeeperInstancePayload = new ZookeeperInstancePayload();
     zookeeperInstancePayload.setRevision(serviceInstance.getRevision());
+    zookeeperInstancePayload.setProtocol(serviceInstance.getProtocol());
 
     org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstancePayload>
         zookeeperServiceInstance =

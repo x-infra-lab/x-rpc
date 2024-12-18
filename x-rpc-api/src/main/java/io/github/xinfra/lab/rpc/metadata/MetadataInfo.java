@@ -17,33 +17,50 @@
 package io.github.xinfra.lab.rpc.metadata;
 
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.apache.commons.codec.digest.DigestUtils;
 
 @Data
 @NoArgsConstructor
 public class MetadataInfo {
 
-  private String appName;
-
-  private String revision;
+  public static final String EMPTY_REVISION = "-";
+  private String revision = EMPTY_REVISION;
 
   private String protocol;
 
-  private TreeMap<String, ServiceInfo> serviceInfos;
+  private TreeMap<String, ServiceInfo> serviceInfos = new TreeMap<>();
 
   /** Additional extended attributes */
-  private Map<String, String> props;
+  private Map<String, String> props = new HashMap<>();
 
   public void addService(ServiceConfig<?> serviceConfig) {
-    // how to get right protocol??
+    if (serviceInfos.containsKey(serviceConfig.getServiceInterfaceName())) {
+      throw new IllegalStateException("duplicate register service:" + serviceConfig);
+    }
+    ServiceInfo serviceInfo = new ServiceInfo();
+    serviceInfo.setInterfaceName(serviceConfig.getServiceInterfaceName());
+    serviceInfo.setProtocol(new TreeSet<>(serviceConfig.getProtocol()));
+    serviceInfo.setGroup(new TreeSet<>(serviceConfig.getGroup()));
+    serviceInfo.setVersion(new TreeSet<>(serviceConfig.getVersion()));
+    serviceInfos.put(serviceConfig.getServiceInterfaceName(), serviceInfo);
   }
 
   /** @return revision is changed or not */
   public boolean calculateRevision() {
-    // todo
+    String value = serviceInfos.toString();
+    String newRevision = DigestUtils.md5Hex(value);
+
+    if (!Objects.equals(revision, newRevision)) {
+      revision = newRevision;
+      return true;
+    }
     return false;
   }
 }

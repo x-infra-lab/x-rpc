@@ -50,6 +50,13 @@
                 <version>${project.version}</version>
             </dependency>
 
+            <!--utils-->
+            <dependency>
+                <groupId>commons-codec</groupId>
+                <artifactId>commons-codec</artifactId>
+                <version>1.17.1</version>
+            </dependency>
+
             <!-- log -->
             <dependency>
                 <groupId>org.slf4j</groupId>

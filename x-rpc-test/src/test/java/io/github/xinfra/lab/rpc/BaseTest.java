@@ -33,7 +33,9 @@ import io.github.xinfra.lab.transport.XRemotingTransportClientConfig;
 import io.github.xinfra.lab.transport.XRemotingTransportConfig;
 import io.github.xinfra.lab.transport.XRemotingTransportServerConfig;
 import org.apache.curator.test.TestingServer;
+import org.apache.curator.utils.CloseableUtils;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -41,19 +43,27 @@ public class BaseTest {
 
   private static TestingServer testingServer;
 
+  private static EchoService echoService;
+
+  private static ConsumerBootstrap consumerBootstrap;
+  private static ProviderBoostrap providerBoostrap;
+
   @BeforeAll
   public static void beforeAll() throws Exception {
     testingServer = new TestingServer();
     testingServer.start();
+    exportService();
+    echoService = referService();
   }
 
   @AfterAll
   public static void afterAll() throws Exception {
-    testingServer.stop();
+    CloseableUtils.closeQuietly(testingServer);
+    CloseableUtils.closeQuietly(consumerBootstrap);
+    CloseableUtils.closeQuietly(providerBoostrap);
   }
 
-  @Test
-  public void testExportService1() {
+  private static void exportService() {
     // app config
     ApplicationConfig applicationConfig = new ApplicationConfig();
     applicationConfig.setAppName("unit-test-app");
@@ -81,7 +91,7 @@ public class BaseTest {
     providerConfig.setFilters(Lists.newArrayList());
 
     // provider bootstrap
-    ProviderBoostrap providerBoostrap = ProviderBoostrap.form(providerConfig);
+    providerBoostrap = ProviderBoostrap.form(providerConfig);
 
     // exporter config
     ExporterConfig exporterConfig = new ExporterConfig(EchoService.class);
@@ -90,8 +100,7 @@ public class BaseTest {
     providerBoostrap.export(exporterConfig);
   }
 
-  @Test
-  public void testReferService1() {
+  private static EchoService referService() {
     // app config
     ApplicationConfig applicationConfig = new ApplicationConfig();
     applicationConfig.setAppName("unit-test-app");
@@ -123,11 +132,17 @@ public class BaseTest {
     //        consumerConfig.setRouterChain();
 
     // consumer bootstrap
-    ConsumerBootstrap consumerBootstrap = ConsumerBootstrap.from(consumerConfig);
+    consumerBootstrap = ConsumerBootstrap.from(consumerConfig);
 
     // refer config
-    ReferenceConfig<?> referenceConfig = new ReferenceConfig(EchoService.class);
+    ReferenceConfig<EchoService> referenceConfig = new ReferenceConfig(EchoService.class);
 
-    consumerBootstrap.refer(referenceConfig);
+    return consumerBootstrap.refer(referenceConfig);
+  }
+
+  @Test
+  void testEcho() {
+    String result = echoService.hello("joe");
+    Assertions.assertNotNull(result);
   }
 }
