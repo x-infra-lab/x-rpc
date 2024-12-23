@@ -27,6 +27,8 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ThreadLocalRandom;
+
 import org.apache.curator.utils.CloseableUtils;
 
 public class Metadatas {
@@ -76,8 +78,11 @@ public class Metadatas {
   }
 
   public static ServiceInstance select(List<ServiceInstance> serviceInstances) {
-    // todo
-
-    return null;
+    if (serviceInstances.size() == 1){
+      return serviceInstances.get(0);
+    }else {
+      int idx = ThreadLocalRandom.current().nextInt(serviceInstances.size());
+      return serviceInstances.get(idx);
+    }
   }
 }

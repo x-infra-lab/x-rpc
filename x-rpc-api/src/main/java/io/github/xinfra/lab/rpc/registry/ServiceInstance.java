@@ -16,8 +16,12 @@
  */
 package io.github.xinfra.lab.rpc.registry;
 
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.metadata.MetadataInfo;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 import lombok.Data;
 
 @Data
@@ -31,6 +35,11 @@ public class ServiceInstance {
 
   private InetSocketAddress socketAddress;
   private MetadataInfo metadataInfo;
+  private String revision = MetadataInfo.EMPTY_REVISION;
+  private String protocol;
+  /** Additional extended attributes */
+  private Map<String, String> props = new HashMap<>();
+
   // todo
 
   public ServiceInstance(String appName, String address, Integer port) {
@@ -38,7 +47,6 @@ public class ServiceInstance {
     this.address = address;
     this.port = port;
     this.socketAddress = new InetSocketAddress(address, port);
-    this.metadataInfo = new MetadataInfo();
   }
 
   public ServiceInstance(String appName, String protocol, InetSocketAddress address) {
@@ -46,23 +54,42 @@ public class ServiceInstance {
     this.socketAddress = address;
     this.address = socketAddress.getAddress().getHostAddress();
     this.port = socketAddress.getPort();
-    this.metadataInfo = new MetadataInfo();
-    this.metadataInfo.setProtocol(protocol);
+    this.protocol = protocol;
   }
 
   public String getRevision() {
-    return metadataInfo.getRevision();
+    return revision;
   }
 
   public void setRevision(String revision) {
-    metadataInfo.setRevision(revision);
+    this.revision = revision;
   }
 
   public void setProtocol(String protocol) {
-    metadataInfo.setProtocol(protocol);
+    this.protocol = protocol;
   }
 
   public String getProtocol() {
-    return metadataInfo.getProtocol();
+    return protocol;
+  }
+
+  public void addService(ServiceConfig<?> serviceConfig) {
+    if (metadataInfo == null) {
+      this.metadataInfo = new MetadataInfo();
+    }
+    this.metadataInfo.addService(serviceConfig);
+  }
+
+  public boolean isRevisionChanged() {
+    if (metadataInfo == null) {
+      return false;
+    }
+    String newReversion = this.metadataInfo.calculateRevision();
+    if (Objects.equals(revision, newReversion)) {
+      return false;
+    } else {
+      revision = newReversion;
+      return true;
+    }
   }
 }

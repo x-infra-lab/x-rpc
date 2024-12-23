@@ -67,7 +67,6 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
           subInstances.stream()
               .map(ServiceInstance::getMetadataInfo)
               .filter(Objects::nonNull)
-              .filter(meta -> Objects.equals(revision, meta.getRevision()))
               .findFirst()
               .orElse(Metadatas.getMetadataInfo(revision, subInstances));
 

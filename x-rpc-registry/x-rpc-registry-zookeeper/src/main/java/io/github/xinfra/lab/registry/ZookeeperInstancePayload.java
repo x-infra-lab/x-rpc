@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.registry;
 
+import java.util.Map;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -24,4 +25,7 @@ import lombok.NoArgsConstructor;
 public class ZookeeperInstancePayload {
   private String revision;
   private String protocol;
+
+  /** Additional extended attributes */
+  private Map<String, String> props;
 }

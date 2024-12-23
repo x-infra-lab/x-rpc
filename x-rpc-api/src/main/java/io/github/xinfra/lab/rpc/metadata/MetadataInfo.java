@@ -17,9 +17,6 @@
 package io.github.xinfra.lab.rpc.metadata;
 
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import lombok.Data;
@@ -29,16 +26,9 @@ import org.apache.commons.codec.digest.DigestUtils;
 @Data
 @NoArgsConstructor
 public class MetadataInfo {
-
   public static final String EMPTY_REVISION = "-";
-  private String revision = EMPTY_REVISION;
-
-  private String protocol;
 
   private TreeMap<String, ServiceInfo> serviceInfos = new TreeMap<>();
-
-  /** Additional extended attributes */
-  private Map<String, String> props = new HashMap<>();
 
   public void addService(ServiceConfig<?> serviceConfig) {
     if (serviceInfos.containsKey(serviceConfig.getServiceInterfaceName())) {
@@ -53,14 +43,12 @@ public class MetadataInfo {
   }
 
   /** @return revision is changed or not */
-  public boolean calculateRevision() {
+  public String calculateRevision() {
+    if (serviceInfos.isEmpty()) {
+      return EMPTY_REVISION;
+    }
     String value = serviceInfos.toString();
     String newRevision = DigestUtils.md5Hex(value);
-
-    if (!Objects.equals(revision, newRevision)) {
-      revision = newRevision;
-      return true;
-    }
-    return false;
+    return newRevision;
   }
 }

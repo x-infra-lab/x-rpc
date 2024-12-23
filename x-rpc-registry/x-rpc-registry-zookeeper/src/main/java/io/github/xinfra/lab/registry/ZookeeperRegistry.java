@@ -117,8 +117,8 @@ public class ZookeeperRegistry implements Registry {
   @Override
   public void register(ServiceConfig<?> serviceConfig) {
     try {
-      serviceInstance.getMetadataInfo().addService(serviceConfig);
-      boolean changed = serviceInstance.getMetadataInfo().calculateRevision();
+      serviceInstance.addService(serviceConfig);
+      boolean changed = serviceInstance.isRevisionChanged();
       if (changed) {
         if (instanceRegistered.compareAndSet(false, true)) {
           registerInstance();
