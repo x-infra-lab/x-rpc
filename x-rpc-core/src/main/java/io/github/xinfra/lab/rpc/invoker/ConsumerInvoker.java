@@ -58,9 +58,10 @@ public class ConsumerInvoker implements Invoker {
             }
           });
 
+      result.get(invocation.getTimeoutMills());
       return result;
     } catch (Exception e) {
-      throw new RpcClientException("send RpcRequest fail. invocation:" + invocation, e);
+      throw new RpcClientException("consumer invoke fail. invocation:" + invocation, e);
     }
   }
 }

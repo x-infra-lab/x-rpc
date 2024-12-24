@@ -17,6 +17,9 @@
 package io.github.xinfra.lab.rpc.invoker;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
 import lombok.Getter;
 import lombok.Setter;
@@ -67,5 +70,9 @@ public class InvocationResult {
   private static InvocationResult from(RpcResponse rpcResponse) {
     // todo
     return null;
+  }
+
+  public void get(int timeoutMills) throws ExecutionException, InterruptedException, TimeoutException {
+    invocationResultCompletableFuture.get(timeoutMills, TimeUnit.MILLISECONDS);
   }
 }
