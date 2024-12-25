@@ -28,5 +28,6 @@ public class Invocation {
 
   private Class<?> serviceClass;
   private Method method;
+  private String[] argTypes;
   private Object[] args;
 }

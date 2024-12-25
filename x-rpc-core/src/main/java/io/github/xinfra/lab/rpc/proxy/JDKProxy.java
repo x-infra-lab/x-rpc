@@ -52,6 +52,7 @@ public class JDKProxy implements Proxy {
       invocation.setArgs(args);
       invocation.setServiceClass(serviceClass);
       invocation.setMethod(method);
+      method.getParameterTypes();
 
       // todo: handle throw exception?
       InvocationResult invocationResult = invoker.invoke(invocation);
