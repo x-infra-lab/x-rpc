@@ -23,6 +23,8 @@ import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Objects;
 
 public class JDKProxy implements Proxy {
   @Override
@@ -46,35 +48,24 @@ public class JDKProxy implements Proxy {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-      // TODO: handle toString hashCode equals method
+      // filter Object class method
+      if(method.getDeclaringClass().equals(Object.class)){
+        return method.invoke(invoker, args);
+      }
 
       Invocation invocation = new Invocation();
-      invocation.setArgs(args);
+      // args may be null
       invocation.setServiceClass(serviceClass);
       invocation.setMethod(method);
-      method.getParameterTypes();
+      invocation.setArgs(args);
+      invocation.setArgTypes(
+              Arrays.stream(method.getParameterTypes())
+                      .map(Class::getName)
+                      .toArray(String[]::new)
+      );
 
-      // todo: handle throw exception?
       InvocationResult invocationResult = invoker.invoke(invocation);
-
-      // todo
-      if (invocationResult.isError()) {
-        // todo
-        throw new RpcServerException(invocationResult.getErrorMsg());
-      }
-
-      Object result = invocationResult.getResult();
-
-      if (result instanceof Throwable) {
-        // todo
-        throw (Throwable) result;
-      }
-
-      // todo
-      if (result == null) {
-        return ClassUtils.getDefaultPrimitiveValue(method.getReturnType());
-      }
-      return result;
+      return invocationResult.invokeResult();
     }
   }
 }

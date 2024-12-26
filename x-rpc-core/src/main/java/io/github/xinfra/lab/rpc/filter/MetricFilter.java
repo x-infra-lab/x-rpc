@@ -24,6 +24,6 @@ public class MetricFilter implements Filter {
   @Override
   public InvocationResult filter(Invoker invoker, Invocation invocation) {
     // todo
-    return null;
+    return invoker.invoke(invocation);
   }
 }

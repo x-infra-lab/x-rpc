@@ -75,4 +75,12 @@ public class InvocationResult {
   public void get(int timeoutMills) throws ExecutionException, InterruptedException, TimeoutException {
     invocationResultCompletableFuture.get(timeoutMills, TimeUnit.MILLISECONDS);
   }
+
+  /**
+   *
+   * @return
+   */
+  public Object invokeResult() {
+
+  }
 }
