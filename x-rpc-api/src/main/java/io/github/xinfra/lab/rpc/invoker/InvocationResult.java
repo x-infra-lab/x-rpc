@@ -77,9 +77,13 @@ public class InvocationResult {
     return invocationResult;
   }
 
-  public void get(int timeoutMills)
+  public InvocationResult get(int timeoutMills)
       throws ExecutionException, InterruptedException, TimeoutException {
-    invocationResultCompletableFuture.get(timeoutMills, TimeUnit.MILLISECONDS);
+    return invocationResultCompletableFuture.get(timeoutMills, TimeUnit.MILLISECONDS);
+  }
+
+  public InvocationResult get() throws ExecutionException, InterruptedException {
+    return invocationResultCompletableFuture.get();
   }
 
   /** @return */

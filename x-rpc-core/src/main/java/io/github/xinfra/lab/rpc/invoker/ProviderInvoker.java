@@ -17,6 +17,7 @@
 package io.github.xinfra.lab.rpc.invoker;
 
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
+import io.github.xinfra.lab.rpc.exception.RpcServerException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -34,10 +35,16 @@ public class ProviderInvoker implements Invoker {
     try {
       Object result =
           invocation.getMethod().invoke(exporterConfig.getServiceImpl(), invocation.getArgs());
-      return invocationResult.complete(result);
+      invocationResult.complete(result);
     } catch (Throwable t) {
       log.error("provider method invoke error", t);
-      return invocationResult.completeExceptionally(t);
+      invocationResult.completeExceptionally(t);
+    } finally {
+      try {
+        return invocationResult.get();
+      } catch (Throwable t) {
+        throw new RpcServerException(t);
+      }
     }
   }
 }

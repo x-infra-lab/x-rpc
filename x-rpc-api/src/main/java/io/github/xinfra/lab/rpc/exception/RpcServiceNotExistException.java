@@ -14,23 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.invoker;
+package io.github.xinfra.lab.rpc.exception;
 
-public class InvokeTypes {
-  public static RpcRequest convertRpcRequest(Invocation invocation) {
-    RpcRequest rpcRequest = new RpcRequest();
-    rpcRequest.setServiceName(invocation.getServiceClass().getName());
-    rpcRequest.setMethodName(invocation.getMethod().getName());
-    rpcRequest.setMethodArgTypes(invocation.getArgTypes());
-    rpcRequest.setMethodArgs(invocation.getArgs());
-    return new RpcRequest();
+public class RpcServiceNotExistException extends RpcServerException {
+  public RpcServiceNotExistException() {}
+
+  public RpcServiceNotExistException(String message) {
+    super(message);
   }
 
-  public static RpcResponse convertRpcResponse(InvocationResult invocationResult) {
-    RpcResponse rpcResponse = new RpcResponse();
-    rpcResponse.setSuccess(invocationResult.isSuccess());
-    rpcResponse.setErrorMsg(invocationResult.getErrorMsg());
-    rpcResponse.setResult(invocationResult.getResult());
-    return new RpcResponse();
+  public RpcServiceNotExistException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public RpcServiceNotExistException(Throwable cause) {
+    super(cause);
+  }
+
+  public RpcServiceNotExistException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
   }
 }
