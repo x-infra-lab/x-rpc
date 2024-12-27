@@ -21,6 +21,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.function.BiConsumer;
+
+import io.github.xinfra.lab.rpc.exception.RpcServerException;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -88,7 +90,10 @@ public class InvocationResult {
 
   /** @return */
   public Object invokeResult() {
-    // todo
-    return null;
+    if (success) {
+      return result;
+    } else {
+      throw new RpcServerException(errorMsg);
+    }
   }
 }
