@@ -28,7 +28,7 @@ import lombok.Setter;
 @Getter
 public class InvocationResult {
   // todo
-  private boolean isError;
+  private boolean success = true;
   // todo
   private String errorMsg;
   // todo
@@ -63,24 +63,28 @@ public class InvocationResult {
   }
 
   private static InvocationResult from(Object result) {
-    // todo
-    return null;
+    InvocationResult invocationResult = new InvocationResult();
+    invocationResult.setResult(result);
+    invocationResult.setSuccess(true);
+    return invocationResult;
   }
 
   private static InvocationResult from(RpcResponse rpcResponse) {
-    // todo
-    return null;
+    InvocationResult invocationResult = new InvocationResult();
+    invocationResult.setSuccess(rpcResponse.isSuccess());
+    invocationResult.setErrorMsg(rpcResponse.getErrorMsg());
+    invocationResult.setResult(rpcResponse.getResult());
+    return invocationResult;
   }
 
-  public void get(int timeoutMills) throws ExecutionException, InterruptedException, TimeoutException {
+  public void get(int timeoutMills)
+      throws ExecutionException, InterruptedException, TimeoutException {
     invocationResultCompletableFuture.get(timeoutMills, TimeUnit.MILLISECONDS);
   }
 
-  /**
-   *
-   * @return
-   */
+  /** @return */
   public Object invokeResult() {
-
+    // todo
+    return null;
   }
 }

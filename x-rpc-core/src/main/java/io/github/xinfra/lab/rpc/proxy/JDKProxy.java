@@ -16,15 +16,12 @@
  */
 package io.github.xinfra.lab.rpc.proxy;
 
-import io.github.xinfra.lab.rpc.common.ClassUtils;
-import io.github.xinfra.lab.rpc.exception.RpcServerException;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Objects;
 
 public class JDKProxy implements Proxy {
   @Override
@@ -49,7 +46,7 @@ public class JDKProxy implements Proxy {
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
       // filter Object class method
-      if(method.getDeclaringClass().equals(Object.class)){
+      if (method.getDeclaringClass().equals(Object.class)) {
         return method.invoke(invoker, args);
       }
 
@@ -59,10 +56,7 @@ public class JDKProxy implements Proxy {
       invocation.setMethod(method);
       invocation.setArgs(args);
       invocation.setArgTypes(
-              Arrays.stream(method.getParameterTypes())
-                      .map(Class::getName)
-                      .toArray(String[]::new)
-      );
+          Arrays.stream(method.getParameterTypes()).map(Class::getName).toArray(String[]::new));
 
       InvocationResult invocationResult = invoker.invoke(invocation);
       return invocationResult.invokeResult();

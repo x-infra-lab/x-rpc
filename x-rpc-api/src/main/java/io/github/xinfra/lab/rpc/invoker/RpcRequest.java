@@ -17,6 +17,7 @@
 package io.github.xinfra.lab.rpc.invoker;
 
 import java.io.Serializable;
+import java.util.Map;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -33,4 +34,7 @@ public class RpcRequest implements Serializable {
   private String[] methodArgTypes;
 
   private Object[] methodArgs;
+
+  /** Extensional properties of request */
+  private Map<String, Object> requestProps;
 }

@@ -14,24 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.invoker;
+package io.github.xinfra.lab.rpc.exception;
 
-import java.util.concurrent.CompletableFuture;
+public class RpcTimeoutException extends RpcClientException {
+  public RpcTimeoutException() {}
 
-public class InvokeTypes {
-  public static RpcRequest convertRpcRequest(Invocation invocation) {
-    RpcRequest rpcRequest = new RpcRequest();
-    rpcRequest.setServiceName(invocation.getServiceClass().getName());
-    rpcRequest.setMethodName(invocation.getMethod().getName());
-    rpcRequest.setMethodArgTypes(invocation.getArgTypes());
-    rpcRequest.setMethodArgs(invocation.getArgs());
-    return new RpcRequest();
+  public RpcTimeoutException(String message) {
+    super(message);
   }
 
-  public static RpcResponse convertRpcResponse(InvocationResult invocationResult) {
-    CompletableFuture<InvocationResult> future =
-        invocationResult.getInvocationResultCompletableFuture();
-    // todo
-    return new RpcResponse();
+  public RpcTimeoutException(String message, Throwable cause) {
+    super(message, cause);
+  }
+
+  public RpcTimeoutException(Throwable cause) {
+    super(cause);
+  }
+
+  public RpcTimeoutException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
   }
 }

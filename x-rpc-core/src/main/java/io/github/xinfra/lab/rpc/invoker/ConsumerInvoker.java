@@ -17,12 +17,14 @@
 package io.github.xinfra.lab.rpc.invoker;
 
 import io.github.xinfra.lab.rpc.exception.RpcClientException;
+import io.github.xinfra.lab.rpc.exception.RpcTimeoutException;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class ConsumerInvoker implements Invoker {
 
@@ -57,8 +59,11 @@ public class ConsumerInvoker implements Invoker {
             }
           });
 
+      // todo: support async invoke
       result.get(invocation.getTimeoutMills());
       return result;
+    } catch (TimeoutException te) {
+      throw new RpcTimeoutException("consumer invoke timeout. invocation:" + invocation, te);
     } catch (Exception e) {
       throw new RpcClientException("consumer invoke fail. invocation:" + invocation, e);
     }

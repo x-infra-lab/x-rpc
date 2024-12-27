@@ -17,7 +17,9 @@
 package io.github.xinfra.lab.rpc.invoker;
 
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class ProviderInvoker implements Invoker {
 
   private ExporterConfig<?> exporterConfig;
@@ -34,7 +36,7 @@ public class ProviderInvoker implements Invoker {
           invocation.getMethod().invoke(exporterConfig.getServiceImpl(), invocation.getArgs());
       return invocationResult.complete(result);
     } catch (Throwable t) {
-      // todo
+      log.error("provider method invoke error", t);
       return invocationResult.completeExceptionally(t);
     }
   }
