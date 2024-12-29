@@ -16,11 +16,12 @@
  */
 package io.github.xinfra.lab.rpc.metadata;
 
+import java.io.Serializable;
 import java.util.TreeSet;
 import lombok.Data;
 
 @Data
-public class ServiceInfo {
+public class ServiceInfo implements Serializable {
   private String interfaceName;
   private TreeSet<String> version;
   private TreeSet<String> group;

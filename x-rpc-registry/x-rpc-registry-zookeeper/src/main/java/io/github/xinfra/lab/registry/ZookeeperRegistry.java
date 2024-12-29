@@ -106,6 +106,11 @@ public class ZookeeperRegistry implements Registry {
     }
   }
 
+  @Override
+  public ServiceInstance getServiceInstance() {
+    return this.serviceInstance;
+  }
+
   private void registerInstance() throws Exception {
     serviceDiscovery.registerService(InstanceConverter.convert(serviceInstance));
   }

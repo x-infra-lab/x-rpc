@@ -22,16 +22,20 @@ import io.github.xinfra.lab.registry.ZookeeperRegistryConfig;
 import io.github.xinfra.lab.rpc.api.EchoService;
 import io.github.xinfra.lab.rpc.bootstrap.ConsumerBootstrap;
 import io.github.xinfra.lab.rpc.bootstrap.ProviderBoostrap;
+import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
 import io.github.xinfra.lab.rpc.config.ApplicationConfig;
 import io.github.xinfra.lab.rpc.config.ConsumerConfig;
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
 import io.github.xinfra.lab.rpc.config.ProviderConfig;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.protocol.XProtocolConfig;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import io.github.xinfra.lab.rpc.service.EchoServiceImpl;
 import io.github.xinfra.lab.transport.XRemotingTransportClientConfig;
 import io.github.xinfra.lab.transport.XRemotingTransportConfig;
 import io.github.xinfra.lab.transport.XRemotingTransportServerConfig;
+import java.util.List;
 import org.apache.curator.test.TestingServer;
 import org.apache.curator.utils.CloseableUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -126,10 +130,16 @@ public class BaseTest {
     consumerConfig.setRegistryConfig(zookeeperRegistryConfig);
     consumerConfig.setProtocolConfig(xProtocolConfig);
     consumerConfig.setFilters(Lists.newArrayList());
-    consumerConfig.setClusterFilters(Lists.newArrayList());
-
     // todo routerChain
-    //        consumerConfig.setRouterChain();
+    consumerConfig.setRouterChain(
+        new RouterChain() {
+          @Override
+          public List<ServiceInstance> route(
+              Invocation invocation, List<ServiceInstance> serviceInstanceList) {
+            return serviceInstanceList;
+          }
+        });
+    consumerConfig.setClusterFilters(Lists.newArrayList());
 
     // consumer bootstrap
     consumerBootstrap = ConsumerBootstrap.from(consumerConfig);

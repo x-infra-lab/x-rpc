@@ -23,7 +23,7 @@ public class InvokeTypes {
     rpcRequest.setMethodName(invocation.getMethod().getName());
     rpcRequest.setMethodArgTypes(invocation.getArgTypes());
     rpcRequest.setMethodArgs(invocation.getArgs());
-    return new RpcRequest();
+    return rpcRequest;
   }
 
   public static RpcResponse convertRpcResponse(InvocationResult invocationResult) {
@@ -31,6 +31,6 @@ public class InvokeTypes {
     rpcResponse.setSuccess(invocationResult.isSuccess());
     rpcResponse.setErrorMsg(invocationResult.getErrorMsg());
     rpcResponse.setResult(invocationResult.getResult());
-    return new RpcResponse();
+    return rpcResponse;
   }
 }

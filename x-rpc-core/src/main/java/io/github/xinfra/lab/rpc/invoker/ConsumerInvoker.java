@@ -60,8 +60,7 @@ public class ConsumerInvoker implements Invoker {
           });
 
       // todo: support async invoke
-      result.get(invocation.getTimeoutMills());
-      return result;
+      return result.get(invocation.getTimeoutMills());
     } catch (TimeoutException te) {
       throw new RpcTimeoutException("consumer invoke timeout. invocation:" + invocation, te);
     } catch (Exception e) {

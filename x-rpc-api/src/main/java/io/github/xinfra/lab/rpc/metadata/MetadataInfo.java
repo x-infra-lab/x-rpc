@@ -17,6 +17,7 @@
 package io.github.xinfra.lab.rpc.metadata;
 
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
+import java.io.Serializable;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import lombok.Data;
@@ -25,7 +26,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 
 @Data
 @NoArgsConstructor
-public class MetadataInfo {
+public class MetadataInfo implements Serializable {
   public static final String EMPTY_REVISION = "-";
 
   private TreeMap<String, ServiceInfo> serviceInfos = new TreeMap<>();

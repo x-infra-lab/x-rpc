@@ -24,7 +24,7 @@ import lombok.Data;
 public class Invocation {
 
   private InetSocketAddress targetAddress;
-  private int timeoutMills;
+  private int timeoutMills = 3000;
 
   private Class<?> serviceClass;
   private Method method;

@@ -16,10 +16,17 @@
  */
 package io.github.xinfra.lab.rpc.metadata;
 
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+
 public class MetadataServiceImpl implements MetadataService {
+  private ServiceInstance serviceInstance;
+
+  public MetadataServiceImpl(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+  }
+
   @Override
   public MetadataInfo getMetadataInfo() {
-    // todo
-    return null;
+    return serviceInstance.getMetadataInfo();
   }
 }

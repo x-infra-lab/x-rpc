@@ -26,6 +26,7 @@ import io.github.xinfra.lab.rpc.metadata.MetadataService;
 import io.github.xinfra.lab.rpc.metadata.MetadataServiceImpl;
 import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.registry.RegistryManager;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import io.github.xinfra.lab.rpc.transport.ServerTransport;
 import io.github.xinfra.lab.rpc.transport.ServerTransportManager;
 import java.io.Closeable;
@@ -69,25 +70,28 @@ public class ProviderBoostrap implements Closeable {
             providerConfig.getProtocolConfig().transportConfig());
     serverTransport.register(exporterConfig, filteringInvoker);
 
-    // export metadata service
-    if (metadataServiceExported.compareAndSet(false, true)) {
-      exportMetadataService(serverTransport);
-    }
-
-    // register
     RegistryConfig<?> registryConfig = providerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);
 
+    // init
     registry.initInstance(
         providerConfig.getApplicationConfig().getAppName(),
         providerConfig.getProtocolConfig().protocol(),
         serverTransport.address());
+
+    // export metadata service
+    if (metadataServiceExported.compareAndSet(false, true)) {
+      exportMetadataService(serverTransport, registry.getServiceInstance());
+    }
+
+    // register
     registry.register(exporterConfig);
   }
 
-  private void exportMetadataService(ServerTransport serverTransport) {
+  private void exportMetadataService(
+      ServerTransport serverTransport, ServiceInstance serviceInstance) {
     ExporterConfig exporterConfig = new ExporterConfig(MetadataService.class);
-    exporterConfig.setServiceImpl(new MetadataServiceImpl());
+    exporterConfig.setServiceImpl(new MetadataServiceImpl(serviceInstance));
     Invoker providerInvoker = new ProviderInvoker(exporterConfig);
     serverTransport.register(exporterConfig, providerInvoker);
   }

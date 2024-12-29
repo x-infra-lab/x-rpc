@@ -19,11 +19,15 @@ package io.github.xinfra.lab.rpc.cluster.loadblancer;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomLoadBalancer implements LoadBalancer {
   @Override
   public ServiceInstance select(List<ServiceInstance> serviceInstances, Invocation invocation) {
-    // todo
-    return null;
+    if (serviceInstances.size() == 1) {
+      return serviceInstances.get(0);
+    }
+    int idx = ThreadLocalRandom.current().nextInt(serviceInstances.size());
+    return serviceInstances.get(idx);
   }
 }

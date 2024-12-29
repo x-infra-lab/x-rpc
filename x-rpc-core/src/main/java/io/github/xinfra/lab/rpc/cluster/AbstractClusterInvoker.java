@@ -52,6 +52,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
             new ConsumerInvoker(cluster.clientTransport()));
 
     this.loadBalancer = LoadBalancerManger.getLoadBalancer(referenceConfig.getLoadBalanceType());
+    this.routerChain = referenceConfig.getConsumerConfig().getRouterChain();
   }
 
   @Override
