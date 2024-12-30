@@ -26,6 +26,7 @@ public class Invocation {
   private InetSocketAddress targetAddress;
   private int timeoutMills = 3000;
 
+  private String serviceName;
   private Class<?> serviceClass;
   private Method method;
   private String[] argTypes;
