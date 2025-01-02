@@ -20,6 +20,7 @@ import static io.github.xinfra.lab.rpc.common.Constants.GENERIC_KEY;
 import static io.github.xinfra.lab.rpc.common.Constants.GENERIC_TYPE_KEY;
 
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.exception.GenericException;
 import io.github.xinfra.lab.rpc.generic.GenericType;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
@@ -36,6 +37,13 @@ public class ConsumerGenericFilter implements Filter {
         String methodName = (String) args[0];
         String[] methodArgTypes = (String[]) args[1];
         Object[] methodArgs = (Object[]) args[2];
+
+        for (Object methodArg : methodArgs) {
+          if (!(methodArg instanceof String)) {
+            throw new GenericException(
+                "When using JSON to serialize generic arguments, the arguments must be of type String");
+          }
+        }
 
         invocation.setServiceName(referenceConfig.getServiceInterfaceName());
         invocation.setMethodName(methodName);

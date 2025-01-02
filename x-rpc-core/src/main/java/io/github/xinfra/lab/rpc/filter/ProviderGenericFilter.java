@@ -20,7 +20,7 @@ import static io.github.xinfra.lab.rpc.common.Constants.GENERIC_KEY;
 import static io.github.xinfra.lab.rpc.common.Constants.GENERIC_TYPE_KEY;
 
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.exception.RpcServerException;
+import io.github.xinfra.lab.rpc.exception.GenericException;
 import io.github.xinfra.lab.rpc.generic.GenericType;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
@@ -49,7 +49,7 @@ public class ProviderGenericFilter implements Filter {
             realArgs[i] = null;
           } else {
             if (!(arg instanceof String)) {
-              throw new RpcServerException(
+              throw new GenericException(
                   "When using JSON to deserialize generic arguments, the arguments must be of type String");
             }
             // todo
