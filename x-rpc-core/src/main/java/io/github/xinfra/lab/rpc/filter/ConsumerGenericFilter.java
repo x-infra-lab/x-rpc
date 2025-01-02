@@ -31,17 +31,18 @@ public class ConsumerGenericFilter implements Filter {
   public InvocationResult filter(Invoker invoker, Invocation invocation) {
     if (invoker.serviceConfig() instanceof ReferenceConfig) {
       ReferenceConfig<?> referenceConfig = (ReferenceConfig<?>) invoker.serviceConfig();
-      if (referenceConfig.isGeneric()
-          && GenericType.JSON.equals(referenceConfig.getGenericType())) {
+      if (referenceConfig.isGeneric()) {
         Object[] args = invocation.getArgs();
         String methodName = (String) args[0];
         String[] methodArgTypes = (String[]) args[1];
         Object[] methodArgs = (Object[]) args[2];
 
-        for (Object methodArg : methodArgs) {
-          if (!(methodArg instanceof String)) {
-            throw new GenericException(
-                "When using JSON to serialize generic arguments, the arguments must be of type String");
+        if (GenericType.JSON.equals(referenceConfig.getGenericType())) {
+          for (Object methodArg : methodArgs) {
+            if (!(methodArg instanceof String)) {
+              throw new GenericException(
+                  "When using JSON to serialize generic arguments, the arguments must be of type String");
+            }
           }
         }
 

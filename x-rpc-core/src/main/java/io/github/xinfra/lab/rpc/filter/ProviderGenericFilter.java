@@ -36,24 +36,27 @@ public class ProviderGenericFilter implements Filter {
       Object generic = invocation.getAttachment(GENERIC_KEY);
       Object genericType = invocation.getAttachment(GENERIC_TYPE_KEY);
 
-      if (Objects.equals(generic, true) && Objects.equals(genericType, GenericType.JSON.name())) {
-
-        Method method = invocation.getMethod();
-        Type[] genericParameterTypes = method.getGenericParameterTypes();
+      if (Objects.equals(generic, true)) {
         Object[] args = invocation.getArgs();
         Object[] realArgs = new Object[args.length];
 
-        for (int i = 0; i < args.length; i++) {
-          Object arg = args[i];
-          if (arg == null) {
-            realArgs[i] = null;
-          } else {
-            if (!(arg instanceof String)) {
-              throw new GenericException(
-                  "When using JSON to deserialize generic arguments, the arguments must be of type String");
+        if (Objects.equals(genericType, GenericType.JSON.name())) {
+          Method method = invocation.getMethod();
+          // todo test genericParameter
+          Type[] genericParameterTypes = method.getGenericParameterTypes();
+
+          for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+            if (arg == null) {
+              realArgs[i] = null;
+            } else {
+              if (!(arg instanceof String)) {
+                throw new GenericException(
+                    "When using JSON to deserialize generic arguments, the arguments must be of type String");
+              }
+              // todo
+              realArgs[i] = null;
             }
-            // todo
-            realArgs[i] = null;
           }
         }
 
