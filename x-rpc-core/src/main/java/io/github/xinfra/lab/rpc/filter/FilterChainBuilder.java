@@ -18,6 +18,7 @@ package io.github.xinfra.lab.rpc.filter;
 
 import io.github.xinfra.lab.rpc.cluster.Cluster;
 import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
@@ -88,6 +89,11 @@ public class FilterChainBuilder {
             }
           });
     }
+
+    @Override
+    public ServiceConfig<?> serviceConfig() {
+      return nextNode.serviceConfig();
+    }
   }
 
   public static class ClusterFilterChainNodeInvoker implements ClusterInvoker {
@@ -117,6 +123,11 @@ public class FilterChainBuilder {
               clusterFilter.onResult(result);
             }
           });
+    }
+
+    @Override
+    public ServiceConfig<?> serviceConfig() {
+      return nextNode.serviceConfig();
     }
 
     @Override

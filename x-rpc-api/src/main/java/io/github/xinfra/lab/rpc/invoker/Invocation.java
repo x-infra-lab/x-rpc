@@ -18,6 +18,8 @@ package io.github.xinfra.lab.rpc.invoker;
 
 import java.lang.reflect.Method;
 import java.net.InetSocketAddress;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.Data;
 
 @Data
@@ -26,9 +28,25 @@ public class Invocation {
   private InetSocketAddress targetAddress;
   private int timeoutMills = 3000;
 
+  /** use for generic call */
   private String serviceName;
+
   private Class<?> serviceClass;
+
+  /** use for generic call */
+  private String methodName;
+
   private Method method;
   private String[] argTypes;
   private Object[] args;
+
+  private Map<String, Object> attachment = new HashMap<>();
+
+  public void addAttachment(String key, Object value) {
+    attachment.put(key, value);
+  }
+
+  public Object getAttachment(String key) {
+    return attachment.get(key);
+  }
 }

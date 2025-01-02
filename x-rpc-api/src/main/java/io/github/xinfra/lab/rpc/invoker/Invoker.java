@@ -16,6 +16,10 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
+
 public interface Invoker {
   InvocationResult invoke(Invocation invocation);
+
+  ServiceConfig<?> serviceConfig();
 }

@@ -19,53 +19,33 @@ package io.github.xinfra.lab.rpc.filter;
 import static io.github.xinfra.lab.rpc.common.Constants.GENERIC_KEY;
 import static io.github.xinfra.lab.rpc.common.Constants.GENERIC_TYPE_KEY;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.exception.RpcServerException;
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.generic.GenericType;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
-import java.lang.reflect.Method;
-import java.lang.reflect.Type;
-import java.util.Objects;
 
-public class ProviderGenericFilter implements Filter {
+public class ConsumerGenericFilter implements Filter {
   @Override
   public InvocationResult filter(Invoker invoker, Invocation invocation) {
-    if (invoker.serviceConfig() instanceof ExporterConfig) {
-      Object generic = invocation.getAttachment(GENERIC_KEY);
-      Object genericType = invocation.getAttachment(GENERIC_TYPE_KEY);
-
-      if (Objects.equals(generic, true) && Objects.equals(genericType, GenericType.JSON.name())) {
-
-        Method method = invocation.getMethod();
-        Type[] genericParameterTypes = method.getGenericParameterTypes();
+    if (invoker.serviceConfig() instanceof ReferenceConfig) {
+      ReferenceConfig<?> referenceConfig = (ReferenceConfig<?>) invoker.serviceConfig();
+      if (referenceConfig.isGeneric()
+          && GenericType.JSON.equals(referenceConfig.getGenericType())) {
         Object[] args = invocation.getArgs();
-        Object[] realArgs = new Object[args.length];
+        String methodName = (String) args[0];
+        String[] methodArgTypes = (String[]) args[1];
+        Object[] methodArgs = (Object[]) args[2];
 
-        for (int i = 0; i < args.length; i++) {
-          Object arg = args[i];
-          if (arg == null) {
-            realArgs[i] = null;
-          } else {
-            if (!(arg instanceof String)) {
-              throw new RpcServerException(
-                  "When using JSON to deserialize generic arguments, the arguments must be of type String");
-            }
-            // todo
-            realArgs[i] = null;
-          }
-        }
+        invocation.setServiceName(referenceConfig.getServiceInterfaceName());
+        invocation.setMethodName(methodName);
+        invocation.setArgTypes(methodArgTypes);
+        invocation.setArgs(methodArgs);
 
-        invocation.setArgs(realArgs);
+        invocation.addAttachment(GENERIC_KEY, referenceConfig.isGeneric());
+        invocation.addAttachment(GENERIC_TYPE_KEY, referenceConfig.getGenericType().name());
       }
     }
     return invoker.invoke(invocation);
-  }
-
-  @Override
-  public void onResult(InvocationResult invocationResult) {
-    // todo
-    Filter.super.onResult(invocationResult);
   }
 }

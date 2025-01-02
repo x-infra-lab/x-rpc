@@ -56,6 +56,7 @@ public class ConsumerBootstrap implements Closeable {
     referenceConfig.setConsumerConfig(consumerConfig);
 
     // build client transport
+    // now share clientTransport
     ClientTransport clientTransport =
         clientTransportManager.getClientTransport(
             consumerConfig.getProtocolConfig().transportConfig());
@@ -67,7 +68,7 @@ public class ConsumerBootstrap implements Closeable {
       Invoker filteringInvoker =
           FilterChainBuilder.buildFilterChainInvoker(
               referenceConfig.getConsumerConfig().getFilters(),
-              new ConsumerInvoker(clientTransport));
+              new ConsumerInvoker(referenceConfig, clientTransport));
       DirectConnectInvoker directConnectInvoker =
           new DirectConnectInvoker(referenceConfig.getDirectAddress(), filteringInvoker);
       return proxy.createProxyObject(
