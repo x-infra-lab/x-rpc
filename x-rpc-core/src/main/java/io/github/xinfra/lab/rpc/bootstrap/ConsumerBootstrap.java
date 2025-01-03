@@ -81,9 +81,8 @@ public class ConsumerBootstrap implements Closeable {
       RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
       Registry registry = registryManager.getRegistry(registryConfig);
       registry.addAppServiceInstancesWatcher(
-          new DefaultAppServiceInstancesWatcher(
-              consumerConfig.getApplicationConfig().getAppName()));
-      registry.subscribe(consumerConfig.getApplicationConfig().getAppName(), cluster.nameService());
+          new DefaultAppServiceInstancesWatcher(referenceConfig.getAppName()));
+      registry.subscribe(referenceConfig.getAppName(), cluster.nameService());
 
       // build invoker & proxy
       ClusterInvoker clusterInvoker = cluster.filteringInvoker();

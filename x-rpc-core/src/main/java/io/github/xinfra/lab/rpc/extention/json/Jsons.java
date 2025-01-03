@@ -66,7 +66,7 @@ public class Jsons {
     }
   }
 
-  public static  <T> T fromJson(String json, Type typeOfT) throws Exception {
+  public static <T> T fromJson(String json, Type typeOfT) throws Exception {
     if (!useGson && !useJackson) {
       throw new IllegalStateException("no available json lib(gson or jackson).");
     }
@@ -83,7 +83,7 @@ public class Jsons {
     throw new IllegalAccessError("unsupported");
   }
 
-  private static  <T> T fromJsonByJackson(String json, Type typeOfT) throws JsonProcessingException {
+  private static <T> T fromJsonByJackson(String json, Type typeOfT) throws JsonProcessingException {
     return mapper.readValue(
         json,
         new TypeReference<T>() {
@@ -94,7 +94,7 @@ public class Jsons {
         });
   }
 
-  private static  <T> T fromJsonByGson(String json, Type typeOfT) {
+  private static <T> T fromJsonByGson(String json, Type typeOfT) {
     Type type = TypeToken.get(typeOfT).getType();
     return gson.fromJson(json, type);
   }

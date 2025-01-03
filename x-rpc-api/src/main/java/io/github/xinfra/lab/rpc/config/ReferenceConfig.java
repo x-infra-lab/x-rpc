@@ -44,6 +44,9 @@ public class ReferenceConfig<T> extends ServiceConfig<T> {
 
   private GenericType genericType = GenericType.JSON;
 
+  /** provider appName * */
+  private String appName;
+
   public void setConsumerConfig(ConsumerConfig consumerConfig) {
     this.consumerConfig = consumerConfig;
     this.protocol.add(consumerConfig.getProtocolConfig().protocol());
