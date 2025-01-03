@@ -21,6 +21,7 @@ import static io.github.xinfra.lab.rpc.common.Constants.GENERIC_TYPE_KEY;
 
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
 import io.github.xinfra.lab.rpc.exception.GenericException;
+import io.github.xinfra.lab.rpc.extention.json.Jsons;
 import io.github.xinfra.lab.rpc.generic.GenericType;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
@@ -54,8 +55,11 @@ public class ProviderGenericFilter implements Filter {
                 throw new GenericException(
                     "When using JSON to deserialize generic arguments, the arguments must be of type String");
               }
-              // todo
-              realArgs[i] = null;
+              try {
+                realArgs[i] = Jsons.fromJson((String) arg, genericParameterTypes[i]);
+              } catch (Exception e) {
+                throw new GenericException("Deserialize JSON generic arguments fail.", e);
+              }
             }
           }
         }
