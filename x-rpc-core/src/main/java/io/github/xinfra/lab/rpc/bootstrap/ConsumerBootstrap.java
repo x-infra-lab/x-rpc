@@ -56,6 +56,7 @@ public class ConsumerBootstrap implements Closeable {
     referenceConfig.setConsumerConfig(consumerConfig);
 
     // build client transport
+    // now share clientTransport
     ClientTransport clientTransport =
         clientTransportManager.getClientTransport(
             consumerConfig.getProtocolConfig().transportConfig());
@@ -67,7 +68,7 @@ public class ConsumerBootstrap implements Closeable {
       Invoker filteringInvoker =
           FilterChainBuilder.buildFilterChainInvoker(
               referenceConfig.getConsumerConfig().getFilters(),
-              new ConsumerInvoker(clientTransport));
+              new ConsumerInvoker(referenceConfig, clientTransport));
       DirectConnectInvoker directConnectInvoker =
           new DirectConnectInvoker(referenceConfig.getDirectAddress(), filteringInvoker);
       return proxy.createProxyObject(
@@ -80,9 +81,8 @@ public class ConsumerBootstrap implements Closeable {
       RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
       Registry registry = registryManager.getRegistry(registryConfig);
       registry.addAppServiceInstancesWatcher(
-          new DefaultAppServiceInstancesWatcher(
-              consumerConfig.getApplicationConfig().getAppName()));
-      registry.subscribe(consumerConfig.getApplicationConfig().getAppName(), cluster.nameService());
+          new DefaultAppServiceInstancesWatcher(referenceConfig.getAppName()));
+      registry.subscribe(referenceConfig.getAppName(), cluster.nameService());
 
       // build invoker & proxy
       ClusterInvoker clusterInvoker = cluster.filteringInvoker();

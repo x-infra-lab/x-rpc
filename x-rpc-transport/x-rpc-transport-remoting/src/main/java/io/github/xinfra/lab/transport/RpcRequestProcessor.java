@@ -66,9 +66,12 @@ public class RpcRequestProcessor implements UserProcessor<RpcRequest> {
 
       Invocation invocation = new Invocation();
       invocation.setServiceClass(method.getDeclaringClass());
+      invocation.setServiceName(method.getDeclaringClass().getName());
       invocation.setMethod(method);
+      invocation.setMethodName(method.getName());
       invocation.setArgs(request.getMethodArgs());
       invocation.setArgTypes(request.getMethodArgTypes());
+      invocation.setAttachment(request.getAttachment());
 
       InvocationResult invocationResult = invoker.invoke(invocation);
       return InvokeTypes.convertRpcResponse(invocationResult);

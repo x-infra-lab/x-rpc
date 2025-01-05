@@ -17,6 +17,7 @@
 package io.github.xinfra.lab.rpc.invoker;
 
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.exception.RpcServerException;
 import lombok.extern.slf4j.Slf4j;
 
@@ -46,5 +47,10 @@ public class ProviderInvoker implements Invoker {
         throw new RpcServerException(t);
       }
     }
+  }
+
+  @Override
+  public ServiceConfig<?> serviceConfig() {
+    return exporterConfig;
   }
 }

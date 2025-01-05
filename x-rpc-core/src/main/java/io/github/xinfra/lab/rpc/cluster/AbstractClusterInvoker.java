@@ -21,6 +21,7 @@ import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalancerManger;
 import io.github.xinfra.lab.rpc.cluster.naming.NameService;
 import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.filter.FilterChainBuilder;
 import io.github.xinfra.lab.rpc.invoker.ConsumerInvoker;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
@@ -30,11 +31,11 @@ import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.util.List;
 
 public abstract class AbstractClusterInvoker implements ClusterInvoker {
-  private Cluster cluster;
+  protected Cluster cluster;
 
-  private ReferenceConfig<?> referenceConfig;
+  protected ReferenceConfig<?> referenceConfig;
 
-  private NameService nameService;
+  protected NameService nameService;
 
   protected Invoker filteringConsumerInvoker;
 
@@ -49,7 +50,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
     this.filteringConsumerInvoker =
         FilterChainBuilder.buildFilterChainInvoker(
             referenceConfig.getConsumerConfig().getFilters(),
-            new ConsumerInvoker(cluster.clientTransport()));
+            new ConsumerInvoker(referenceConfig, cluster.clientTransport()));
 
     this.loadBalancer = LoadBalancerManger.getLoadBalancer(referenceConfig.getLoadBalanceType());
     this.routerChain = referenceConfig.getConsumerConfig().getRouterChain();
@@ -65,6 +66,11 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
     List<ServiceInstance> serviceInstances = nameService.getInstances(invocation);
     List<ServiceInstance> routedServiceInstances = routerChain.route(invocation, serviceInstances);
     return doInvoke(invocation, routedServiceInstances);
+  }
+
+  @Override
+  public ServiceConfig<?> serviceConfig() {
+    return referenceConfig;
   }
 
   protected ServiceInstance select(Invocation invocation, List<ServiceInstance> serviceInstances) {

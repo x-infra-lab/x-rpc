@@ -28,6 +28,10 @@ import io.github.xinfra.lab.rpc.config.ConsumerConfig;
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
 import io.github.xinfra.lab.rpc.config.ProviderConfig;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.filter.ConsumerGenericFilter;
+import io.github.xinfra.lab.rpc.filter.ProviderGenericFilter;
+import io.github.xinfra.lab.rpc.generic.GenericService;
+import io.github.xinfra.lab.rpc.generic.GenericType;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.protocol.XProtocolConfig;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
@@ -49,6 +53,8 @@ public class BaseTest {
 
   private static EchoService echoService;
 
+  private static GenericService genericService;
+
   private static ConsumerBootstrap consumerBootstrap;
   private static ProviderBoostrap providerBoostrap;
 
@@ -58,6 +64,7 @@ public class BaseTest {
     testingServer.start();
     exportService();
     echoService = referService();
+    genericService = referGenericService();
   }
 
   @AfterAll
@@ -70,7 +77,7 @@ public class BaseTest {
   private static void exportService() {
     // app config
     ApplicationConfig applicationConfig = new ApplicationConfig();
-    applicationConfig.setAppName("unit-test-app");
+    applicationConfig.setAppName("unit-test-provider-app");
 
     // registry config
     ZookeeperConfig zookeeperConfig = new ZookeeperConfig();
@@ -92,13 +99,13 @@ public class BaseTest {
     providerConfig.setApplicationConfig(applicationConfig);
     providerConfig.setRegistryConfig(zookeeperRegistryConfig);
     providerConfig.setProtocolConfig(xProtocolConfig);
-    providerConfig.setFilters(Lists.newArrayList());
+    providerConfig.setFilters(Lists.newArrayList(new ProviderGenericFilter()));
 
     // provider bootstrap
     providerBoostrap = ProviderBoostrap.form(providerConfig);
 
     // exporter config
-    ExporterConfig exporterConfig = new ExporterConfig(EchoService.class);
+    ExporterConfig<EchoService> exporterConfig = new ExporterConfig<>(EchoService.class);
     exporterConfig.setServiceImpl(new EchoServiceImpl());
 
     providerBoostrap.export(exporterConfig);
@@ -107,7 +114,7 @@ public class BaseTest {
   private static EchoService referService() {
     // app config
     ApplicationConfig applicationConfig = new ApplicationConfig();
-    applicationConfig.setAppName("unit-test-app");
+    applicationConfig.setAppName("unit-test-consumer-app");
 
     // registry config
     ZookeeperConfig zookeeperConfig = new ZookeeperConfig();
@@ -124,12 +131,11 @@ public class BaseTest {
     XProtocolConfig xProtocolConfig = new XProtocolConfig();
     xProtocolConfig.setXRemotingTransportConfig(xRemotingTransportConfig);
 
-    //  consumer config
+    // consumer config
     ConsumerConfig consumerConfig = new ConsumerConfig();
     consumerConfig.setApplicationConfig(applicationConfig);
     consumerConfig.setRegistryConfig(zookeeperRegistryConfig);
     consumerConfig.setProtocolConfig(xProtocolConfig);
-    consumerConfig.setFilters(Lists.newArrayList());
     // todo routerChain
     consumerConfig.setRouterChain(
         new RouterChain() {
@@ -140,19 +146,39 @@ public class BaseTest {
           }
         });
     consumerConfig.setClusterFilters(Lists.newArrayList());
+    consumerConfig.setFilters(Lists.newArrayList(new ConsumerGenericFilter()));
 
     // consumer bootstrap
     consumerBootstrap = ConsumerBootstrap.from(consumerConfig);
 
     // refer config
-    ReferenceConfig<EchoService> referenceConfig = new ReferenceConfig(EchoService.class);
+    ReferenceConfig<EchoService> referenceConfig = new ReferenceConfig<>(EchoService.class);
+    referenceConfig.setAppName("unit-test-provider-app");
 
     return consumerBootstrap.refer(referenceConfig);
   }
 
+  private static GenericService referGenericService() {
+    // refer config
+    ReferenceConfig<GenericService> referenceConfig = new ReferenceConfig<>(GenericService.class);
+    referenceConfig.setGeneric(true);
+    referenceConfig.setGenericType(GenericType.JSON);
+    referenceConfig.setServiceInterfaceName("io.github.xinfra.lab.rpc.api.EchoService");
+    referenceConfig.setAppName("unit-test-provider-app");
+    return consumerBootstrap.refer(referenceConfig);
+  }
+
   @Test
-  void testEcho() {
+  public void testEcho() {
     String result = echoService.hello("joe");
+    Assertions.assertNotNull(result);
+  }
+
+  @Test
+  public void testGenericEcho() {
+    Object result =
+        genericService.$invoke(
+            "hello", new String[] {"java.lang.String"}, new String[] {"\"joe\""});
     Assertions.assertNotNull(result);
   }
 }

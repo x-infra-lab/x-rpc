@@ -14,35 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.invoker;
+package io.github.xinfra.lab.rpc.exception;
 
-import java.io.Serializable;
-import java.util.Map;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public class GenericException extends RpcException {
+  public GenericException() {}
 
-@Data
-@NoArgsConstructor
-public class RpcRequest implements Serializable {
-  /** eg: com.github.xinfra.lab.rpc.exanple.EchoService */
-  private String serviceName;
+  public GenericException(String message) {
+    super(message);
+  }
 
-  /** eg:echo */
-  private String methodName;
+  public GenericException(String message, Throwable cause) {
+    super(message, cause);
+  }
 
-  /** eg: java.lang.String */
-  private String[] methodArgTypes;
+  public GenericException(Throwable cause) {
+    super(cause);
+  }
 
-  private Object[] methodArgs;
-
-  /** Extensional properties of request */
-  private Map<String, Object> attachment;
-
-  public void addAttachment(Map<String, Object> attachment) {
-    if (this.attachment == null) {
-      this.attachment = attachment;
-    } else {
-      this.attachment.putAll(attachment);
-    }
+  public GenericException(
+      String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    super(message, cause, enableSuppression, writableStackTrace);
   }
 }

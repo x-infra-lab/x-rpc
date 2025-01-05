@@ -18,24 +18,23 @@ package io.github.xinfra.lab.rpc.filter;
 
 import io.github.xinfra.lab.rpc.cluster.Cluster;
 import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
-import java.lang.reflect.Constructor;
 import java.util.List;
 
 public class FilterChainBuilder {
 
-  private static <INVOKER, FILTER> INVOKER buildFilterChainInvoker(
-      List<FILTER> filters, INVOKER invoker, Class<? extends INVOKER> filterInvokerClass) {
-    try {
-      Class<?> filterClass = filters.getClass().getComponentType();
-      Constructor<? extends INVOKER> constructor =
-          filterInvokerClass.getConstructor(filterClass, invoker.getClass());
+  public static Invoker buildFilterChainInvoker(List<Filter> filters, Invoker invoker) {
+    if (filters.isEmpty()) {
+      return invoker;
+    }
 
-      INVOKER nextNode = invoker;
+    try {
+      Invoker nextNode = invoker;
       for (int i = filters.size() - 1; i >= 0; i--) {
-        invoker = constructor.newInstance(filters.get(i), nextNode);
+        invoker = new FilterChainNodeInvoker(filters.get(i), nextNode);
         nextNode = invoker;
       }
 
@@ -45,20 +44,23 @@ public class FilterChainBuilder {
     }
   }
 
-  public static Invoker buildFilterChainInvoker(List<Filter> filters, Invoker invoker) {
-    if (filters.isEmpty()) {
-      return invoker;
-    }
-    return buildFilterChainInvoker(filters, invoker, FilterChainNodeInvoker.class);
-  }
-
   public static ClusterInvoker buildClusterFilterChainInvoker(
       List<ClusterFilter> clusterFilters, ClusterInvoker clusterInvoker) {
     if (clusterFilters.isEmpty()) {
       return clusterInvoker;
     }
-    return buildFilterChainInvoker(
-        clusterFilters, clusterInvoker, ClusterFilterChainNodeInvoker.class);
+
+    try {
+      ClusterInvoker nextNode = clusterInvoker;
+      for (int i = clusterFilters.size() - 1; i >= 0; i--) {
+        clusterInvoker = new ClusterFilterChainNodeInvoker(clusterFilters.get(i), nextNode);
+        nextNode = clusterInvoker;
+      }
+
+      return clusterInvoker;
+    } catch (Throwable throwable) {
+      throw new RuntimeException("fail build filter chain.", throwable);
+    }
   }
 
   public static class FilterChainNodeInvoker implements Invoker {
@@ -87,6 +89,11 @@ public class FilterChainBuilder {
               filter.onResult(result);
             }
           });
+    }
+
+    @Override
+    public ServiceConfig<?> serviceConfig() {
+      return nextNode.serviceConfig();
     }
   }
 
@@ -117,6 +124,11 @@ public class FilterChainBuilder {
               clusterFilter.onResult(result);
             }
           });
+    }
+
+    @Override
+    public ServiceConfig<?> serviceConfig() {
+      return nextNode.serviceConfig();
     }
 
     @Override

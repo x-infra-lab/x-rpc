@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import java.net.InetSocketAddress;
 
 /** direct connect provider */
@@ -34,5 +35,10 @@ public class DirectConnectInvoker implements Invoker {
   public InvocationResult invoke(Invocation invocation) {
     invocation.setTargetAddress(directSocketAddress);
     return invoker.invoke(invocation);
+  }
+
+  @Override
+  public ServiceConfig<?> serviceConfig() {
+    return invoker.serviceConfig();
   }
 }

@@ -16,10 +16,10 @@
  */
 package io.github.xinfra.lab.rpc.metadata;
 
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.invoker.ConsumerInvoker;
 import io.github.xinfra.lab.rpc.invoker.DirectConnectInvoker;
 import io.github.xinfra.lab.rpc.proxy.ProxyManager;
-import io.github.xinfra.lab.rpc.proxy.ProxyType;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
 import io.github.xinfra.lab.rpc.transport.Transports;
@@ -69,11 +69,12 @@ public class Metadatas {
 
   private static MetadataService referMetadataService(
       ClientTransport clientTransport, InetSocketAddress socketAddress) {
-    ConsumerInvoker consumerInvoker = new ConsumerInvoker(clientTransport);
+    ReferenceConfig<MetadataService> referenceConfig = new ReferenceConfig<>(MetadataService.class);
+    ConsumerInvoker consumerInvoker = new ConsumerInvoker(referenceConfig, clientTransport);
     DirectConnectInvoker directConnectInvoker =
         new DirectConnectInvoker(socketAddress, consumerInvoker);
-    return ProxyManager.getProxy(ProxyType.JDK)
-        .createProxyObject(MetadataService.class, directConnectInvoker);
+    return ProxyManager.getProxy(referenceConfig.getProxyType())
+        .createProxyObject(referenceConfig.getServiceInterfaceClass(), directConnectInvoker);
   }
 
   public static ServiceInstance select(List<ServiceInstance> serviceInstances) {

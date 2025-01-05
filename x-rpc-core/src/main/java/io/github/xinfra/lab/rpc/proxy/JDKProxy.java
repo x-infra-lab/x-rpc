@@ -53,7 +53,9 @@ public class JDKProxy implements Proxy {
       Invocation invocation = new Invocation();
       // args may be null
       invocation.setServiceClass(serviceClass);
+      invocation.setServiceName(serviceClass.getName());
       invocation.setMethod(method);
+      invocation.setMethodName(method.getName());
       invocation.setArgs(args);
       invocation.setArgTypes(
           Arrays.stream(method.getParameterTypes()).map(Class::getName).toArray(String[]::new));

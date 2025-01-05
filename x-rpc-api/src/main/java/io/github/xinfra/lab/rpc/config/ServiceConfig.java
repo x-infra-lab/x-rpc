@@ -21,7 +21,7 @@ import java.util.Set;
 import lombok.Data;
 
 @Data
-public class ServiceConfig<T> {
+public abstract class ServiceConfig<T> {
 
   public ServiceConfig(Class<T> serviceInterfaceClass) {
     this.serviceInterfaceClass = serviceInterfaceClass;
