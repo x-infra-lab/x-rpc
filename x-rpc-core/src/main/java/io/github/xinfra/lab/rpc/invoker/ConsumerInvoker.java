@@ -16,6 +16,8 @@
  */
 package io.github.xinfra.lab.rpc.invoker;
 
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.exception.RpcClientException;
 import io.github.xinfra.lab.rpc.exception.RpcTimeoutException;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
@@ -32,9 +34,11 @@ public class ConsumerInvoker implements Invoker {
   private static ExecutorService invokeCallBackExecutor =
       new ThreadPoolExecutor(10, 100, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(1024));
 
+  private ReferenceConfig<?> referenceConfig;
   private ClientTransport clientTransport;
 
-  public ConsumerInvoker(ClientTransport clientTransport) {
+  public ConsumerInvoker(ReferenceConfig<?> referenceConfig, ClientTransport clientTransport) {
+    this.referenceConfig = referenceConfig;
     this.clientTransport = clientTransport;
   }
 
@@ -66,5 +70,10 @@ public class ConsumerInvoker implements Invoker {
     } catch (Exception e) {
       throw new RpcClientException("consumer invoke fail. invocation:" + invocation, e);
     }
+  }
+
+  @Override
+  public ServiceConfig<?> serviceConfig() {
+    return referenceConfig;
   }
 }

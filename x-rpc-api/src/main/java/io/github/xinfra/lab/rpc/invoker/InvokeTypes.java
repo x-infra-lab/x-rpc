@@ -19,10 +19,11 @@ package io.github.xinfra.lab.rpc.invoker;
 public class InvokeTypes {
   public static RpcRequest convertRpcRequest(Invocation invocation) {
     RpcRequest rpcRequest = new RpcRequest();
-    rpcRequest.setServiceName(invocation.getServiceClass().getName());
-    rpcRequest.setMethodName(invocation.getMethod().getName());
+    rpcRequest.setServiceName(invocation.getServiceName());
+    rpcRequest.setMethodName(invocation.getMethodName());
     rpcRequest.setMethodArgTypes(invocation.getArgTypes());
     rpcRequest.setMethodArgs(invocation.getArgs());
+    rpcRequest.addAttachment(invocation.getAttachment());
     return rpcRequest;
   }
 
