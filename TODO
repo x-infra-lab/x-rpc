@@ -1,5 +1,4 @@
-1. validate config
-2. exception handle
-3. export MetaService
-4. route chain implement
-5. consumer & provider protocol validate
+* validate config
+* exception handle
+* route chain
+* consumer & provider protocol validate
