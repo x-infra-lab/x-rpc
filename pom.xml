@@ -14,6 +14,7 @@
         <module>x-rpc-registry</module>
         <module>x-rpc-api</module>
         <module>x-rpc-test</module>
+        <module>x-rpc-spring-boot-starter</module>
     </modules>
 
     <properties>
