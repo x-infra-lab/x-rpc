@@ -120,9 +120,9 @@ public class ZookeeperRegistry implements Registry {
   }
 
   @Override
-  public void register(ServiceConfig<?> serviceConfig) {
+  public void register(List<? extends ServiceConfig<?>> serviceConfigs) {
     try {
-      serviceInstance.addService(serviceConfig);
+      serviceConfigs.forEach(serviceConfig -> serviceInstance.addService(serviceConfig));
       boolean changed = serviceInstance.isRevisionChanged();
       if (changed) {
         if (instanceRegistered.compareAndSet(false, true)) {
@@ -132,7 +132,7 @@ public class ZookeeperRegistry implements Registry {
         }
       }
     } catch (Exception e) {
-      log.error("register service failed:{}", serviceConfig, e);
+      log.error("register service failed", e);
       throw new RegistryException("register service failed", e);
     }
   }

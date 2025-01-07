@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.bootstrap;
 
+import com.google.common.collect.Lists;
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
 import io.github.xinfra.lab.rpc.config.ProviderConfig;
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
@@ -31,6 +32,8 @@ import io.github.xinfra.lab.rpc.transport.ServerTransport;
 import io.github.xinfra.lab.rpc.transport.ServerTransportManager;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang3.Validate;
 
@@ -42,6 +45,8 @@ public class ProviderBoostrap implements Closeable {
   private RegistryManager registryManager = new RegistryManager();
 
   private AtomicBoolean metadataServiceExported = new AtomicBoolean(false);
+
+  private List<ExporterConfig<?>> exportedExporterConfigs = new ArrayList<>();
 
   public ProviderBoostrap(ProviderConfig providerConfig) {
     Validate.notNull(providerConfig);
@@ -84,13 +89,22 @@ public class ProviderBoostrap implements Closeable {
       exportMetadataService(serverTransport, registry.getServiceInstance());
     }
 
-    // register
-    registry.register(exporterConfig);
+    // todo: check repeat export
+    exportedExporterConfigs.add(exporterConfig);
+    if (providerConfig.isAutoRegister()) {
+      registry.register(Lists.newArrayList(exporterConfig));
+    }
+  }
+
+  public void register() {
+    RegistryConfig<?> registryConfig = providerConfig.getRegistryConfig();
+    Registry registry = registryManager.getRegistry(registryConfig);
+    registry.register(exportedExporterConfigs);
   }
 
   private void exportMetadataService(
       ServerTransport serverTransport, ServiceInstance serviceInstance) {
-    ExporterConfig exporterConfig = new ExporterConfig(MetadataService.class);
+    ExporterConfig<MetadataService> exporterConfig = new ExporterConfig<>(MetadataService.class);
     exporterConfig.setServiceImpl(new MetadataServiceImpl(serviceInstance));
     Invoker providerInvoker = new ProviderInvoker(exporterConfig);
     serverTransport.register(exporterConfig, providerInvoker);
