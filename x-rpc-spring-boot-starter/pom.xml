@@ -24,5 +24,17 @@
             <version>2.7.18</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+            <groupId>io.github.x-infra-lab</groupId>
+            <artifactId>x-rpc-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xinfra.lab</groupId>
+            <artifactId>x-rpc-registry-zookeeper</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.github.xinfra.lab</groupId>
+            <artifactId>x-rpc-transport-remoting</artifactId>
+        </dependency>
     </dependencies>
 </project>
