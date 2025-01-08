@@ -16,14 +16,68 @@
  */
 package io.github.xinfra.lab.rpc.spring.bean;
 
+import io.github.xinfra.lab.rpc.spring.annotation.EnableXRpc;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.annotation.AnnotationAttributes;
 import org.springframework.core.type.AnnotationMetadata;
+import org.springframework.util.ClassUtils;
 
 public class XRpcRegistrar implements ImportBeanDefinitionRegistrar {
   @Override
   public void registerBeanDefinitions(
       AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
-    // todo
+    Set<String> packageToScanSet = packageToScan(importingClassMetadata);
+
+    registerXRpcServiceAnnotationPostProcessor(registry, packageToScanSet);
+    registerXRpcReferenceAnnotationPostProcessor(registry);
+  }
+
+  private void registerXRpcReferenceAnnotationPostProcessor(BeanDefinitionRegistry registry) {
+    BeanDefinitionBuilder builder =
+        BeanDefinitionBuilder.rootBeanDefinition(XRpcReferenceAnnotationPostProcessor.class);
+    AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
+    BeanDefinitionReaderUtils.registerWithGeneratedName(beanDefinition, registry);
+  }
+
+  private void registerXRpcServiceAnnotationPostProcessor(
+      BeanDefinitionRegistry registry, Set<String> packageToScanSet) {
+    BeanDefinitionBuilder builder =
+        BeanDefinitionBuilder.rootBeanDefinition(XRpcServiceAnnotationPostProcessor.class);
+    builder.addConstructorArgValue(packageToScanSet);
+    AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
+    BeanDefinitionReaderUtils.registerWithGeneratedName(beanDefinition, registry);
+  }
+
+  private Set<String> packageToScan(AnnotationMetadata importingClassMetadata) {
+    Set<String> packageToScanSet = new HashSet<>();
+    AnnotationAttributes attributes =
+        AnnotationAttributes.fromMap(
+            importingClassMetadata.getAnnotationAttributes(EnableXRpc.class.getName()));
+    if (attributes == null) {
+      return packageToScanSet;
+    }
+
+    String[] basePackages = attributes.getStringArray("basePackages");
+    Arrays.stream(basePackages).forEach(packageToScanSet::add);
+
+    Class<?>[] basePackageClasses = attributes.getClassArray("basePackageClasses");
+    Arrays.stream(basePackageClasses)
+        .map(ClassUtils::getPackageName)
+        .forEach(packageToScanSet::add);
+
+    if (!packageToScanSet.isEmpty()) {
+      return packageToScanSet;
+    }
+
+    // default to scan the package of the annotated class
+    packageToScanSet.add(ClassUtils.getPackageName(importingClassMetadata.getClassName()));
+    return packageToScanSet;
   }
 }

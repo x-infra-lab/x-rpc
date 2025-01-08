@@ -14,15 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.annotation;
+package io.github.xinfra.lab.rpc.spring.bean;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-
-@Target({ElementType.FIELD})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-public @interface XRpcReference {}
+public class XRpcReferenceAnnotationPostProcessor {}

@@ -30,7 +30,7 @@ import org.springframework.context.annotation.Import;
 @Import(XRpcRegistrar.class)
 public @interface EnableXRpc {
 
-  String[] scanBasePackages() default {};
+  String[] basePackages() default {};
 
-  Class<?>[] scanBasePackageClasses() default {};
+  Class<?>[] basePackageClasses() default {};
 }
