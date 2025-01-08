@@ -14,6 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.annotation;
+package io.github.xinfra.lab.rpc.spring.bean;
 
-public @interface XRpcComponentScan {}
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.context.annotation.ImportBeanDefinitionRegistrar;
+import org.springframework.core.type.AnnotationMetadata;
+
+public class XRpcRegistrar implements ImportBeanDefinitionRegistrar {
+  @Override
+  public void registerBeanDefinitions(
+      AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry) {
+    // todo
+  }
+}
