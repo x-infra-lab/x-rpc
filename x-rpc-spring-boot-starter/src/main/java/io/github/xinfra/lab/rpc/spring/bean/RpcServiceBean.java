@@ -14,24 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.annotation;
+package io.github.xinfra.lab.rpc.spring.bean;
 
-import io.github.xinfra.lab.rpc.spring.bean.XRpcBeanDefinitionRegistrar;
-import io.github.xinfra.lab.rpc.spring.boot.autoconfigure.XRpcAutoConfiguration;
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
-import org.springframework.context.annotation.Import;
-
-@Target({ElementType.TYPE})
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Import({XRpcBeanDefinitionRegistrar.class, XRpcAutoConfiguration.class})
-public @interface EnableXRpc {
-
-  String[] basePackages() default {};
-
-  Class<?>[] basePackageClasses() default {};
-}
+public class RpcServiceBean {}
