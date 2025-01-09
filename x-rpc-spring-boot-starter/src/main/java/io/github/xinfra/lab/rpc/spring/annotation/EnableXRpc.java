@@ -16,7 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.spring.annotation;
 
-import io.github.xinfra.lab.rpc.spring.bean.XRpcRegistrar;
+import io.github.xinfra.lab.rpc.spring.bean.XRpcBeanDefinitionRegistrar;
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -27,7 +27,7 @@ import org.springframework.context.annotation.Import;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Import(XRpcRegistrar.class)
+@Import(XRpcBeanDefinitionRegistrar.class)
 public @interface EnableXRpc {
 
   String[] basePackages() default {};

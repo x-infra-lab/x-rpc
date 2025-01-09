@@ -16,14 +16,66 @@
  */
 package io.github.xinfra.lab.rpc.spring.bean;
 
+import io.github.xinfra.lab.rpc.spring.annotation.XRpcService;
+import java.util.HashSet;
 import java.util.Set;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.util.CollectionUtils;
 
-public class XRpcServiceAnnotationPostProcessor {
+@Slf4j
+public class XRpcServiceAnnotationPostProcessor implements BeanDefinitionRegistryPostProcessor {
 
   private final Set<String> packagesToScan;
 
   public XRpcServiceAnnotationPostProcessor(Set<String> packagesToScan) {
     this.packagesToScan = packagesToScan;
   }
-  // todo
+
+  @Override
+  public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory)
+      throws BeansException {
+    // do nothing
+  }
+
+  @Override
+  public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry)
+      throws BeansException {
+    scanXRpcServiceBeans(registry);
+  }
+
+  private void scanXRpcServiceBeans(BeanDefinitionRegistry registry) {
+    if (packagesToScan == null || packagesToScan.isEmpty()) {
+      log.warn("No packages to scan for X RPC services");
+      return;
+    }
+    Set<BeanDefinition> candidateBeanDefinitions = new HashSet<>();
+    ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry, false);
+    scanner.addIncludeFilter(new AnnotationTypeFilter(XRpcService.class));
+    for (String packageToScan : packagesToScan) {
+      Set<BeanDefinition> candidateComponents = scanner.findCandidateComponents(packageToScan);
+      log.info("Found {} X RPC services in package: {}", candidateComponents.size(), packageToScan);
+      candidateBeanDefinitions.addAll(candidateComponents);
+    }
+
+    if (CollectionUtils.isEmpty(candidateBeanDefinitions)) {
+      log.warn("No X RPC services found in packages: {}", String.join(", ", packagesToScan));
+      return;
+    }
+
+    for (BeanDefinition beanDefinition : candidateBeanDefinitions) {
+      registerXRpcServiceBean(registry, beanDefinition);
+    }
+  }
+
+  private void registerXRpcServiceBean(
+      BeanDefinitionRegistry registry, BeanDefinition beanDefinition) {
+    // todo
+  }
 }

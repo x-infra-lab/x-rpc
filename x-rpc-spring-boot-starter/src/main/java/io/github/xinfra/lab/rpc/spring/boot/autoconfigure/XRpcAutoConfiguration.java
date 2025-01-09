@@ -18,11 +18,16 @@ package io.github.xinfra.lab.rpc.spring.boot.autoconfigure;
 
 import io.github.xinfra.lab.registry.ZookeeperConfig;
 import io.github.xinfra.lab.registry.ZookeeperRegistryConfig;
+import io.github.xinfra.lab.rpc.bootstrap.ConsumerBootstrap;
 import io.github.xinfra.lab.rpc.bootstrap.ProviderBoostrap;
+import io.github.xinfra.lab.rpc.cluster.router.Router;
 import io.github.xinfra.lab.rpc.config.ApplicationConfig;
+import io.github.xinfra.lab.rpc.config.ConsumerConfig;
 import io.github.xinfra.lab.rpc.config.ProtocolConfig;
 import io.github.xinfra.lab.rpc.config.ProviderConfig;
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
+import io.github.xinfra.lab.rpc.filter.ClusterFilter;
+import io.github.xinfra.lab.rpc.filter.ConsumerGenericFilter;
 import io.github.xinfra.lab.rpc.filter.Filter;
 import io.github.xinfra.lab.rpc.filter.ProviderGenericFilter;
 import io.github.xinfra.lab.rpc.protocol.XProtocolConfig;
@@ -43,12 +48,14 @@ import org.springframework.context.annotation.Configuration;
 public class XRpcAutoConfiguration {
 
   @Bean
+  @ConditionalOnMissingBean
   @ConfigurationProperties(prefix = "x.rpc.application")
   public ApplicationConfig applicationConfig() {
     return new ApplicationConfig();
   }
 
   @Bean
+  @ConditionalOnMissingBean
   @ConditionalOnClass(ZookeeperConfig.class)
   @ConditionalOnProperty(name = "x.rpc.registry", havingValue = "zookeeper")
   @ConfigurationProperties(prefix = "x.rpc.registry.zookeeper")
@@ -57,6 +64,7 @@ public class XRpcAutoConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean
   @ConditionalOnBean(ZookeeperConfig.class)
   public ZookeeperRegistryConfig zookeeperRegistryConfig(ZookeeperConfig zookeeperConfig) {
     return new ZookeeperRegistryConfig(zookeeperConfig);
@@ -81,6 +89,7 @@ public class XRpcAutoConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean
   @ConditionalOnBean({XRemotingTransportClientConfig.class, XRemotingTransportServerConfig.class})
   public XRemotingTransportConfig xRemotingTransportConfig(
       XRemotingTransportClientConfig xRemotingTransportClientConfig,
@@ -92,6 +101,7 @@ public class XRpcAutoConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean
   @ConditionalOnBean(XRemotingTransportConfig.class)
   public XProtocolConfig xProtocolConfig(XRemotingTransportConfig xRemotingTransportConfig) {
     XProtocolConfig xProtocolConfig = new XProtocolConfig();
@@ -105,6 +115,12 @@ public class XRpcAutoConfiguration {
   }
 
   @Bean
+  public Filter consumerGenericFilter() {
+    return new ConsumerGenericFilter();
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
   public ProviderBoostrap providerBoostrap(
       ApplicationConfig applicationConfig,
       RegistryConfig<?> registryConfig,
@@ -118,5 +134,25 @@ public class XRpcAutoConfiguration {
     providerConfig.setAutoRegister(false);
 
     return ProviderBoostrap.form(providerConfig);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public ConsumerBootstrap consumerBootstrap(
+      ApplicationConfig applicationConfig,
+      RegistryConfig<?> registryConfig,
+      ProtocolConfig protocolConfig,
+      List<ClusterFilter> clusterFilters,
+      List<Filter> filters,
+      List<Router> routers) {
+    ConsumerConfig consumerConfig = new ConsumerConfig();
+    consumerConfig.setApplicationConfig(applicationConfig);
+    consumerConfig.setRegistryConfig(registryConfig);
+    consumerConfig.setProtocolConfig(protocolConfig);
+    consumerConfig.setClusterFilters(clusterFilters);
+    consumerConfig.setFilters(filters);
+    routers.forEach(router -> consumerConfig.getRouterChain().addRouter(router));
+
+    return ConsumerBootstrap.from(consumerConfig);
   }
 }

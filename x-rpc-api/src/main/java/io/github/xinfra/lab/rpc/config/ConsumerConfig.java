@@ -35,5 +35,5 @@ public class ConsumerConfig {
 
   private List<Filter> filters;
 
-  private RouterChain routerChain;
+  private RouterChain routerChain = new RouterChain();
 }

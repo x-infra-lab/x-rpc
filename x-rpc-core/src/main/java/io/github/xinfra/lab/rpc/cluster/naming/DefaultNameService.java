@@ -17,7 +17,6 @@
 package io.github.xinfra.lab.rpc.cluster.naming;
 
 import io.github.xinfra.lab.rpc.cluster.Cluster;
-import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.exception.NoAvailableProviderException;
@@ -40,8 +39,6 @@ public class DefaultNameService implements NameService {
 
   private ReferenceConfig<?> referenceConfig;
 
-  private RouterChain routerChain;
-
   private Set<ServiceInstance> allServiceInstances = new HashSet<>();
 
   private Set<ServiceInstance> healthServiceInstances = new HashSet<>();
@@ -51,16 +48,13 @@ public class DefaultNameService implements NameService {
   public DefaultNameService(Cluster cluster) {
     this.referenceConfig = cluster.referenceConfig();
     this.clientTransport = cluster.clientTransport();
-    this.routerChain = referenceConfig.getConsumerConfig().getRouterChain();
-
     this.clientTransport.addTransportEventListener(this);
   }
 
   @Override
   public List<ServiceInstance> getInstances(Invocation invocation) {
     // copy
-    ArrayList<ServiceInstance> copiedInstances = new ArrayList<>(healthServiceInstances);
-    List<ServiceInstance> availableInstances = routerChain.route(invocation, copiedInstances);
+    ArrayList<ServiceInstance> availableInstances = new ArrayList<>(healthServiceInstances);
     if (availableInstances.isEmpty()) {
       throw new NoAvailableProviderException(
           "No available instance for invocation:"
