@@ -17,25 +17,56 @@
 package io.github.xinfra.lab.rpc.spring.bean;
 
 import io.github.xinfra.lab.rpc.spring.annotation.XRpcService;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.BeanClassLoaderAware;
+import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
-import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.context.ResourceLoaderAware;
+import org.springframework.core.env.Environment;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
+import org.springframework.util.ClassUtils;
 import org.springframework.util.CollectionUtils;
 
 @Slf4j
-public class XRpcServiceAnnotationPostProcessor implements BeanDefinitionRegistryPostProcessor {
+public class XRpcServiceAnnotationPostProcessor
+    implements BeanDefinitionRegistryPostProcessor,
+        EnvironmentAware,
+        ResourceLoaderAware,
+        BeanClassLoaderAware {
 
   private final Set<String> packagesToScan;
+  private Environment environment;
+  private ResourceLoader resourceLoader;
+  private ClassLoader classLoader;
 
   public XRpcServiceAnnotationPostProcessor(Set<String> packagesToScan) {
     this.packagesToScan = packagesToScan;
+  }
+
+  @Override
+  public void setEnvironment(Environment environment) {
+    this.environment = environment;
+  }
+
+  @Override
+  public void setResourceLoader(ResourceLoader resourceLoader) {
+    this.resourceLoader = resourceLoader;
+  }
+
+  @Override
+  public void setBeanClassLoader(ClassLoader classLoader) {
+    this.classLoader = classLoader;
   }
 
   @Override
@@ -55,27 +86,41 @@ public class XRpcServiceAnnotationPostProcessor implements BeanDefinitionRegistr
       log.warn("No packages to scan for X RPC services");
       return;
     }
-    Set<BeanDefinition> candidateBeanDefinitions = new HashSet<>();
-    ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(registry, false);
+    XRpcBeanDefinitionScanner scanner =
+        new XRpcBeanDefinitionScanner(registry, false, environment, resourceLoader);
     scanner.addIncludeFilter(new AnnotationTypeFilter(XRpcService.class));
+
     for (String packageToScan : packagesToScan) {
-      Set<BeanDefinition> candidateComponents = scanner.findCandidateComponents(packageToScan);
-      log.info("Found {} X RPC services in package: {}", candidateComponents.size(), packageToScan);
-      candidateBeanDefinitions.addAll(candidateComponents);
+      // register XRpcService beanDefinition
+      int num = scanner.scan(packageToScan);
+      log.info("Found {} X RPC services in package: {}", num, packageToScan);
     }
 
-    if (CollectionUtils.isEmpty(candidateBeanDefinitions)) {
+    if (CollectionUtils.isEmpty(scanner.getBeanDefinitionHolderMap())) {
       log.warn("No X RPC services found in packages: {}", String.join(", ", packagesToScan));
       return;
     }
 
-    for (BeanDefinition beanDefinition : candidateBeanDefinitions) {
-      registerXRpcServiceBean(registry, beanDefinition);
+    Set<BeanDefinitionHolder> beanDefinitionHolders =
+        scanner.getBeanDefinitionHolderMap().values().stream()
+            .flatMap(Collection::stream)
+            .collect(Collectors.toSet());
+    for (BeanDefinitionHolder beanDefinitionHolder : beanDefinitionHolders) {
+      registerExporterConfigBeans(registry, beanDefinitionHolder);
     }
   }
 
-  private void registerXRpcServiceBean(
-      BeanDefinitionRegistry registry, BeanDefinition beanDefinition) {
-    // todo
+  private void registerExporterConfigBeans(
+      BeanDefinitionRegistry registry, BeanDefinitionHolder rpcServiceBeanDefinitionHolder) {
+    BeanDefinitionBuilder builder =
+        BeanDefinitionBuilder.rootBeanDefinition(ExporterConfigBean.class);
+    builder.addConstructorArgValue(
+        ClassUtils.resolveClassName(
+            rpcServiceBeanDefinitionHolder.getBeanDefinition().getBeanClassName(), classLoader));
+    builder.addPropertyReference("providerBoostrap", "providerBoostrap");
+    builder.addPropertyReference("serviceImpl", rpcServiceBeanDefinitionHolder.getBeanName());
+
+    AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
+    BeanDefinitionReaderUtils.registerWithGeneratedName(beanDefinition, registry);
   }
 }

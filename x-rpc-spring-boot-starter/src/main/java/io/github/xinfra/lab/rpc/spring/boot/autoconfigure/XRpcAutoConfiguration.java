@@ -66,7 +66,7 @@ public class XRpcAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   @ConditionalOnBean(ZookeeperConfig.class)
-  public ZookeeperRegistryConfig zookeeperRegistryConfig(ZookeeperConfig zookeeperConfig) {
+  public RegistryConfig<ZookeeperConfig> zookeeperRegistryConfig(ZookeeperConfig zookeeperConfig) {
     return new ZookeeperRegistryConfig(zookeeperConfig);
   }
 
@@ -103,7 +103,7 @@ public class XRpcAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   @ConditionalOnBean(XRemotingTransportConfig.class)
-  public XProtocolConfig xProtocolConfig(XRemotingTransportConfig xRemotingTransportConfig) {
+  public ProtocolConfig xProtocolConfig(XRemotingTransportConfig xRemotingTransportConfig) {
     XProtocolConfig xProtocolConfig = new XProtocolConfig();
     xProtocolConfig.setXRemotingTransportConfig(xRemotingTransportConfig);
     return xProtocolConfig;

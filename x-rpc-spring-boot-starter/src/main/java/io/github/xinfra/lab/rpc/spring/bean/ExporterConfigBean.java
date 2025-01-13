@@ -16,4 +16,26 @@
  */
 package io.github.xinfra.lab.rpc.spring.bean;
 
-public class RpcServiceBean {}
+import io.github.xinfra.lab.rpc.bootstrap.ProviderBoostrap;
+import io.github.xinfra.lab.rpc.config.ExporterConfig;
+import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
+
+public class ExporterConfigBean extends ExporterConfig implements InitializingBean, DisposableBean {
+
+  private ProviderBoostrap providerBoostrap;
+
+  public ExporterConfigBean(Class<?> serviceInterfaceClass) {
+    super(serviceInterfaceClass);
+  }
+
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    providerBoostrap.export(this);
+  }
+
+  @Override
+  public void destroy() throws Exception {
+    providerBoostrap.unExport(this);
+  }
+}
