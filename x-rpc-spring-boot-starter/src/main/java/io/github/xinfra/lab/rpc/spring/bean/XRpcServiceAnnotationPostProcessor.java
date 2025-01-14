@@ -114,11 +114,13 @@ public class XRpcServiceAnnotationPostProcessor
       BeanDefinitionRegistry registry, BeanDefinitionHolder rpcServiceBeanDefinitionHolder) {
     BeanDefinitionBuilder builder =
         BeanDefinitionBuilder.rootBeanDefinition(ExporterConfigBean.class);
-    builder.addConstructorArgValue(
+    Class<?> serviceClass =
         ClassUtils.resolveClassName(
-            rpcServiceBeanDefinitionHolder.getBeanDefinition().getBeanClassName(), classLoader));
+            rpcServiceBeanDefinitionHolder.getBeanDefinition().getBeanClassName(), classLoader);
+    builder.addConstructorArgValue(serviceClass);
     builder.addPropertyReference("providerBoostrap", "providerBoostrap");
     builder.addPropertyReference("serviceImpl", rpcServiceBeanDefinitionHolder.getBeanName());
+    // todo resolve @XRpcService attrs
 
     AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
     BeanDefinitionReaderUtils.registerWithGeneratedName(beanDefinition, registry);

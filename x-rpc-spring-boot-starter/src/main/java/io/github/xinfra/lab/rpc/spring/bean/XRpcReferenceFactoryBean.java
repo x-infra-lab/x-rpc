@@ -16,16 +16,40 @@
  */
 package io.github.xinfra.lab.rpc.spring.bean;
 
+import io.github.xinfra.lab.rpc.bootstrap.ConsumerBootstrap;
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
-public class XRpcReferenceFactoryBean<T> implements FactoryBean<T> {
+public class XRpcReferenceFactoryBean<T> implements FactoryBean<T>, DisposableBean {
+
+  private Class<?> objectType;
+
+  private ConsumerBootstrap consumerBootstrap;
+
+  private ReferenceConfig<T> referenceConfig;
+
+  private T object;
+
+  public XRpcReferenceFactoryBean(Class<?> objectType) {
+    this.objectType = objectType;
+  }
+
   @Override
   public T getObject() throws Exception {
-    return null;
+    if (object == null) {
+      object = consumerBootstrap.refer(referenceConfig);
+    }
+    return object;
   }
 
   @Override
   public Class<?> getObjectType() {
-    return null;
+    return objectType;
+  }
+
+  @Override
+  public void destroy() throws Exception {
+    consumerBootstrap.unRefer(referenceConfig);
   }
 }

@@ -31,6 +31,7 @@ import io.github.xinfra.lab.rpc.filter.ConsumerGenericFilter;
 import io.github.xinfra.lab.rpc.filter.Filter;
 import io.github.xinfra.lab.rpc.filter.ProviderGenericFilter;
 import io.github.xinfra.lab.rpc.protocol.XProtocolConfig;
+import io.github.xinfra.lab.rpc.spring.context.XRpcApplicationListener;
 import io.github.xinfra.lab.transport.XRemotingTransportClientConfig;
 import io.github.xinfra.lab.transport.XRemotingTransportConfig;
 import io.github.xinfra.lab.transport.XRemotingTransportServerConfig;
@@ -119,7 +120,7 @@ public class XRpcAutoConfiguration {
     return new ConsumerGenericFilter();
   }
 
-  @Bean
+  @Bean(destroyMethod = "close")
   @ConditionalOnMissingBean
   public ProviderBoostrap providerBoostrap(
       ApplicationConfig applicationConfig,
@@ -136,7 +137,7 @@ public class XRpcAutoConfiguration {
     return ProviderBoostrap.form(providerConfig);
   }
 
-  @Bean
+  @Bean(destroyMethod = "close")
   @ConditionalOnMissingBean
   public ConsumerBootstrap consumerBootstrap(
       ApplicationConfig applicationConfig,
@@ -154,5 +155,11 @@ public class XRpcAutoConfiguration {
     routers.forEach(router -> consumerConfig.getRouterChain().addRouter(router));
 
     return ConsumerBootstrap.from(consumerConfig);
+  }
+
+  @Bean
+  @ConditionalOnMissingBean
+  public XRpcApplicationListener xRpcApplicationListener(ProviderBoostrap providerBoostrap) {
+    return new XRpcApplicationListener(providerBoostrap);
   }
 }

@@ -90,6 +90,10 @@ public class ConsumerBootstrap implements Closeable {
     }
   }
 
+  public void unRefer(ReferenceConfig<?> referenceConfig) {
+    // todo
+  }
+
   @Override
   public void close() throws IOException {
     registryManager.close();

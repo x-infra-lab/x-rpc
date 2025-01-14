@@ -16,4 +16,49 @@
  */
 package io.github.xinfra.lab.rpc.spring.bean;
 
-public class XRpcReferenceAnnotationPostProcessor {}
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.spring.annotation.XRpcReference;
+import java.lang.reflect.Field;
+import org.springframework.beans.BeansException;
+import org.springframework.beans.MutablePropertyValues;
+import org.springframework.beans.PropertyValues;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
+import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.util.ReflectionUtils;
+
+public class XRpcReferenceAnnotationPostProcessor implements InstantiationAwareBeanPostProcessor {
+
+  @Override
+  public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName)
+      throws BeansException {
+    MutablePropertyValues mpvs = new MutablePropertyValues(pvs);
+
+    Class<?> beanClass = bean.getClass();
+    ReflectionUtils.doWithFields(
+        beanClass,
+        field -> {
+          String fieldName = field.getName();
+          mpvs.add(fieldName, buildRpcReference(field));
+        },
+        field -> field.isAnnotationPresent(XRpcReference.class));
+
+    return mpvs;
+  }
+
+  private BeanDefinition buildRpcReference(Field field) {
+
+    BeanDefinitionBuilder builder =
+        BeanDefinitionBuilder.rootBeanDefinition(XRpcReferenceFactoryBean.class);
+
+    Class<?> referenceClass = field.getType();
+    builder.addConstructorArgValue(referenceClass);
+    builder.addPropertyReference("consumerBootstrap", "consumerBootstrap");
+
+    ReferenceConfig<?> referenceConfig = new ReferenceConfig<>(referenceClass);
+    // todo resolve @XRpcReference attrs
+    builder.addPropertyValue("referenceConfig", referenceConfig);
+
+    return builder.getBeanDefinition();
+  }
+}
