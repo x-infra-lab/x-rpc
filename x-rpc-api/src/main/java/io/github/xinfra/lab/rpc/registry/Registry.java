@@ -27,7 +27,7 @@ public interface Registry extends Closeable {
 
   ServiceInstance getServiceInstance();
 
-  void register(ServiceConfig<?> serviceConfig);
+  void register(List<? extends ServiceConfig<?>> serviceConfigs);
 
   void update(ServiceInstance serviceInstance);
 

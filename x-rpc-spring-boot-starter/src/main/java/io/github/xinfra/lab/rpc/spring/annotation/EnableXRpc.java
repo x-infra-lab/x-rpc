@@ -14,26 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.config;
+package io.github.xinfra.lab.rpc.spring.annotation;
 
-import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
-import io.github.xinfra.lab.rpc.filter.ClusterFilter;
-import io.github.xinfra.lab.rpc.filter.Filter;
-import java.util.List;
-import lombok.Data;
+import io.github.xinfra.lab.rpc.spring.bean.XRpcBeanDefinitionRegistrar;
+import io.github.xinfra.lab.rpc.spring.boot.autoconfigure.XRpcAutoConfiguration;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import org.springframework.context.annotation.Import;
 
-@Data
-public class ConsumerConfig {
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import({XRpcBeanDefinitionRegistrar.class, XRpcAutoConfiguration.class})
+public @interface EnableXRpc {
 
-  private ApplicationConfig applicationConfig;
+  String[] basePackages() default {};
 
-  private RegistryConfig<?> registryConfig;
-
-  private ProtocolConfig protocolConfig;
-
-  private List<ClusterFilter> clusterFilters;
-
-  private List<Filter> filters;
-
-  private RouterChain routerChain = new RouterChain();
+  Class<?>[] basePackageClasses() default {};
 }

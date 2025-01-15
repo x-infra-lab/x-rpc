@@ -16,4 +16,23 @@
  */
 package io.github.xinfra.lab.rpc.cluster.router;
 
-public interface RouterChain extends Router {}
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import java.util.ArrayList;
+import java.util.List;
+
+public class RouterChain {
+  private List<Router> routers = new ArrayList<>();
+
+  public void addRouter(Router router) {
+    routers.add(router);
+  }
+
+  public List<ServiceInstance> route(
+      Invocation invocation, List<ServiceInstance> serviceInstanceList) {
+    for (Router router : routers) {
+      serviceInstanceList = router.route(invocation, serviceInstanceList);
+    }
+    return serviceInstanceList;
+  }
+}

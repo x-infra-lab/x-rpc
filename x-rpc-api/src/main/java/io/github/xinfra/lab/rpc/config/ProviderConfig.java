@@ -30,4 +30,6 @@ public class ProviderConfig {
   private ProtocolConfig protocolConfig;
 
   private List<Filter> filters;
+
+  private boolean autoRegister = true;
 }

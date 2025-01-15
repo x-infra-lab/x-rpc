@@ -14,26 +14,36 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.config;
+package io.github.xinfra.lab.rpc.spring.bean;
 
-import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
-import io.github.xinfra.lab.rpc.filter.ClusterFilter;
-import io.github.xinfra.lab.rpc.filter.Filter;
-import java.util.List;
-import lombok.Data;
+import io.github.xinfra.lab.rpc.bootstrap.ConsumerBootstrap;
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import org.springframework.beans.factory.FactoryBean;
 
-@Data
-public class ConsumerConfig {
+public class XRpcReferenceFactoryBean<T> implements FactoryBean<T> {
 
-  private ApplicationConfig applicationConfig;
+  private Class<?> objectType;
 
-  private RegistryConfig<?> registryConfig;
+  private ConsumerBootstrap consumerBootstrap;
 
-  private ProtocolConfig protocolConfig;
+  private ReferenceConfig<T> referenceConfig;
 
-  private List<ClusterFilter> clusterFilters;
+  private T object;
 
-  private List<Filter> filters;
+  public XRpcReferenceFactoryBean(Class<?> objectType) {
+    this.objectType = objectType;
+  }
 
-  private RouterChain routerChain = new RouterChain();
+  @Override
+  public T getObject() throws Exception {
+    if (object == null) {
+      object = consumerBootstrap.refer(referenceConfig);
+    }
+    return object;
+  }
+
+  @Override
+  public Class<?> getObjectType() {
+    return objectType;
+  }
 }

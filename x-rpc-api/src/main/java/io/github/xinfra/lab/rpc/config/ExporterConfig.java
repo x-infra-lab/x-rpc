@@ -25,7 +25,7 @@ public class ExporterConfig<T> extends ServiceConfig<T> {
     super(serviceInterfaceClass);
   }
 
-  private ProviderConfig providerConfig;
+  protected ProviderConfig providerConfig;
 
   private T serviceImpl;
 
