@@ -18,10 +18,9 @@ package io.github.xinfra.lab.rpc.spring.bean;
 
 import io.github.xinfra.lab.rpc.bootstrap.ProviderBoostrap;
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-public class ExporterConfigBean extends ExporterConfig implements InitializingBean, DisposableBean {
+public class ExporterConfigBean extends ExporterConfig implements InitializingBean {
 
   private ProviderBoostrap providerBoostrap;
 
@@ -32,10 +31,5 @@ public class ExporterConfigBean extends ExporterConfig implements InitializingBe
   @Override
   public void afterPropertiesSet() throws Exception {
     providerBoostrap.export(this);
-  }
-
-  @Override
-  public void destroy() throws Exception {
-    providerBoostrap.unExport(this);
   }
 }

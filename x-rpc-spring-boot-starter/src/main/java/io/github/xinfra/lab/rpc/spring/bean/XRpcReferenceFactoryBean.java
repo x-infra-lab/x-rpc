@@ -18,10 +18,9 @@ package io.github.xinfra.lab.rpc.spring.bean;
 
 import io.github.xinfra.lab.rpc.bootstrap.ConsumerBootstrap;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
-import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.FactoryBean;
 
-public class XRpcReferenceFactoryBean<T> implements FactoryBean<T>, DisposableBean {
+public class XRpcReferenceFactoryBean<T> implements FactoryBean<T> {
 
   private Class<?> objectType;
 
@@ -46,10 +45,5 @@ public class XRpcReferenceFactoryBean<T> implements FactoryBean<T>, DisposableBe
   @Override
   public Class<?> getObjectType() {
     return objectType;
-  }
-
-  @Override
-  public void destroy() throws Exception {
-    consumerBootstrap.unRefer(referenceConfig);
   }
 }
