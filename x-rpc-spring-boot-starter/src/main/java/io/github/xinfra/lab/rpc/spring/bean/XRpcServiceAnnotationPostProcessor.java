@@ -114,10 +114,16 @@ public class XRpcServiceAnnotationPostProcessor
       BeanDefinitionRegistry registry, BeanDefinitionHolder rpcServiceBeanDefinitionHolder) {
     BeanDefinitionBuilder builder =
         BeanDefinitionBuilder.rootBeanDefinition(ExporterConfigBean.class);
-    Class<?> serviceClass =
+    // get service interface
+    Class<?> beanClass =
         ClassUtils.resolveClassName(
             rpcServiceBeanDefinitionHolder.getBeanDefinition().getBeanClassName(), classLoader);
-    builder.addConstructorArgValue(serviceClass);
+    Class<?>[] allInterfaces = ClassUtils.getAllInterfacesForClass(beanClass);
+    if (allInterfaces.length == 0) {
+      log.warn("No interfaces found for class: {}", beanClass);
+      throw new IllegalArgumentException("No interfaces found for class: " + beanClass);
+    }
+    builder.addConstructorArgValue(allInterfaces[0]);
     builder.addPropertyReference("providerBoostrap", "providerBoostrap");
     builder.addPropertyReference("serviceImpl", rpcServiceBeanDefinitionHolder.getBeanName());
     // todo resolve @XRpcService attrs

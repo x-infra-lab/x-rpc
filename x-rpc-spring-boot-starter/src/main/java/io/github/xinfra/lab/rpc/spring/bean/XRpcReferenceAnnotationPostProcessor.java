@@ -56,6 +56,10 @@ public class XRpcReferenceAnnotationPostProcessor implements InstantiationAwareB
     builder.addPropertyReference("consumerBootstrap", "consumerBootstrap");
 
     ReferenceConfig<?> referenceConfig = new ReferenceConfig<>(referenceClass);
+
+    XRpcReference xRpcReference = field.getAnnotation(XRpcReference.class);
+    referenceConfig.setAppName(xRpcReference.appName());
+
     // todo resolve @XRpcReference attrs
     builder.addPropertyValue("referenceConfig", referenceConfig);
 

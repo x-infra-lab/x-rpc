@@ -18,19 +18,18 @@ package io.github.xinfra.lab.rpc.spring.boot;
 
 import io.github.xinfra.lab.rpc.spring.boot.consumer.ConsumerApplication;
 import io.github.xinfra.lab.rpc.spring.boot.provider.ProviderApplication;
+import org.apache.curator.test.TestingServer;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.junit.jupiter.api.Test;
 
-@ExtendWith(SpringExtension.class)
-@SpringBootTest
 public class XRpcTestApplicationTest {
 
-  //    @Test
-  public void baseTest1() {
-    ConsumerApplication.main(new String[] {});
-    ProviderApplication.main(new String[] {});
+  @Test
+  public void baseTest1() throws Exception {
+    TestingServer testingServer = new TestingServer(2666);
+
+    ProviderApplication.main(new String[] {"--spring.config.name=provider-application"});
+    ConsumerApplication.main(new String[] {"--spring.config.name=consumer-application"});
 
     ConsumerApplication consumerApplication =
         ConsumerApplication.applicationContext.getBean(ConsumerApplication.class);

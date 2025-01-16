@@ -58,7 +58,10 @@ public class XRpcAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean
   @ConditionalOnClass(ZookeeperConfig.class)
-  @ConditionalOnProperty(name = "x.rpc.registry", havingValue = "zookeeper")
+  @ConditionalOnProperty(
+      name = "x.rpc.registry.type",
+      havingValue = "zookeeper",
+      matchIfMissing = true)
   @ConfigurationProperties(prefix = "x.rpc.registry.zookeeper")
   public ZookeeperConfig zookeeperConfig() {
     return new ZookeeperConfig();
@@ -73,7 +76,7 @@ public class XRpcAutoConfiguration {
 
   @Bean
   @ConditionalOnClass(XRemotingTransportServerConfig.class)
-  @ConditionalOnProperty(name = "x.rpc.protocol", havingValue = "x")
+  @ConditionalOnProperty(name = "x.rpc.protocol.type", havingValue = "x", matchIfMissing = true)
   @ConditionalOnMissingBean(XRemotingTransportServerConfig.class)
   @ConfigurationProperties(prefix = "x.rpc.protocol.server")
   public XRemotingTransportServerConfig xRemotingTransportServerConfig() {
@@ -82,7 +85,7 @@ public class XRpcAutoConfiguration {
 
   @Bean
   @ConditionalOnClass(XRemotingTransportClientConfig.class)
-  @ConditionalOnProperty(name = "x.rpc.protocol", havingValue = "x")
+  @ConditionalOnProperty(name = "x.rpc.protocol.type", havingValue = "x", matchIfMissing = true)
   @ConditionalOnMissingBean(XRemotingTransportClientConfig.class)
   @ConfigurationProperties(prefix = "x.rpc.protocol.client")
   public XRemotingTransportClientConfig xRemotingTransportClientConfig() {

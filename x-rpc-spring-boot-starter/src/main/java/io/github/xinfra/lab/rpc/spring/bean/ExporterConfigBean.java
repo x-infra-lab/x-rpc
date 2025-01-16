@@ -18,11 +18,13 @@ package io.github.xinfra.lab.rpc.spring.bean;
 
 import io.github.xinfra.lab.rpc.bootstrap.ProviderBoostrap;
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.InitializingBean;
 
 public class ExporterConfigBean extends ExporterConfig implements InitializingBean {
 
-  private ProviderBoostrap providerBoostrap;
+  @Getter @Setter private ProviderBoostrap providerBoostrap;
 
   public ExporterConfigBean(Class<?> serviceInterfaceClass) {
     super(serviceInterfaceClass);

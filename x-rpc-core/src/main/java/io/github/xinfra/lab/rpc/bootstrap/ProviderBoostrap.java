@@ -36,8 +36,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.commons.lang3.Validate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProviderBoostrap implements Closeable {
+  private static final Logger log = LoggerFactory.getLogger(ProviderBoostrap.class);
   private ProviderConfig providerConfig;
 
   private ServerTransportManager serverTransportManager = new ServerTransportManager();
@@ -97,6 +100,10 @@ public class ProviderBoostrap implements Closeable {
   }
 
   public void register() {
+    if (exportedExporterConfigs.isEmpty()) {
+      log.info("No service exported, skip registry register.");
+      return;
+    }
     RegistryConfig<?> registryConfig = providerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);
     registry.register(exportedExporterConfigs);

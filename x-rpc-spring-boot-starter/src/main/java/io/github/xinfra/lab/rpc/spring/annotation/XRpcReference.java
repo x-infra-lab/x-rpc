@@ -25,4 +25,6 @@ import java.lang.annotation.Target;
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface XRpcReference {}
+public @interface XRpcReference {
+  String appName() default "";
+}

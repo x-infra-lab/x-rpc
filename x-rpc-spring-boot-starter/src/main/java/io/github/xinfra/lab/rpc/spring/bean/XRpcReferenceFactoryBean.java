@@ -18,15 +18,17 @@ package io.github.xinfra.lab.rpc.spring.bean;
 
 import io.github.xinfra.lab.rpc.bootstrap.ConsumerBootstrap;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;
 
 public class XRpcReferenceFactoryBean<T> implements FactoryBean<T> {
 
   private Class<?> objectType;
 
-  private ConsumerBootstrap consumerBootstrap;
+  @Getter @Setter private ConsumerBootstrap consumerBootstrap;
 
-  private ReferenceConfig<T> referenceConfig;
+  @Getter @Setter private ReferenceConfig<T> referenceConfig;
 
   private T object;
 
