@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: spring-consumer-app
+
+x:
+  rpc:
+    application:
+      appName: ${spring.application.name}
+    registry:
+      type: zookeeper
+      zookeeper:
+        zkAddress: 127.0.0.1:2666
+    protocol:
+      type: x
+      server:
+        serverPort: 9999
+      client:
+        connectTimeout: 2000

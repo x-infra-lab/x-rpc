@@ -14,26 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.config;
+package io.github.xinfra.lab.rpc.spring.bean;
 
-import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
-import io.github.xinfra.lab.rpc.filter.ClusterFilter;
-import io.github.xinfra.lab.rpc.filter.Filter;
-import java.util.List;
-import lombok.Data;
+import io.github.xinfra.lab.rpc.bootstrap.ProviderBoostrap;
+import io.github.xinfra.lab.rpc.config.ExporterConfig;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 
-@Data
-public class ConsumerConfig {
+@Slf4j
+public class ExporterConfigBean extends ExporterConfig implements InitializingBean {
 
-  private ApplicationConfig applicationConfig;
+  @Getter @Setter private ProviderBoostrap providerBoostrap;
 
-  private RegistryConfig<?> registryConfig;
+  public ExporterConfigBean(Class<?> serviceInterfaceClass) {
+    super(serviceInterfaceClass);
+  }
 
-  private ProtocolConfig protocolConfig;
-
-  private List<ClusterFilter> clusterFilters;
-
-  private List<Filter> filters;
-
-  private RouterChain routerChain = new RouterChain();
+  @Override
+  public void afterPropertiesSet() throws Exception {
+    providerBoostrap.export(this);
+    log.info("XRpc export service: {}", getServiceInterfaceName());
+  }
 }

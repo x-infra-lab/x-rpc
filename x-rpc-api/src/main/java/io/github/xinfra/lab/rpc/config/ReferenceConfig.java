@@ -30,7 +30,7 @@ public class ReferenceConfig<T> extends ServiceConfig<T> {
     super(serviceInterfaceClass);
   }
 
-  private ConsumerConfig consumerConfig;
+  protected ConsumerConfig consumerConfig;
 
   private ProxyType proxyType = ProxyType.JDK;
 

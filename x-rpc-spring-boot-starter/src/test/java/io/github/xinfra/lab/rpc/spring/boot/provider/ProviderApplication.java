@@ -14,26 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.config;
+package io.github.xinfra.lab.rpc.spring.boot.provider;
 
-import io.github.xinfra.lab.rpc.cluster.router.RouterChain;
-import io.github.xinfra.lab.rpc.filter.ClusterFilter;
-import io.github.xinfra.lab.rpc.filter.Filter;
-import java.util.List;
-import lombok.Data;
+import io.github.xinfra.lab.rpc.spring.annotation.EnableXRpc;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-@Data
-public class ConsumerConfig {
-
-  private ApplicationConfig applicationConfig;
-
-  private RegistryConfig<?> registryConfig;
-
-  private ProtocolConfig protocolConfig;
-
-  private List<ClusterFilter> clusterFilters;
-
-  private List<Filter> filters;
-
-  private RouterChain routerChain = new RouterChain();
+@SpringBootApplication
+@EnableXRpc(basePackageClasses = ProviderApplication.class)
+public class ProviderApplication {
+  public static void main(String[] args) {
+    SpringApplication.run(ProviderApplication.class, args);
+    System.out.println("XRpc ProviderApplication started");
+  }
 }
