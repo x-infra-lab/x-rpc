@@ -19,8 +19,6 @@ package io.github.xinfra.lab.rpc.spring.boot.consumer;
 import io.github.xinfra.lab.rpc.spring.annotation.EnableXRpc;
 import io.github.xinfra.lab.rpc.spring.annotation.XRpcReference;
 import io.github.xinfra.lab.rpc.spring.boot.api.EchoService;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -30,8 +28,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 public class ConsumerApplication {
 
   @XRpcReference(appName = "spring-provider-app")
-  @Getter
-  @Setter
   public EchoService echoService;
 
   public static ConfigurableApplicationContext applicationContext;

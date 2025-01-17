@@ -17,10 +17,12 @@
 package io.github.xinfra.lab.rpc.spring.context;
 
 import io.github.xinfra.lab.rpc.bootstrap.ProviderBoostrap;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
 import org.springframework.context.event.ContextRefreshedEvent;
 
+@Slf4j
 public class XRpcApplicationListener implements ApplicationListener<ApplicationContextEvent> {
   private ProviderBoostrap providerBoostrap;
 

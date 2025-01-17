@@ -83,7 +83,7 @@ public class XRpcServiceAnnotationPostProcessor
 
   private void scanXRpcServiceBeans(BeanDefinitionRegistry registry) {
     if (packagesToScan == null || packagesToScan.isEmpty()) {
-      log.warn("No packages to scan for X RPC services");
+      log.warn("XRpc no packages to scan for XRpc services");
       return;
     }
     XRpcBeanDefinitionScanner scanner =
@@ -93,11 +93,11 @@ public class XRpcServiceAnnotationPostProcessor
     for (String packageToScan : packagesToScan) {
       // register XRpcService beanDefinition
       int num = scanner.scan(packageToScan);
-      log.info("Found {} X RPC services in package: {}", num, packageToScan);
+      log.info("XRpc found {} services in package: {}", num, packageToScan);
     }
 
     if (CollectionUtils.isEmpty(scanner.getBeanDefinitionHolderMap())) {
-      log.warn("No X RPC services found in packages: {}", String.join(", ", packagesToScan));
+      log.warn("XRpc no services found in packages: {}", String.join(", ", packagesToScan));
       return;
     }
 

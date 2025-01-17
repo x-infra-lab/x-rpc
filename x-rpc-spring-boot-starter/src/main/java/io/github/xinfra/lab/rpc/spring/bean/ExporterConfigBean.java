@@ -20,8 +20,10 @@ import io.github.xinfra.lab.rpc.bootstrap.ProviderBoostrap;
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 
+@Slf4j
 public class ExporterConfigBean extends ExporterConfig implements InitializingBean {
 
   @Getter @Setter private ProviderBoostrap providerBoostrap;
@@ -33,5 +35,6 @@ public class ExporterConfigBean extends ExporterConfig implements InitializingBe
   @Override
   public void afterPropertiesSet() throws Exception {
     providerBoostrap.export(this);
+    log.info("XRpc export service: {}", getServiceInterfaceName());
   }
 }

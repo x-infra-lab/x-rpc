@@ -16,38 +16,70 @@
  */
 package io.github.xinfra.lab.rpc.spring.bean;
 
+import static org.springframework.beans.factory.BeanFactory.FACTORY_BEAN_PREFIX;
+
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.spring.annotation.XRpcReference;
 import java.lang.reflect.Field;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
-import org.springframework.beans.MutablePropertyValues;
 import org.springframework.beans.PropertyValues;
+import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.config.InstantiationAwareBeanPostProcessor;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.util.ReflectionUtils;
 
-public class XRpcReferenceAnnotationPostProcessor implements InstantiationAwareBeanPostProcessor {
+public class XRpcReferenceAnnotationPostProcessor
+    implements InstantiationAwareBeanPostProcessor, BeanFactoryAware {
+  private static final Logger log =
+      LoggerFactory.getLogger(XRpcReferenceAnnotationPostProcessor.class);
+  private DefaultListableBeanFactory beanFactory;
+
+  @Override
+  public void setBeanFactory(BeanFactory beanFactory) throws BeansException {
+    if (!(beanFactory instanceof DefaultListableBeanFactory)) {
+      throw new IllegalArgumentException(
+          "beanFactory must be DefaultListableBeanFactory, but is " + beanFactory.getClass());
+    }
+    this.beanFactory = (DefaultListableBeanFactory) beanFactory;
+  }
 
   @Override
   public PropertyValues postProcessProperties(PropertyValues pvs, Object bean, String beanName)
       throws BeansException {
-    MutablePropertyValues mpvs = new MutablePropertyValues(pvs);
-
     Class<?> beanClass = bean.getClass();
     ReflectionUtils.doWithFields(
         beanClass,
         field -> {
-          String fieldName = field.getName();
-          mpvs.add(fieldName, buildRpcReference(field));
+          field.setAccessible(true);
+          try {
+            field.set(bean, buildRpcReferenceObject(field));
+            log.info("XRpc resolve @XRpcReference filed:{}", field);
+          } catch (Exception e) {
+            throw new BeanCreationException(
+                "XRpc resolve @XRpcReference filed fail. filed:" + field, e);
+          }
         },
         field -> field.isAnnotationPresent(XRpcReference.class));
-
-    return mpvs;
+    return pvs;
   }
 
-  private BeanDefinition buildRpcReference(Field field) {
+  private Object buildRpcReferenceObject(Field field) throws Exception {
+    String beanName = field.getType().getSimpleName() + "XRpcReferenceFactoryBean";
+    if (!beanFactory.containsBean(FACTORY_BEAN_PREFIX + beanName)) {
+      registerReferenceFactoryBean(field, beanName);
+    }
+    return beanFactory
+        .getBean(FACTORY_BEAN_PREFIX + beanName, XRpcReferenceFactoryBean.class)
+        .getObject();
+  }
 
+  private void registerReferenceFactoryBean(Field field, String beanName) {
     BeanDefinitionBuilder builder =
         BeanDefinitionBuilder.rootBeanDefinition(XRpcReferenceFactoryBean.class);
 
@@ -63,6 +95,7 @@ public class XRpcReferenceAnnotationPostProcessor implements InstantiationAwareB
     // todo resolve @XRpcReference attrs
     builder.addPropertyValue("referenceConfig", referenceConfig);
 
-    return builder.getBeanDefinition();
+    BeanDefinition beanDefinition = builder.getBeanDefinition();
+    beanFactory.registerBeanDefinition(beanName, beanDefinition);
   }
 }

@@ -101,12 +101,13 @@ public class ProviderBoostrap implements Closeable {
 
   public void register() {
     if (exportedExporterConfigs.isEmpty()) {
-      log.info("No service exported, skip registry register.");
+      log.info("XRpc no service exported, skip registry register.");
       return;
     }
     RegistryConfig<?> registryConfig = providerConfig.getRegistryConfig();
     Registry registry = registryManager.getRegistry(registryConfig);
     registry.register(exportedExporterConfigs);
+    log.info("XRpc {} service registered.", exportedExporterConfigs.size());
   }
 
   private void exportMetadataService(
