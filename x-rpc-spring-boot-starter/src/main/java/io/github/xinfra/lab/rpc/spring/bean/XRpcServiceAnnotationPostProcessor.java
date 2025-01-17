@@ -16,6 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.spring.bean;
 
+import io.github.xinfra.lab.rpc.config.ExporterConfig;
 import io.github.xinfra.lab.rpc.spring.annotation.XRpcService;
 import java.util.Collection;
 import java.util.Set;
@@ -25,7 +26,6 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanClassLoaderAware;
 import org.springframework.beans.factory.config.BeanDefinitionHolder;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.support.BeanDefinitionReaderUtils;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
@@ -106,14 +106,12 @@ public class XRpcServiceAnnotationPostProcessor
             .flatMap(Collection::stream)
             .collect(Collectors.toSet());
     for (BeanDefinitionHolder beanDefinitionHolder : beanDefinitionHolders) {
-      registerExporterConfigBeans(registry, beanDefinitionHolder);
+      registerXRpcServiceBean(registry, beanDefinitionHolder);
     }
   }
 
-  private void registerExporterConfigBeans(
+  private void registerXRpcServiceBean(
       BeanDefinitionRegistry registry, BeanDefinitionHolder rpcServiceBeanDefinitionHolder) {
-    BeanDefinitionBuilder builder =
-        BeanDefinitionBuilder.rootBeanDefinition(ExporterConfigBean.class);
     // get service interface
     Class<?> beanClass =
         ClassUtils.resolveClassName(
@@ -123,12 +121,25 @@ public class XRpcServiceAnnotationPostProcessor
       log.warn("No interfaces found for class: {}", beanClass);
       throw new IllegalArgumentException("No interfaces found for class: " + beanClass);
     }
-    builder.addConstructorArgValue(allInterfaces[0]);
-    builder.addPropertyReference("providerBoostrap", "providerBoostrap");
-    builder.addPropertyReference("serviceImpl", rpcServiceBeanDefinitionHolder.getBeanName());
-    // todo resolve @XRpcService attrs
+    Class<?> serviceInterface = allInterfaces[0];
 
-    AbstractBeanDefinition beanDefinition = builder.getBeanDefinition();
-    BeanDefinitionReaderUtils.registerWithGeneratedName(beanDefinition, registry);
+    BeanDefinitionBuilder xRpcServiceBeanBuilder =
+        BeanDefinitionBuilder.rootBeanDefinition(XRpcServiceBean.class);
+    xRpcServiceBeanBuilder.addPropertyReference("providerBoostrap", "providerBoostrap");
+
+    // todo resolve @XRpcService attrs
+    BeanDefinitionBuilder exporterConfigBuilder =
+        BeanDefinitionBuilder.rootBeanDefinition(ExporterConfig.class);
+    exporterConfigBuilder.addConstructorArgValue(serviceInterface);
+    exporterConfigBuilder.addPropertyReference(
+        "serviceImpl", rpcServiceBeanDefinitionHolder.getBeanName());
+    String exporterConfigBeanName =
+        BeanDefinitionReaderUtils.registerWithGeneratedName(
+            exporterConfigBuilder.getBeanDefinition(), registry);
+
+    xRpcServiceBeanBuilder.addPropertyReference("exporterConfig", exporterConfigBeanName);
+
+    BeanDefinitionReaderUtils.registerWithGeneratedName(
+        xRpcServiceBeanBuilder.getBeanDefinition(), registry);
   }
 }
