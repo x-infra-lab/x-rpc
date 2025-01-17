@@ -106,11 +106,11 @@ public class XRpcServiceAnnotationPostProcessor
             .flatMap(Collection::stream)
             .collect(Collectors.toSet());
     for (BeanDefinitionHolder beanDefinitionHolder : beanDefinitionHolders) {
-      registerExporterConfigBeans(registry, beanDefinitionHolder);
+      registerXRpcServiceBean(registry, beanDefinitionHolder);
     }
   }
 
-  private void registerExporterConfigBeans(
+  private void registerXRpcServiceBean(
       BeanDefinitionRegistry registry, BeanDefinitionHolder rpcServiceBeanDefinitionHolder) {
     // get service interface
     Class<?> beanClass =
