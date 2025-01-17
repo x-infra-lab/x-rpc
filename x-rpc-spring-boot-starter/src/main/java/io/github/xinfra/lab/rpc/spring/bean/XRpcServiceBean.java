@@ -24,17 +24,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 
 @Slf4j
-public class ExporterConfigBean extends ExporterConfig implements InitializingBean {
+public class XRpcServiceBean implements InitializingBean {
 
   @Getter @Setter private ProviderBoostrap providerBoostrap;
 
-  public ExporterConfigBean(Class<?> serviceInterfaceClass) {
-    super(serviceInterfaceClass);
-  }
+  @Getter @Setter private ExporterConfig<?> exporterConfig;
 
   @Override
   public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(this);
-    log.info("XRpc export service: {}", getServiceInterfaceName());
+    providerBoostrap.export(exporterConfig);
+    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
   }
 }
