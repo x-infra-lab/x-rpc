@@ -17,5 +17,12 @@
 package io.github.xinfra.lab.transport;
 
 import io.github.xinfra.lab.rpc.config.TransportClientConfig;
+import lombok.Data;
 
-public class XRemotingTransportClientConfig implements TransportClientConfig {}
+@Data
+public class XRemotingTransportClientConfig implements TransportClientConfig {
+
+  private int connectTimeout = 2000;
+
+  // todo
+}

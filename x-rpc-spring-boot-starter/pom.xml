@@ -8,33 +8,41 @@
     </parent>
 
     <groupId>io.github.xinfra.lab</groupId>
-    <artifactId>x-rpc-test</artifactId>
+    <artifactId>x-rpc-spring-boot-starter</artifactId>
     <packaging>jar</packaging>
 
-    <name>x-rpc-test</name>
-    <url>http://maven.apache.org</url>
+    <name>x-rpc-spring-boot-starter</name>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
-
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-autoconfigure</artifactId>
+            <version>2.7.18</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
+        </dependency>
         <dependency>
             <groupId>io.github.x-infra-lab</groupId>
             <artifactId>x-rpc-core</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.xinfra.lab</groupId>
-            <artifactId>x-rpc-transport-remoting</artifactId>
+            <artifactId>x-rpc-registry-zookeeper</artifactId>
         </dependency>
         <dependency>
             <groupId>io.github.xinfra.lab</groupId>
-            <artifactId>x-rpc-registry-zookeeper</artifactId>
+            <artifactId>x-rpc-transport-remoting</artifactId>
         </dependency>
 
-
-        <!-- test scope start -->
+        <!--test scope-->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
@@ -48,24 +56,15 @@
         </dependency>
 
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <version>2.7.18</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.curator</groupId>
             <artifactId>curator-test</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- test scope end -->
     </dependencies>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-            </plugin>
-        </plugins>
-    </build>
 </project>

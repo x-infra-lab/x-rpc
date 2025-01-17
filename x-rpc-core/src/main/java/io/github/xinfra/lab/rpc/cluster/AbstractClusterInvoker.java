@@ -40,7 +40,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
   protected Invoker filteringConsumerInvoker;
 
   protected LoadBalancer loadBalancer;
-  // todo init
+
   protected RouterChain routerChain;
 
   public AbstractClusterInvoker(Cluster cluster) {

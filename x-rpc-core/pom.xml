@@ -21,12 +21,12 @@
         <dependency>
             <groupId>io.github.xinfra.lab</groupId>
             <artifactId>x-rpc-transport-remoting</artifactId>
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
         <dependency>
             <groupId>io.github.xinfra.lab</groupId>
             <artifactId>x-rpc-registry-zookeeper</artifactId>
-            <scope>provided</scope>
+            <optional>true</optional>
         </dependency>
 
         <!-- lombok -->
