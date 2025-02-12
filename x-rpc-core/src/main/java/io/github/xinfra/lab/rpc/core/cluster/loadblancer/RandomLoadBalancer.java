@@ -14,25 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.bean;
+package io.github.xinfra.lab.rpc.core.cluster.loadblancer;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
+import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalancer;
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
-@Slf4j
-public class XRpcServiceBean implements InitializingBean {
-
-  @Getter @Setter private ProviderBoostrap providerBoostrap;
-
-  @Getter @Setter private ExporterConfig<?> exporterConfig;
-
+public class RandomLoadBalancer implements LoadBalancer {
   @Override
-  public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(exporterConfig);
-    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
+  public ServiceInstance select(List<ServiceInstance> serviceInstances, Invocation invocation) {
+    if (serviceInstances.size() == 1) {
+      return serviceInstances.get(0);
+    }
+    int idx = ThreadLocalRandom.current().nextInt(serviceInstances.size());
+    return serviceInstances.get(idx);
   }
 }

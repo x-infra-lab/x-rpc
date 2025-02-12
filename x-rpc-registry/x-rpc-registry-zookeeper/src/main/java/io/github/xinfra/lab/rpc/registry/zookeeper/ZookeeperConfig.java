@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.bean;
+package io.github.xinfra.lab.rpc.registry.zookeeper;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
+import io.github.xinfra.lab.rpc.registry.RegistryClientConfig;
+import lombok.Data;
 
-@Slf4j
-public class XRpcServiceBean implements InitializingBean {
+@Data
+public class ZookeeperConfig implements RegistryClientConfig {
 
-  @Getter @Setter private ProviderBoostrap providerBoostrap;
+  private String zkAddress;
 
-  @Getter @Setter private ExporterConfig<?> exporterConfig;
+  /** retry */
+  private int sleepMsBetweenRetry = 100;
 
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(exporterConfig);
-    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
-  }
+  private String basePath = "/x/services";
+
+  // todo
 }
