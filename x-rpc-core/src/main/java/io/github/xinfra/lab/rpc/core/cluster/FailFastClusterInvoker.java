@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.bean;
+package io.github.xinfra.lab.rpc.core.cluster;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
+import io.github.xinfra.lab.rpc.cluster.Cluster;
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.invoker.InvocationResult;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
+import java.util.List;
 
-@Slf4j
-public class XRpcServiceBean implements InitializingBean {
+public class FailFastClusterInvoker extends AbstractClusterInvoker {
 
-  @Getter @Setter private ProviderBoostrap providerBoostrap;
-
-  @Getter @Setter private ExporterConfig<?> exporterConfig;
+  public FailFastClusterInvoker(Cluster cluster) {
+    super(cluster);
+  }
 
   @Override
-  public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(exporterConfig);
-    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
+  protected InvocationResult doInvoke(
+      Invocation invocation, List<ServiceInstance> serviceInstances) {
+    ServiceInstance serviceInstance = select(invocation, serviceInstances);
+    invocation.setTargetAddress(serviceInstance.getSocketAddress());
+    return filteringConsumerInvoker.invoke(invocation);
   }
 }

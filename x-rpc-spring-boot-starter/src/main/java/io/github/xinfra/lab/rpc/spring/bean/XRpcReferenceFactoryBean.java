@@ -16,8 +16,8 @@
  */
 package io.github.xinfra.lab.rpc.spring.bean;
 
-import io.github.xinfra.lab.rpc.bootstrap.ConsumerBootstrap;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.core.bootstrap.ConsumerBootstrap;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.FactoryBean;

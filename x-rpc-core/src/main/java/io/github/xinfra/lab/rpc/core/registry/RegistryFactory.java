@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.bean;
+package io.github.xinfra.lab.rpc.core.registry;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
+import io.github.xinfra.lab.rpc.config.RegistryConfig;
+import io.github.xinfra.lab.rpc.registry.Registry;
+import io.github.xinfra.lab.rpc.registry.RegistryType;
+import io.github.xinfra.lab.rpc.registry.zookeeper.ZookeeperRegistry;
 
-@Slf4j
-public class XRpcServiceBean implements InitializingBean {
+public class RegistryFactory {
 
-  @Getter @Setter private ProviderBoostrap providerBoostrap;
-
-  @Getter @Setter private ExporterConfig<?> exporterConfig;
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(exporterConfig);
-    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
+  public static Registry create(RegistryConfig<?> registryConfig) {
+    if (registryConfig.getRegistryType() == RegistryType.ZOOKEEPER) {
+      return new ZookeeperRegistry(registryConfig);
+    }
+    throw new IllegalArgumentException(
+        "Unsupported registry type: " + registryConfig.getRegistryType());
   }
 }

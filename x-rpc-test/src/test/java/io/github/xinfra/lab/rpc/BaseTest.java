@@ -17,25 +17,25 @@
 package io.github.xinfra.lab.rpc;
 
 import com.google.common.collect.Lists;
-import io.github.xinfra.lab.registry.ZookeeperConfig;
-import io.github.xinfra.lab.registry.ZookeeperRegistryConfig;
-import io.github.xinfra.lab.rpc.api.EchoService;
-import io.github.xinfra.lab.rpc.bootstrap.ConsumerBootstrap;
-import io.github.xinfra.lab.rpc.bootstrap.ProviderBoostrap;
 import io.github.xinfra.lab.rpc.config.ApplicationConfig;
 import io.github.xinfra.lab.rpc.config.ConsumerConfig;
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
 import io.github.xinfra.lab.rpc.config.ProviderConfig;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
-import io.github.xinfra.lab.rpc.filter.ConsumerGenericFilter;
-import io.github.xinfra.lab.rpc.filter.ProviderGenericFilter;
+import io.github.xinfra.lab.rpc.core.bootstrap.ConsumerBootstrap;
+import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
+import io.github.xinfra.lab.rpc.core.filter.ConsumerGenericFilter;
+import io.github.xinfra.lab.rpc.core.filter.ProviderGenericFilter;
+import io.github.xinfra.lab.rpc.core.protocol.XProtocolConfig;
 import io.github.xinfra.lab.rpc.generic.GenericService;
 import io.github.xinfra.lab.rpc.generic.GenericType;
-import io.github.xinfra.lab.rpc.protocol.XProtocolConfig;
-import io.github.xinfra.lab.rpc.service.EchoServiceImpl;
-import io.github.xinfra.lab.transport.XRemotingTransportClientConfig;
-import io.github.xinfra.lab.transport.XRemotingTransportConfig;
-import io.github.xinfra.lab.transport.XRemotingTransportServerConfig;
+import io.github.xinfra.lab.rpc.registry.zookeeper.ZookeeperConfig;
+import io.github.xinfra.lab.rpc.registry.zookeeper.ZookeeperRegistryConfig;
+import io.github.xinfra.lab.rpc.test.api.EchoService;
+import io.github.xinfra.lab.rpc.test.service.EchoServiceImpl;
+import io.github.xinfra.lab.rpc.transport.xremoting.XRemotingTransportClientConfig;
+import io.github.xinfra.lab.rpc.transport.xremoting.XRemotingTransportConfig;
+import io.github.xinfra.lab.rpc.transport.xremoting.XRemotingTransportServerConfig;
 import org.apache.curator.test.TestingServer;
 import org.apache.curator.utils.CloseableUtils;
 import org.junit.jupiter.api.AfterAll;
@@ -150,7 +150,7 @@ public class BaseTest {
     ReferenceConfig<GenericService> referenceConfig = new ReferenceConfig<>(GenericService.class);
     referenceConfig.setGeneric(true);
     referenceConfig.setGenericType(GenericType.JSON);
-    referenceConfig.setServiceInterfaceName("io.github.xinfra.lab.rpc.api.EchoService");
+    referenceConfig.setServiceInterfaceName(EchoService.class.getName());
     referenceConfig.setAppName("unit-test-provider-app");
     return consumerBootstrap.refer(referenceConfig);
   }

@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.bean;
+package io.github.xinfra.lab.rpc.core.transport;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
+import io.github.xinfra.lab.rpc.config.TransportClientConfig;
+import io.github.xinfra.lab.rpc.transport.ClientTransport;
+import io.github.xinfra.lab.rpc.transport.TransportType;
+import io.github.xinfra.lab.rpc.transport.xremoting.XRemotingClientTransport;
 
-@Slf4j
-public class XRpcServiceBean implements InitializingBean {
+public class ClientTransportFactory {
 
-  @Getter @Setter private ProviderBoostrap providerBoostrap;
-
-  @Getter @Setter private ExporterConfig<?> exporterConfig;
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(exporterConfig);
-    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
+  public static ClientTransport create(
+      TransportType transportType, TransportClientConfig transportClientConfig) {
+    if (transportType == TransportType.X_REMOTING) {
+      return new XRemotingClientTransport(transportClientConfig);
+    }
+    throw new IllegalStateException("unsupported transportType:" + transportType);
   }
 }

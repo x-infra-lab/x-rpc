@@ -16,7 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.spring.bean;
 
-import io.github.xinfra.lab.rpc.spring.annotation.EnableXRpc;
+import io.github.xinfra.lab.rpc.spring.boot.autoconfigure.EnableXRpc;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;

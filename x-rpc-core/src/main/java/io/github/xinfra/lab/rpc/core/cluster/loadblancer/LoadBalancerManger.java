@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.bean;
+package io.github.xinfra.lab.rpc.core.cluster.loadblancer;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
+import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalanceType;
+import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalancer;
+import java.util.HashMap;
+import java.util.Map;
 
-@Slf4j
-public class XRpcServiceBean implements InitializingBean {
+public class LoadBalancerManger {
 
-  @Getter @Setter private ProviderBoostrap providerBoostrap;
+  private static Map<LoadBalanceType, LoadBalancer> loadBalancerMap = new HashMap<>();
 
-  @Getter @Setter private ExporterConfig<?> exporterConfig;
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(exporterConfig);
-    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
+  public static synchronized LoadBalancer getLoadBalancer(LoadBalanceType loadBalanceType) {
+    LoadBalancer loadBalancer = loadBalancerMap.get(loadBalanceType);
+    if (loadBalancer == null) {
+      loadBalancer = LoadBalancerFactory.create(loadBalanceType);
+      loadBalancerMap.put(loadBalanceType, loadBalancer);
+    }
+    return loadBalancer;
   }
 }

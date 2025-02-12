@@ -14,25 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.bean;
+package io.github.xinfra.lab.rpc.core.protocol;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
-import lombok.Getter;
+import io.github.xinfra.lab.rpc.config.ProtocolConfig;
+import io.github.xinfra.lab.rpc.transport.xremoting.XRemotingTransportConfig;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 
-@Slf4j
-public class XRpcServiceBean implements InitializingBean {
+public class XProtocolConfig implements ProtocolConfig {
 
-  @Getter @Setter private ProviderBoostrap providerBoostrap;
+  public static final String PROTOCL_NAME = "x-rpc";
 
-  @Getter @Setter private ExporterConfig<?> exporterConfig;
+  @Setter private XRemotingTransportConfig xRemotingTransportConfig;
 
   @Override
-  public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(exporterConfig);
-    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
+  public String protocol() {
+    return PROTOCL_NAME;
+  }
+
+  @Override
+  public XRemotingTransportConfig transportConfig() {
+    return xRemotingTransportConfig;
   }
 }

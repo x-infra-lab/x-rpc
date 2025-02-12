@@ -14,25 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.bean;
+package io.github.xinfra.lab.rpc.core.metadata;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
+import io.github.xinfra.lab.rpc.metadata.MetadataInfo;
+import io.github.xinfra.lab.rpc.metadata.MetadataService;
+import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 
-@Slf4j
-public class XRpcServiceBean implements InitializingBean {
+public class MetadataServiceImpl implements MetadataService {
+  private ServiceInstance serviceInstance;
 
-  @Getter @Setter private ProviderBoostrap providerBoostrap;
-
-  @Getter @Setter private ExporterConfig<?> exporterConfig;
+  public MetadataServiceImpl(ServiceInstance serviceInstance) {
+    this.serviceInstance = serviceInstance;
+  }
 
   @Override
-  public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(exporterConfig);
-    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
+  public MetadataInfo getMetadataInfo() {
+    return serviceInstance.getMetadataInfo();
   }
 }
