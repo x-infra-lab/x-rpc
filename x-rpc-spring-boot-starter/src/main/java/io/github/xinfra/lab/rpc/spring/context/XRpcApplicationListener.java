@@ -16,7 +16,7 @@
  */
 package io.github.xinfra.lab.rpc.spring.context;
 
-import io.github.xinfra.lab.rpc.bootstrap.ProviderBoostrap;
+import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;

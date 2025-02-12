@@ -14,25 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.bean;
+package io.github.xinfra.lab.rpc.transport.xremoting;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
-import lombok.Getter;
+import io.github.xinfra.lab.rpc.config.TransportServerConfig;
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
 import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
 
-@Slf4j
-public class XRpcServiceBean implements InitializingBean {
+public class XRemotingTransportServerConfig implements TransportServerConfig {
 
-  @Getter @Setter private ProviderBoostrap providerBoostrap;
-
-  @Getter @Setter private ExporterConfig<?> exporterConfig;
+  @Setter private int serverPort;
 
   @Override
-  public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(exporterConfig);
-    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
+  public int port() {
+    return serverPort;
+  }
+
+  @Override
+  public String host() {
+    try {
+      return Inet4Address.getLocalHost().getHostAddress();
+    } catch (UnknownHostException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

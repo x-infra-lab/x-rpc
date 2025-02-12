@@ -14,25 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.bean;
+package io.github.xinfra.lab.rpc.spring.boot.autoconfigure;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
+import io.github.xinfra.lab.rpc.spring.bean.XRpcBeanDefinitionRegistrar;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+import org.springframework.context.annotation.Import;
 
-@Slf4j
-public class XRpcServiceBean implements InitializingBean {
+@Target({ElementType.TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Import({XRpcBeanDefinitionRegistrar.class, XRpcAutoConfiguration.class})
+public @interface EnableXRpc {
 
-  @Getter @Setter private ProviderBoostrap providerBoostrap;
+  String[] basePackages() default {};
 
-  @Getter @Setter private ExporterConfig<?> exporterConfig;
-
-  @Override
-  public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(exporterConfig);
-    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
-  }
+  Class<?>[] basePackageClasses() default {};
 }

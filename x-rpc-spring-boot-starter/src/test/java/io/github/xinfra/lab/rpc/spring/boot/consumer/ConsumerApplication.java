@@ -16,9 +16,9 @@
  */
 package io.github.xinfra.lab.rpc.spring.boot.consumer;
 
-import io.github.xinfra.lab.rpc.spring.annotation.EnableXRpc;
 import io.github.xinfra.lab.rpc.spring.annotation.XRpcReference;
 import io.github.xinfra.lab.rpc.spring.boot.api.EchoService;
+import io.github.xinfra.lab.rpc.spring.boot.autoconfigure.EnableXRpc;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;

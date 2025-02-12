@@ -14,25 +14,17 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package io.github.xinfra.lab.rpc.spring.bean;
+package io.github.xinfra.lab.rpc.core.filter;
 
-import io.github.xinfra.lab.rpc.config.ExporterConfig;
-import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.InitializingBean;
+import io.github.xinfra.lab.rpc.filter.Filter;
+import io.github.xinfra.lab.rpc.invoker.Invocation;
+import io.github.xinfra.lab.rpc.invoker.InvocationResult;
+import io.github.xinfra.lab.rpc.invoker.Invoker;
 
-@Slf4j
-public class XRpcServiceBean implements InitializingBean {
-
-  @Getter @Setter private ProviderBoostrap providerBoostrap;
-
-  @Getter @Setter private ExporterConfig<?> exporterConfig;
-
+public class MetricFilter implements Filter {
   @Override
-  public void afterPropertiesSet() throws Exception {
-    providerBoostrap.export(exporterConfig);
-    log.info("XRpc export service: {}", exporterConfig.getServiceInterfaceName());
+  public InvocationResult filter(Invoker invoker, Invocation invocation) {
+    // todo
+    return invoker.invoke(invocation);
   }
 }
