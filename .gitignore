@@ -54,3 +54,6 @@ tree.txt
 # system ignore
 .DS_Store
 Thumbs.db
+
+# claude
+.claude/

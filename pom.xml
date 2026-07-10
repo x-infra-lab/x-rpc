@@ -6,8 +6,34 @@
 
     <groupId>io.github.x-infra-lab</groupId>
     <artifactId>x-rpc-parent</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>0.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
+
+    <name>x-rpc</name>
+    <description>A lightweight, high-performance Java RPC framework</description>
+    <url>https://github.com/x-infra-lab/x-rpc</url>
+
+    <licenses>
+        <license>
+            <name>Apache License, Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+
+    <scm>
+        <url>https://github.com/x-infra-lab/x-rpc</url>
+        <connection>scm:git:git://github.com/x-infra-lab/x-rpc.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/x-infra-lab/x-rpc.git</developerConnection>
+    </scm>
+
+    <developers>
+        <developer>
+            <id>x-infra-lab</id>
+            <name>x-infra-lab</name>
+            <url>https://github.com/x-infra-lab</url>
+        </developer>
+    </developers>
     <modules>
         <module>x-rpc-core</module>
         <module>x-rpc-transport</module>
@@ -15,6 +41,8 @@
         <module>x-rpc-api</module>
         <module>x-rpc-test</module>
         <module>x-rpc-spring-boot-starter</module>
+        <module>x-rpc-console</module>
+        <module>x-rpc-example</module>
     </modules>
 
     <properties>
@@ -138,10 +166,35 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>3.3.1</version>
                 </plugin>
+
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.12</version>
+                    <executions>
+                        <execution>
+                            <id>prepare-agent</id>
+                            <goals>
+                                <goal>prepare-agent</goal>
+                            </goals>
+                        </execution>
+                        <execution>
+                            <id>report</id>
+                            <phase>test</phase>
+                            <goals>
+                                <goal>report</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
 
         <plugins>
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
             <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
@@ -150,7 +203,7 @@
                     <java>
                         <googleJavaFormat/>
                         <licenseHeader>
-                            <file>${maven.multiModuleProjectDirectory}/LICENSE</file>
+                            <file>${maven.multiModuleProjectDirectory}/HEADER</file>
                         </licenseHeader>
                     </java>
                 </configuration>
@@ -165,4 +218,66 @@
             </plugin>
         </plugins>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <version>3.3.1</version>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <version>3.6.3</version>
+                        <configuration>
+                            <doclint>none</doclint>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>3.2.4</version>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>0.6.0</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
