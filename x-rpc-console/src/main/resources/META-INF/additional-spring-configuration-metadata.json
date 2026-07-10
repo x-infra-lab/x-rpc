@@ -1,0 +1,23 @@
+{
+  "groups": [
+    {
+      "name": "x.rpc.console",
+      "description": "x-rpc console configuration.",
+      "sourceType": "io.github.xinfra.lab.rpc.console.config.ConsoleConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "x.rpc.console.zk-address",
+      "type": "java.lang.String",
+      "description": "ZooKeeper server address for the console to connect to.",
+      "defaultValue": "127.0.0.1:2181"
+    },
+    {
+      "name": "x.rpc.console.base-path",
+      "type": "java.lang.String",
+      "description": "Base path for service discovery in ZooKeeper.",
+      "defaultValue": "/x/services"
+    }
+  ]
+}

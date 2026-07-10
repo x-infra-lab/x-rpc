@@ -23,8 +23,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
+/** Represents a registered service provider instance with its network address and metadata. */
 @Data
+@EqualsAndHashCode(of = {"address", "port"})
 public class ServiceInstance {
 
   private String appName;
@@ -39,8 +42,6 @@ public class ServiceInstance {
   private String protocol;
   /** Additional extended attributes */
   private Map<String, String> props = new HashMap<>();
-
-  // todo
 
   public ServiceInstance(String appName, String address, Integer port) {
     this.appName = appName;
@@ -78,6 +79,12 @@ public class ServiceInstance {
       this.metadataInfo = new MetadataInfo();
     }
     this.metadataInfo.addService(serviceConfig);
+  }
+
+  public void removeService(ServiceConfig<?> serviceConfig) {
+    if (metadataInfo != null) {
+      this.metadataInfo.removeService(serviceConfig.getServiceInterfaceName());
+    }
   }
 
   public boolean isRevisionChanged() {

@@ -16,6 +16,8 @@
  */
 package io.github.xinfra.lab.rpc.core.proxy;
 
+import io.github.xinfra.lab.rpc.config.ReferenceConfig;
+import io.github.xinfra.lab.rpc.config.ServiceConfig;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
@@ -46,13 +48,21 @@ public class JDKProxy implements Proxy {
 
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
-      // filter Object class method
       if (method.getDeclaringClass().equals(Object.class)) {
-        return method.invoke(invoker, args);
+        String methodName = method.getName();
+        if ("toString".equals(methodName)) {
+          return "XRpcProxy[" + serviceClass.getName() + "]";
+        }
+        if ("hashCode".equals(methodName)) {
+          return System.identityHashCode(proxy);
+        }
+        if ("equals".equals(methodName)) {
+          return proxy == args[0];
+        }
+        return method.invoke(proxy, args);
       }
 
       Invocation invocation = new Invocation();
-      // args may be null
       invocation.setServiceClass(serviceClass);
       invocation.setServiceName(serviceClass.getName());
       invocation.setMethod(method);
@@ -60,6 +70,10 @@ public class JDKProxy implements Proxy {
       invocation.setArgs(args);
       invocation.setArgTypes(
           Arrays.stream(method.getParameterTypes()).map(Class::getName).toArray(String[]::new));
+      ServiceConfig<?> sc = invoker.serviceConfig();
+      if (sc instanceof ReferenceConfig) {
+        invocation.setTimeoutMills(((ReferenceConfig<?>) sc).getTimeoutMills());
+      }
 
       InvocationResult invocationResult = invoker.invoke(invocation);
       return invocationResult.invokeResult();

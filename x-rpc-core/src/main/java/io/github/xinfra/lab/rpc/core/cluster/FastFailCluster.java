@@ -20,11 +20,15 @@ import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.core.filter.FilterChainBuilder;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
+import java.util.concurrent.ExecutorService;
 
 public class FastFailCluster extends AbstractCluster {
 
-  public FastFailCluster(ReferenceConfig<?> referenceConfig, ClientTransport clientTransport) {
-    super(referenceConfig, clientTransport);
+  public FastFailCluster(
+      ReferenceConfig<?> referenceConfig,
+      ClientTransport clientTransport,
+      ExecutorService callbackExecutor) {
+    super(referenceConfig, clientTransport, callbackExecutor);
   }
 
   @Override

@@ -25,9 +25,9 @@ public class ZookeeperConfig implements RegistryClientConfig {
   private String zkAddress;
 
   /** retry */
-  private int sleepMsBetweenRetry = 100;
+  private int sleepMsBetweenRetry = 1000;
+
+  private int maxRetries = 3;
 
   private String basePath = "/x/services";
-
-  // todo
 }

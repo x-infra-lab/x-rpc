@@ -29,6 +29,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ThreadLocalRandom;
 import org.apache.curator.utils.CloseableUtils;
 
@@ -50,13 +51,16 @@ public class Metadatas {
 
       ServiceInstance serviceInstance = select(serviceInstances);
 
-      // todo invoke
-      // todo fail and retry
       ClientTransport clientTransport = null;
       try {
         clientTransport = Transports.getClientTransport(serviceInstance.getProtocol());
-        MetadataService metadataService =
-            referMetadataService(clientTransport, serviceInstance.getSocketAddress());
+        InetSocketAddress socketAddress = serviceInstance.getSocketAddress();
+        try {
+          clientTransport.connect(socketAddress);
+        } catch (Exception e) {
+          throw new RuntimeException("Failed to connect for metadata query: " + socketAddress, e);
+        }
+        MetadataService metadataService = referMetadataService(clientTransport, socketAddress);
         metadataInfo = metadataService.getMetadataInfo();
       } finally {
         if (clientTransport != null) {
@@ -72,7 +76,8 @@ public class Metadatas {
   private static MetadataService referMetadataService(
       ClientTransport clientTransport, InetSocketAddress socketAddress) {
     ReferenceConfig<MetadataService> referenceConfig = new ReferenceConfig<>(MetadataService.class);
-    ConsumerInvoker consumerInvoker = new ConsumerInvoker(referenceConfig, clientTransport);
+    ConsumerInvoker consumerInvoker =
+        new ConsumerInvoker(referenceConfig, clientTransport, ForkJoinPool.commonPool());
     DirectConnectInvoker directConnectInvoker =
         new DirectConnectInvoker(socketAddress, consumerInvoker);
     return ProxyManager.getProxy(referenceConfig.getProxyType())
@@ -80,6 +85,9 @@ public class Metadatas {
   }
 
   public static ServiceInstance select(List<ServiceInstance> serviceInstances) {
+    if (serviceInstances == null || serviceInstances.isEmpty()) {
+      throw new IllegalArgumentException("No available service instances for metadata query");
+    }
     if (serviceInstances.size() == 1) {
       return serviceInstances.get(0);
     } else {

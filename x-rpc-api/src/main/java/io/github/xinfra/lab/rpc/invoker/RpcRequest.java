@@ -17,6 +17,7 @@
 package io.github.xinfra.lab.rpc.invoker;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -24,6 +25,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 public class RpcRequest implements Serializable {
+  private static final long serialVersionUID = 1L;
   /** eg: com.github.xinfra.lab.rpc.exanple.EchoService */
   private String serviceName;
 
@@ -36,12 +38,10 @@ public class RpcRequest implements Serializable {
   private Object[] methodArgs;
 
   /** Extensional properties of request */
-  private Map<String, Object> attachment;
+  private Map<String, Object> attachment = new HashMap<>();
 
   public void addAttachment(Map<String, Object> attachment) {
-    if (this.attachment == null) {
-      this.attachment = attachment;
-    } else {
+    if (attachment != null) {
       this.attachment.putAll(attachment);
     }
   }

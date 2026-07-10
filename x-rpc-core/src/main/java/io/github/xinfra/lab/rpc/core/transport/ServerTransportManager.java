@@ -19,10 +19,12 @@ package io.github.xinfra.lab.rpc.core.transport;
 import io.github.xinfra.lab.rpc.config.TransportConfig;
 import io.github.xinfra.lab.rpc.config.TransportServerConfig;
 import io.github.xinfra.lab.rpc.transport.ServerTransport;
+import java.io.Closeable;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ServerTransportManager {
+public class ServerTransportManager implements Closeable {
   private Map<TransportServerConfig, ServerTransport> serverTransportMap = new HashMap<>();
 
   public synchronized ServerTransport getServerTransport(TransportConfig transportConfig) {
@@ -34,5 +36,23 @@ public class ServerTransportManager {
       serverTransportMap.put(transportServerConfig, serverTransport);
     }
     return serverTransport;
+  }
+
+  @Override
+  public void close() throws IOException {
+    IOException ex = null;
+    for (ServerTransport serverTransport : serverTransportMap.values()) {
+      try {
+        serverTransport.close();
+      } catch (IOException ioe) {
+        if (ex == null) {
+          ex = new IOException("ServerTransportManager close fail.");
+        }
+        ex.addSuppressed(new IOException(serverTransport + " close fail.", ioe));
+      }
+    }
+    if (ex != null) {
+      throw ex;
+    }
   }
 }

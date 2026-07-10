@@ -43,7 +43,7 @@ public class RegistryManager implements Closeable {
         registry.close();
       } catch (IOException ioe) {
         if (ex == null) {
-          ex = new IOException("ClientTransportManager close fail.");
+          ex = new IOException("RegistryManager close fail.");
         }
         ex.addSuppressed(new IOException(registry + " close fail.", ioe));
       }

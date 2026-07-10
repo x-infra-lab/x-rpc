@@ -27,16 +27,15 @@ import lombok.Setter;
 
 @Setter
 @Getter
+/** Holds the result of an RPC invocation, supporting both synchronous and asynchronous completion. */
 public class InvocationResult {
-  // todo
   private boolean success = true;
-  // todo
+
   private String errorMsg;
-  // todo
+
   private Object result;
 
-  // todo
-  CompletableFuture<InvocationResult> invocationResultCompletableFuture;
+  private CompletableFuture<InvocationResult> invocationResultCompletableFuture;
 
   public InvocationResult() {
     this.invocationResultCompletableFuture = new CompletableFuture<>();
@@ -87,7 +86,6 @@ public class InvocationResult {
     return invocationResultCompletableFuture.get();
   }
 
-  /** @return */
   public Object invokeResult() {
     if (success) {
       return result;

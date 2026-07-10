@@ -112,27 +112,45 @@ public class XRpcServiceAnnotationPostProcessor
 
   private void registerXRpcServiceBean(
       BeanDefinitionRegistry registry, BeanDefinitionHolder rpcServiceBeanDefinitionHolder) {
-    // get service interface
     Class<?> beanClass =
         ClassUtils.resolveClassName(
             rpcServiceBeanDefinitionHolder.getBeanDefinition().getBeanClassName(), classLoader);
-    Class<?>[] allInterfaces = ClassUtils.getAllInterfacesForClass(beanClass);
-    if (allInterfaces.length == 0) {
-      log.warn("No interfaces found for class: {}", beanClass);
-      throw new IllegalArgumentException("No interfaces found for class: " + beanClass);
+    XRpcService xRpcService = beanClass.getAnnotation(XRpcService.class);
+
+    Class<?> serviceInterface;
+    if (xRpcService != null && xRpcService.interfaceClass() != void.class) {
+      serviceInterface = xRpcService.interfaceClass();
+    } else {
+      Class<?>[] allInterfaces = ClassUtils.getAllInterfacesForClass(beanClass);
+      serviceInterface = null;
+      for (Class<?> iface : allInterfaces) {
+        if (!iface.getName().startsWith("java.")) {
+          serviceInterface = iface;
+          break;
+        }
+      }
+      if (serviceInterface == null) {
+        throw new IllegalArgumentException(
+            "No business interface found for class: "
+                + beanClass
+                + ". Use @XRpcService(interfaceClass=...) to specify.");
+      }
     }
-    Class<?> serviceInterface = allInterfaces[0];
 
     BeanDefinitionBuilder xRpcServiceBeanBuilder =
         BeanDefinitionBuilder.rootBeanDefinition(XRpcServiceBean.class);
     xRpcServiceBeanBuilder.addPropertyReference("providerBoostrap", "providerBoostrap");
 
-    // todo resolve @XRpcService attrs
     BeanDefinitionBuilder exporterConfigBuilder =
         BeanDefinitionBuilder.rootBeanDefinition(ExporterConfig.class);
     exporterConfigBuilder.addConstructorArgValue(serviceInterface);
     exporterConfigBuilder.addPropertyReference(
         "serviceImpl", rpcServiceBeanDefinitionHolder.getBeanName());
+    if (xRpcService != null) {
+      exporterConfigBuilder.addPropertyValue("tpsLimit", xRpcService.tpsLimit());
+      exporterConfigBuilder.addPropertyValue("weight", xRpcService.weight());
+      exporterConfigBuilder.addPropertyValue("warmupMills", xRpcService.warmupMills());
+    }
     String exporterConfigBeanName =
         BeanDefinitionReaderUtils.registerWithGeneratedName(
             exporterConfigBuilder.getBeanDefinition(), registry);

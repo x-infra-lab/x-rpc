@@ -38,11 +38,19 @@ public class ReferenceConfig<T> extends ServiceConfig<T> {
 
   private InetSocketAddress directAddress;
 
+  private int timeoutMills = 3000;
+
   private LoadBalanceType loadBalanceType = LoadBalanceType.RANDOM;
 
   private boolean generic;
 
   private GenericType genericType = GenericType.JSON;
+
+  private int retries = 3;
+
+  private double tpsLimit = -1;
+
+  private String routeGroup = "";
 
   /** provider appName * */
   private String appName;

@@ -20,4 +20,16 @@ public class Constants {
   public static final String GENERIC_KEY = "generic";
 
   public static final String GENERIC_TYPE_KEY = "generic-type";
+
+  public static final String TRACE_ID_KEY = "x-trace-id";
+
+  public static final String SPAN_ID_KEY = "x-span-id";
+
+  public static final String GROUP_KEY = "x-group";
+
+  public static final String WEIGHT_KEY = "x-weight";
+
+  public static final String WARMUP_KEY = "x-warmup";
+
+  public static final String TPS_LIMIT_KEY = "x-tps-limit";
 }

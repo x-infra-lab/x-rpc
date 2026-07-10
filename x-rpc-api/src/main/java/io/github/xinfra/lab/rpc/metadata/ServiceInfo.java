@@ -22,6 +22,7 @@ import lombok.Data;
 
 @Data
 public class ServiceInfo implements Serializable {
+  private static final long serialVersionUID = 1L;
   private String interfaceName;
   private TreeSet<String> version;
   private TreeSet<String> group;

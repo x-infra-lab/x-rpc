@@ -23,6 +23,7 @@ import java.util.Map;
 import lombok.Data;
 
 @Data
+/** Represents a single RPC method invocation with target address, arguments, and attachments. */
 public class Invocation {
 
   private InetSocketAddress targetAddress;

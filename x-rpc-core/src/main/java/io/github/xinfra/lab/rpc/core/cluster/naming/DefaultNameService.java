@@ -27,8 +27,10 @@ import io.github.xinfra.lab.rpc.transport.ClientTransport;
 import io.github.xinfra.lab.rpc.transport.TransportEvent;
 import java.net.InetSocketAddress;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import lombok.extern.slf4j.Slf4j;
@@ -53,8 +55,7 @@ public class DefaultNameService implements NameService {
   }
 
   @Override
-  public List<ServiceInstance> getInstances(Invocation invocation) {
-    // copy
+  public synchronized List<ServiceInstance> getInstances(Invocation invocation) {
     ArrayList<ServiceInstance> availableInstances = new ArrayList<>(healthServiceInstances);
     if (availableInstances.isEmpty()) {
       throw new NoAvailableProviderException(
@@ -70,55 +71,44 @@ public class DefaultNameService implements NameService {
     return referenceConfig;
   }
 
+  private static String instanceKey(ServiceInstance instance) {
+    return instance.getAddress() + ":" + instance.getPort();
+  }
+
   @Override
   public synchronized void notify(List<ServiceInstance> newServiceInstances) {
-    // add new instance
-    Set<ServiceInstance> addedServiceInstances = new HashSet<>();
-    for (ServiceInstance newServiceInstance : newServiceInstances) {
-      boolean found = false;
-      for (ServiceInstance oldServiceInstance : allServiceInstances) {
-        if (Objects.equals(newServiceInstance.getAddress(), oldServiceInstance.getAddress())
-            && Objects.equals(newServiceInstance.getPort(), oldServiceInstance.getPort())) {
-          found = true;
-          break;
+    Map<String, ServiceInstance> oldMap = new HashMap<>(allServiceInstances.size());
+    for (ServiceInstance instance : allServiceInstances) {
+      oldMap.put(instanceKey(instance), instance);
+    }
+    Map<String, ServiceInstance> newMap = new HashMap<>(newServiceInstances.size());
+    for (ServiceInstance instance : newServiceInstances) {
+      newMap.put(instanceKey(instance), instance);
+    }
+
+    // add new instances
+    for (Map.Entry<String, ServiceInstance> entry : newMap.entrySet()) {
+      if (!oldMap.containsKey(entry.getKey())) {
+        ServiceInstance serviceInstance = entry.getValue();
+        try {
+          clientTransport.connect(serviceInstance.getSocketAddress());
+          healthServiceInstances.add(serviceInstance);
+        } catch (Exception e) {
+          log.warn("connect serviceInstance:{} fail.", serviceInstance, e);
+          unHealthServiceInstances.add(serviceInstance);
+          clientTransport.reconnect(serviceInstance.getSocketAddress());
         }
       }
-      if (!found) {
-        addedServiceInstances.add(newServiceInstance);
-      }
     }
 
-    for (ServiceInstance serviceInstance : addedServiceInstances) {
-      try {
-        clientTransport.connect(serviceInstance.getSocketAddress());
-        healthServiceInstances.add(serviceInstance);
-      } catch (Exception e) {
-        log.warn("connect serviceInstance:{} fail.", serviceInstance, e);
-        unHealthServiceInstances.add(serviceInstance);
-        clientTransport.reconnect(serviceInstance.getSocketAddress());
+    // remove old instances
+    for (Map.Entry<String, ServiceInstance> entry : oldMap.entrySet()) {
+      if (!newMap.containsKey(entry.getKey())) {
+        ServiceInstance serviceInstance = entry.getValue();
+        healthServiceInstances.remove(serviceInstance);
+        unHealthServiceInstances.remove(serviceInstance);
+        clientTransport.disconnect(serviceInstance.getSocketAddress());
       }
-    }
-
-    // remove instance
-    Set<ServiceInstance> removedServiceInstances = new HashSet<>();
-    for (ServiceInstance oldServiceInstance : allServiceInstances) {
-      boolean found = false;
-      for (ServiceInstance newServiceInstance : newServiceInstances) {
-        if (Objects.equals(newServiceInstance.getAddress(), oldServiceInstance.getAddress())
-            && Objects.equals(newServiceInstance.getPort(), oldServiceInstance.getPort())) {
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        removedServiceInstances.add(oldServiceInstance);
-      }
-    }
-
-    healthServiceInstances.removeAll(removedServiceInstances);
-    unHealthServiceInstances.removeAll(removedServiceInstances);
-    for (ServiceInstance serviceInstance : removedServiceInstances) {
-      clientTransport.disconnect(serviceInstance.getSocketAddress());
     }
 
     allServiceInstances = new HashSet<>(newServiceInstances);
@@ -151,6 +141,7 @@ public class DefaultNameService implements NameService {
       if (targetServiceInstance != null) {
         healthServiceInstances.remove(targetServiceInstance);
         unHealthServiceInstances.add(targetServiceInstance);
+        clientTransport.reconnect(socketAddress);
       }
     }
   }

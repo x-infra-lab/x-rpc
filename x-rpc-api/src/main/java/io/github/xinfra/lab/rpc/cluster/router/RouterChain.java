@@ -21,6 +21,7 @@ import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.util.ArrayList;
 import java.util.List;
 
+/** Chains multiple {@link Router} instances, applying them in order. */
 public class RouterChain {
   private List<Router> routers = new ArrayList<>();
 

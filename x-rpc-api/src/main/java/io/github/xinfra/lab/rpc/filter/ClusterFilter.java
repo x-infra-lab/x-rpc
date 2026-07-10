@@ -20,8 +20,10 @@ import io.github.xinfra.lab.rpc.cluster.ClusterInvoker;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 
+/** Intercepts RPC invocations at the cluster level, before load balancing and routing. */
 public interface ClusterFilter {
 
+  /** Processes the invocation, optionally delegating to the cluster invoker. */
   InvocationResult filter(ClusterInvoker clusterInvoker, Invocation invocation);
 
   default void onResult(InvocationResult invocationResult) {}

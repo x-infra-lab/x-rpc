@@ -22,7 +22,15 @@ import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalancer;
 public class LoadBalancerFactory {
 
   public static LoadBalancer create(LoadBalanceType loadBalanceType) {
-    // todo
-    return new RandomLoadBalancer();
+    switch (loadBalanceType) {
+      case RANDOM:
+        return new RandomLoadBalancer();
+      case ROUND_ROBIN:
+        return new RoundRobinLoadBalancer();
+      case WEIGHTED:
+        return new WeightedLoadBalancer();
+      default:
+        throw new IllegalArgumentException("unsupported load balance type: " + loadBalanceType);
+    }
   }
 }

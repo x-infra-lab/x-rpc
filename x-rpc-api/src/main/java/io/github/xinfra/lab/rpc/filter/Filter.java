@@ -20,7 +20,9 @@ import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
 
+/** Intercepts RPC invocations on the provider or consumer side. */
 public interface Filter {
+  /** Processes the invocation, optionally delegating to the next invoker in the chain. */
   InvocationResult filter(Invoker invoker, Invocation invocation);
 
   default void onResult(InvocationResult invocationResult) {}

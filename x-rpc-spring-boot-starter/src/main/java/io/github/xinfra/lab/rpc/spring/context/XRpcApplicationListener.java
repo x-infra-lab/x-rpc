@@ -17,6 +17,7 @@
 package io.github.xinfra.lab.rpc.spring.context;
 
 import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ApplicationContextEvent;
@@ -25,6 +26,7 @@ import org.springframework.context.event.ContextRefreshedEvent;
 @Slf4j
 public class XRpcApplicationListener implements ApplicationListener<ApplicationContextEvent> {
   private ProviderBoostrap providerBoostrap;
+  private final AtomicBoolean registered = new AtomicBoolean(false);
 
   public XRpcApplicationListener(ProviderBoostrap providerBoostrap) {
     this.providerBoostrap = providerBoostrap;
@@ -38,6 +40,8 @@ public class XRpcApplicationListener implements ApplicationListener<ApplicationC
   }
 
   private void onContextRefreshedEvent(ContextRefreshedEvent event) {
-    providerBoostrap.register();
+    if (registered.compareAndSet(false, true)) {
+      providerBoostrap.register();
+    }
   }
 }

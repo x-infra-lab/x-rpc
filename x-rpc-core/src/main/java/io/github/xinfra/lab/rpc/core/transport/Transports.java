@@ -23,7 +23,7 @@ import io.github.xinfra.lab.rpc.transport.xremoting.XRemotingTransportClientConf
 
 public class Transports {
   public static ClientTransport getClientTransport(String protocol) {
-    if (XProtocolConfig.PROTOCL_NAME.equals(protocol)) {
+    if (XProtocolConfig.PROTOCOL_NAME.equals(protocol)) {
       return ClientTransportFactory.create(
           TransportType.X_REMOTING, new XRemotingTransportClientConfig());
     }

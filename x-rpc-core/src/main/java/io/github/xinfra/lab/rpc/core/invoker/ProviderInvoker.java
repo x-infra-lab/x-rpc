@@ -22,6 +22,7 @@ import io.github.xinfra.lab.rpc.exception.RpcServerException;
 import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.invoker.InvocationResult;
 import io.github.xinfra.lab.rpc.invoker.Invoker;
+import java.lang.reflect.InvocationTargetException;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -35,20 +36,21 @@ public class ProviderInvoker implements Invoker {
 
   @Override
   public InvocationResult invoke(Invocation invocation) {
-    InvocationResult invocationResult = new InvocationResult();
     try {
       Object result =
           invocation.getMethod().invoke(exporterConfig.getServiceImpl(), invocation.getArgs());
-      invocationResult.complete(result);
+      InvocationResult invocationResult = new InvocationResult();
+      invocationResult.setResult(result);
+      invocationResult.setSuccess(true);
+      invocationResult.getInvocationResultCompletableFuture().complete(invocationResult);
+      return invocationResult;
+    } catch (InvocationTargetException e) {
+      Throwable cause = e.getCause() != null ? e.getCause() : e;
+      log.error("provider method invoke error", cause);
+      throw new RpcServerException(cause);
     } catch (Throwable t) {
       log.error("provider method invoke error", t);
-      invocationResult.completeExceptionally(t);
-    } finally {
-      try {
-        return invocationResult.get();
-      } catch (Throwable t) {
-        throw new RpcServerException(t);
-      }
+      throw new RpcServerException(t);
     }
   }
 

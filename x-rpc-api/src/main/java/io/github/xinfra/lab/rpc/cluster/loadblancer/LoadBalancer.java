@@ -20,6 +20,7 @@ import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.util.List;
 
+/** Selects one service instance from a list of candidates for an invocation. */
 public interface LoadBalancer {
 
   ServiceInstance select(List<ServiceInstance> serviceInstances, Invocation invocation);

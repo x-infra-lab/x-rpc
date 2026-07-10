@@ -31,9 +31,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class XRemotingServerTransport implements ServerTransport {
   private XRemotingTransportServerConfig transportServerConfig;
   private RpcServer rpcServer;
-  protected Map<String, Invoker> invokerMap = new ConcurrentHashMap<>();
+  Map<String, Invoker> invokerMap = new ConcurrentHashMap<>();
 
-  protected ReflectCache reflectCache = new ReflectCache();
+  ReflectCache reflectCache = new ReflectCache();
 
   public XRemotingServerTransport(TransportServerConfig transportServerConfig) {
     if (!(transportServerConfig instanceof XRemotingTransportServerConfig)) {
@@ -61,7 +61,9 @@ public class XRemotingServerTransport implements ServerTransport {
 
   @Override
   public void unRegister(ServiceConfig<?> serviceConfig, Invoker invoker) {
-    // todo
+    String serviceInterfaceName = serviceConfig.getServiceInterfaceName();
+    invokerMap.remove(serviceInterfaceName);
+    reflectCache.removeClass(serviceConfig.getServiceInterfaceClass());
   }
 
   @Override

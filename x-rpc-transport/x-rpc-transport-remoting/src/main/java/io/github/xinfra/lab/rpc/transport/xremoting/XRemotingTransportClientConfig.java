@@ -23,6 +23,4 @@ import lombok.Data;
 public class XRemotingTransportClientConfig implements TransportClientConfig {
 
   private int connectTimeout = 2000;
-
-  // todo
 }

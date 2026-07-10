@@ -21,6 +21,7 @@ import java.io.Closeable;
 import java.net.InetSocketAddress;
 import java.util.List;
 
+/** Service registry for publishing, subscribing, and discovering service instances. */
 public interface Registry extends Closeable {
 
   void initInstance(String appName, String protocol, InetSocketAddress address);

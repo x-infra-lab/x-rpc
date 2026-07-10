@@ -32,10 +32,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-import lombok.extern.slf4j.Slf4j;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.curator.framework.CuratorFrameworkFactory;
-import org.apache.curator.retry.RetryOneTime;
+import org.apache.curator.retry.ExponentialBackoffRetry;
 import org.apache.curator.utils.CloseableUtils;
 import org.apache.curator.x.discovery.ServiceCache;
 import org.apache.curator.x.discovery.ServiceDiscovery;
@@ -43,7 +42,6 @@ import org.apache.curator.x.discovery.ServiceDiscoveryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Slf4j
 public class ZookeeperRegistry implements Registry {
 
   private static final Logger log = LoggerFactory.getLogger(ZookeeperRegistry.class);
@@ -66,12 +64,19 @@ public class ZookeeperRegistry implements Registry {
     }
     zookeeperRegistryConfig = (ZookeeperRegistryConfig) registryConfig;
     zookeeperConfig = zookeeperRegistryConfig.getRegistryClientConfig();
+    if (zookeeperConfig == null) {
+      throw new IllegalArgumentException("zookeeperConfig must not be null");
+    }
+    if (zookeeperConfig.getZkAddress() == null || zookeeperConfig.getZkAddress().trim().isEmpty()) {
+      throw new IllegalArgumentException("zkAddress must not be blank");
+    }
 
     try {
       curatorFramework =
           CuratorFrameworkFactory.newClient(
               zookeeperConfig.getZkAddress(),
-              new RetryOneTime(zookeeperConfig.getSleepMsBetweenRetry()));
+              new ExponentialBackoffRetry(
+                  zookeeperConfig.getSleepMsBetweenRetry(), zookeeperConfig.getMaxRetries()));
       curatorFramework.start();
 
       serviceDiscovery =
@@ -138,10 +143,27 @@ public class ZookeeperRegistry implements Registry {
   }
 
   @Override
-  public void update(ServiceInstance serviceInstance) {}
+  public void update(ServiceInstance serviceInstance) {
+    try {
+      if (instanceRegistered.get()) {
+        updateInstance();
+      }
+    } catch (Exception e) {
+      log.error("update service instance failed", e);
+      throw new RegistryException("update service instance failed", e);
+    }
+  }
 
   @Override
-  public void unRegister(ServiceInstance serviceInstance) {}
+  public void unRegister(ServiceInstance serviceInstance) {
+    try {
+      serviceDiscovery.unregisterService(InstanceConverter.convert(serviceInstance));
+      instanceRegistered.set(false);
+    } catch (Exception e) {
+      log.error("unregister service failed", e);
+      throw new RegistryException("unregister service failed", e);
+    }
+  }
 
   @Override
   public void subscribe(String appName, NotifyListener notifyListener) {
@@ -155,7 +177,12 @@ public class ZookeeperRegistry implements Registry {
   }
 
   @Override
-  public void unSubscribe(String appName, NotifyListener notifyListener) {}
+  public void unSubscribe(String appName, NotifyListener notifyListener) {
+    ZookeeperServiceDiscoveryChangeWatcher watcher = watchers.get(appName);
+    if (watcher != null) {
+      watcher.getAppServiceInstancesWatcher().removeNotifyListener(notifyListener);
+    }
+  }
 
   @Override
   public List<ServiceInstance> queryServiceInstances(String appName) {
@@ -179,34 +206,33 @@ public class ZookeeperRegistry implements Registry {
     }
 
     CountDownLatch latch = new CountDownLatch(1);
-    watchers.computeIfAbsent(
-        appName,
-        name -> {
-          ServiceCache<ZookeeperInstancePayload> serviceCache =
-              serviceDiscovery.serviceCacheBuilder().name(name).build();
-          ZookeeperServiceDiscoveryChangeWatcher w =
-              new ZookeeperServiceDiscoveryChangeWatcher(
-                  name, serviceCache, this, latch, appServiceInstancesWatcher);
-          serviceCache.addListener(w);
+    ServiceCache<ZookeeperInstancePayload> serviceCache =
+        serviceDiscovery.serviceCacheBuilder().name(appName).build();
+    ZookeeperServiceDiscoveryChangeWatcher w =
+        new ZookeeperServiceDiscoveryChangeWatcher(
+            appName, serviceCache, this, latch, appServiceInstancesWatcher);
+    serviceCache.addListener(w);
 
-          try {
-            serviceCache.start();
-          } catch (Exception e) {
-            CloseableUtils.closeQuietly(serviceCache);
-            log.error("subscribe fail. appName:{}", appName, e);
-            throw new RegistryException("subscribe fail. appName: " + name, e);
-          }
+    try {
+      serviceCache.start();
+    } catch (Exception e) {
+      CloseableUtils.closeQuietly(serviceCache);
+      log.error("subscribe fail. appName:{}", appName, e);
+      throw new RegistryException("subscribe fail. appName: " + appName, e);
+    }
 
-          return w;
-        });
-
+    watchers.put(appName, w);
     appServiceInstancesWatcher.change(queryServiceInstances(appName));
     latch.countDown();
   }
 
   @Override
-  public void removeAppServiceInstancesWatcher(
+  public synchronized void removeAppServiceInstancesWatcher(
       AppServiceInstancesWatcher appServiceInstancesWatcher) {
-    // todo
+    String appName = appServiceInstancesWatcher.getAppName();
+    ZookeeperServiceDiscoveryChangeWatcher watcher = watchers.remove(appName);
+    if (watcher != null) {
+      CloseableUtils.closeQuietly(watcher.getServiceCache());
+    }
   }
 }

@@ -18,6 +18,7 @@ package io.github.xinfra.lab.rpc.invoker;
 
 import io.github.xinfra.lab.rpc.config.ServiceConfig;
 
+/** Executes an RPC invocation against a single service provider. */
 public interface Invoker {
   InvocationResult invoke(Invocation invocation);
 

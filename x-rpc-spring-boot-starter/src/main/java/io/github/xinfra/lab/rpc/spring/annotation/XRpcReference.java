@@ -22,9 +22,24 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/** Injects an x-rpc service consumer proxy into the annotated field. */
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface XRpcReference {
   String appName() default "";
+
+  int timeoutMills() default 3000;
+
+  boolean generic() default false;
+
+  String clusterType() default "FAST_FAIL";
+
+  String loadBalanceType() default "RANDOM";
+
+  int retries() default 3;
+
+  String routeGroup() default "";
+
+  double tpsLimit() default -1;
 }

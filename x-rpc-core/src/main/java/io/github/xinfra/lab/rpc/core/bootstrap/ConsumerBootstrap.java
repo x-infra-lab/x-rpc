@@ -35,6 +35,11 @@ import io.github.xinfra.lab.rpc.registry.Registry;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import org.apache.commons.lang3.Validate;
 
 public class ConsumerBootstrap implements Closeable {
 
@@ -44,8 +49,22 @@ public class ConsumerBootstrap implements Closeable {
 
   private ClientTransportManager clientTransportManager = new ClientTransportManager();
 
+  private ExecutorService callbackExecutor;
+
   private ConsumerBootstrap(ConsumerConfig consumerConfig) {
+    Validate.notNull(consumerConfig, "consumerConfig must not be null");
+    Validate.notNull(consumerConfig.getApplicationConfig(), "applicationConfig must not be null");
+    Validate.notNull(consumerConfig.getRegistryConfig(), "registryConfig must not be null");
+    Validate.notNull(consumerConfig.getProtocolConfig(), "protocolConfig must not be null");
     this.consumerConfig = consumerConfig;
+    this.callbackExecutor =
+        new ThreadPoolExecutor(
+            10,
+            100,
+            60,
+            TimeUnit.SECONDS,
+            new ArrayBlockingQueue<>(1024),
+            new ThreadPoolExecutor.CallerRunsPolicy());
   }
 
   public static ConsumerBootstrap from(ConsumerConfig consumerConfig) {
@@ -53,6 +72,12 @@ public class ConsumerBootstrap implements Closeable {
   }
 
   public <T> T refer(ReferenceConfig<T> referenceConfig) {
+    Validate.notNull(referenceConfig, "referenceConfig must not be null");
+    Validate.notNull(
+        referenceConfig.getServiceInterfaceClass(), "serviceInterfaceClass must not be null");
+    if (referenceConfig.getDirectAddress() == null) {
+      Validate.notBlank(referenceConfig.getAppName(), "appName must not be blank for non-direct reference");
+    }
     referenceConfig.setConsumerConfig(consumerConfig);
 
     // build client transport
@@ -65,17 +90,23 @@ public class ConsumerBootstrap implements Closeable {
     Proxy proxy = ProxyManager.getProxy(referenceConfig.getProxyType());
 
     if (referenceConfig.getDirectAddress() != null) {
+      try {
+        clientTransport.connect(referenceConfig.getDirectAddress());
+      } catch (Exception e) {
+        throw new IllegalStateException(
+            "Failed to connect to direct address: " + referenceConfig.getDirectAddress(), e);
+      }
       Invoker filteringInvoker =
           FilterChainBuilder.buildFilterChainInvoker(
               referenceConfig.getConsumerConfig().getFilters(),
-              new ConsumerInvoker(referenceConfig, clientTransport));
+              new ConsumerInvoker(referenceConfig, clientTransport, callbackExecutor));
       DirectConnectInvoker directConnectInvoker =
           new DirectConnectInvoker(referenceConfig.getDirectAddress(), filteringInvoker);
       return proxy.createProxyObject(
           referenceConfig.getServiceInterfaceClass(), directConnectInvoker);
     } else {
       // build cluster
-      Cluster cluster = ClusterFactory.create(referenceConfig, clientTransport);
+      Cluster cluster = ClusterFactory.create(referenceConfig, clientTransport, callbackExecutor);
 
       // cluster subscribe
       RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
@@ -91,12 +122,40 @@ public class ConsumerBootstrap implements Closeable {
   }
 
   public void unRefer(ReferenceConfig<?> referenceConfig) {
-    // todo
+    RegistryConfig<?> registryConfig = consumerConfig.getRegistryConfig();
+    Registry registry = registryManager.getRegistry(registryConfig);
+    registry.removeAppServiceInstancesWatcher(
+        new DefaultAppServiceInstancesWatcher(referenceConfig.getAppName()));
   }
 
   @Override
   public void close() throws IOException {
-    registryManager.close();
-    clientTransportManager.close();
+    callbackExecutor.shutdown();
+    try {
+      if (!callbackExecutor.awaitTermination(30, TimeUnit.SECONDS)) {
+        callbackExecutor.shutdownNow();
+      }
+    } catch (InterruptedException e) {
+      callbackExecutor.shutdownNow();
+      Thread.currentThread().interrupt();
+    }
+    IOException ex = null;
+    try {
+      registryManager.close();
+    } catch (IOException e) {
+      ex = e;
+    }
+    try {
+      clientTransportManager.close();
+    } catch (IOException e) {
+      if (ex != null) {
+        ex.addSuppressed(e);
+      } else {
+        ex = e;
+      }
+    }
+    if (ex != null) {
+      throw ex;
+    }
   }
 }

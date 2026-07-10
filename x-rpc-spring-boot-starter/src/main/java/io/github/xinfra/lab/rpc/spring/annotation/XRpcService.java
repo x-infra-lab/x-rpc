@@ -22,7 +22,16 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/** Marks a class as an x-rpc service provider. The class must implement a business interface. */
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-public @interface XRpcService {}
+public @interface XRpcService {
+  Class<?> interfaceClass() default void.class;
+
+  double tpsLimit() default -1;
+
+  int weight() default 100;
+
+  int warmupMills() default 0;
+}

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>x-rpc Console</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="header">
+        <h1>x-rpc Console</h1>
+        <div class="status"><span class="refresh-indicator"></span>Auto-refresh: 10s</div>
+    </div>
+    <div class="container">
+        <div class="sidebar">
+            <div class="nav-title">Navigation</div>
+            <div class="nav-item active" data-view="apps">Applications</div>
+            <div class="nav-item" data-view="services">Services</div>
+        </div>
+        <div class="main" id="main-content">
+            <div class="empty">Loading...</div>
+        </div>
+    </div>
+    <script src="js/app.js"></script>
+</body>
+</html>

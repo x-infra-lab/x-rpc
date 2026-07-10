@@ -33,6 +33,9 @@ public class InstanceConverter {
 
     serviceInstance.setRevision(zookeeperServiceInstance.getPayload().getRevision());
     serviceInstance.setProtocol(zookeeperServiceInstance.getPayload().getProtocol());
+    if (zookeeperServiceInstance.getPayload().getProps() != null) {
+      serviceInstance.getProps().putAll(zookeeperServiceInstance.getPayload().getProps());
+    }
     return serviceInstance;
   }
 
@@ -42,6 +45,7 @@ public class InstanceConverter {
     ZookeeperInstancePayload zookeeperInstancePayload = new ZookeeperInstancePayload();
     zookeeperInstancePayload.setRevision(serviceInstance.getRevision());
     zookeeperInstancePayload.setProtocol(serviceInstance.getProtocol());
+    zookeeperInstancePayload.setProps(serviceInstance.getProps());
 
     org.apache.curator.x.discovery.ServiceInstance<ZookeeperInstancePayload>
         zookeeperServiceInstance =

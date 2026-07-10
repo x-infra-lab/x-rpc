@@ -16,7 +16,4 @@
  */
 package io.github.xinfra.lab.rpc.core.context;
 
-public class RpcContext {
-
-  // TODO: shutdown hook release all resource
-}
+public class RpcContext {}
