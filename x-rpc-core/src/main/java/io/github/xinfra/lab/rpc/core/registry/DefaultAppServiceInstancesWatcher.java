@@ -50,7 +50,7 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
   }
 
   public synchronized void change(List<ServiceInstance> serviceInstances) {
-    log.info("app: {} service instances changed: {}", appName, serviceInstances);
+    log.debug("app: {} service instances changed: {}", appName, serviceInstances);
 
     Map<String, Map<ServiceInfo, List<ServiceInstance>>> newServiceToInstancesMap = new HashMap<>();
 
@@ -65,7 +65,6 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
       String revision = entry.getKey();
       List<ServiceInstance> subInstances = entry.getValue();
 
-      // todo
       MetadataInfo metadataInfo =
           subInstances.stream()
               .map(ServiceInstance::getMetadataInfo)
@@ -92,7 +91,6 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
       try {
         notifyListener.notify(matchedServiceInstances(notifyListener.serviceConfig()));
       } catch (Exception e) {
-        // todo retry?
         log.error("notify listener fail. service config: {} ", notifyListener.serviceConfig(), e);
       }
     }
@@ -103,6 +101,10 @@ public class DefaultAppServiceInstancesWatcher implements AppServiceInstancesWat
       notifyListeners.add(notifyListener);
       notifyListener.notify(matchedServiceInstances(notifyListener.serviceConfig()));
     }
+  }
+
+  public synchronized void removeNotifyListener(NotifyListener notifyListener) {
+    notifyListeners.remove(notifyListener);
   }
 
   private List<ServiceInstance> matchedServiceInstances(ServiceConfig<?> serviceConfig) {

@@ -65,9 +65,9 @@ public class BaseTest {
 
   @AfterAll
   public static void afterAll() throws Exception {
-    CloseableUtils.closeQuietly(testingServer);
     CloseableUtils.closeQuietly(consumerBootstrap);
     CloseableUtils.closeQuietly(providerBoostrap);
+    CloseableUtils.closeQuietly(testingServer);
   }
 
   private static void exportService() {
@@ -98,7 +98,7 @@ public class BaseTest {
     providerConfig.setFilters(Lists.newArrayList(new ProviderGenericFilter()));
 
     // provider bootstrap
-    providerBoostrap = ProviderBoostrap.form(providerConfig);
+    providerBoostrap = ProviderBoostrap.from(providerConfig);
 
     // exporter config
     ExporterConfig<EchoService> exporterConfig = new ExporterConfig<>(EchoService.class);

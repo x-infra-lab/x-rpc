@@ -1,0 +1,82 @@
+{
+  "groups": [
+    {
+      "name": "x.rpc",
+      "description": "x-rpc framework configuration."
+    },
+    {
+      "name": "x.rpc.application",
+      "description": "Application configuration.",
+      "sourceType": "io.github.xinfra.lab.rpc.config.ApplicationConfig"
+    },
+    {
+      "name": "x.rpc.registry.zookeeper",
+      "description": "ZooKeeper registry configuration.",
+      "sourceType": "io.github.xinfra.lab.rpc.registry.zookeeper.ZookeeperConfig"
+    },
+    {
+      "name": "x.rpc.protocol.server",
+      "description": "Transport server configuration.",
+      "sourceType": "io.github.xinfra.lab.rpc.transport.xremoting.XRemotingTransportServerConfig"
+    },
+    {
+      "name": "x.rpc.protocol.client",
+      "description": "Transport client configuration.",
+      "sourceType": "io.github.xinfra.lab.rpc.transport.xremoting.XRemotingTransportClientConfig"
+    }
+  ],
+  "properties": [
+    {
+      "name": "x.rpc.enabled",
+      "type": "java.lang.Boolean",
+      "description": "Enable or disable x-rpc auto-configuration.",
+      "defaultValue": true
+    },
+    {
+      "name": "x.rpc.application.app-name",
+      "type": "java.lang.String",
+      "description": "Application name for service registration."
+    },
+    {
+      "name": "x.rpc.registry.type",
+      "type": "java.lang.String",
+      "description": "Registry type.",
+      "defaultValue": "zookeeper"
+    },
+    {
+      "name": "x.rpc.registry.zookeeper.zk-address",
+      "type": "java.lang.String",
+      "description": "ZooKeeper server address (host:port)."
+    },
+    {
+      "name": "x.rpc.registry.zookeeper.base-path",
+      "type": "java.lang.String",
+      "description": "Base path for service discovery in ZooKeeper.",
+      "defaultValue": "/x/services"
+    },
+    {
+      "name": "x.rpc.registry.zookeeper.sleep-ms-between-retry",
+      "type": "java.lang.Integer",
+      "description": "Milliseconds between retry attempts.",
+      "defaultValue": 100
+    },
+    {
+      "name": "x.rpc.protocol.type",
+      "type": "java.lang.String",
+      "description": "Protocol type.",
+      "defaultValue": "x"
+    },
+    {
+      "name": "x.rpc.protocol.server.server-port",
+      "type": "java.lang.Integer",
+      "description": "Server listening port. 0 for auto-assign.",
+      "defaultValue": 0
+    },
+    {
+      "name": "x.rpc.protocol.client.connect-timeout",
+      "type": "java.lang.Integer",
+      "description": "Client connection timeout in milliseconds.",
+      "defaultValue": 2000
+    }
+  ]
+}

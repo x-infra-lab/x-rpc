@@ -27,25 +27,25 @@ import io.github.xinfra.lab.rpc.invoker.Invoker;
 import io.github.xinfra.lab.rpc.invoker.RpcRequest;
 import io.github.xinfra.lab.rpc.invoker.RpcResponse;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
 public class ConsumerInvoker implements Invoker {
 
-  // todo
-  private static ExecutorService invokeCallBackExecutor =
-      new ThreadPoolExecutor(10, 100, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<Runnable>(1024));
-
   private ReferenceConfig<?> referenceConfig;
   private ClientTransport clientTransport;
+  private ExecutorService invokeCallBackExecutor;
 
-  public ConsumerInvoker(ReferenceConfig<?> referenceConfig, ClientTransport clientTransport) {
+  public ConsumerInvoker(
+      ReferenceConfig<?> referenceConfig,
+      ClientTransport clientTransport,
+      ExecutorService invokeCallBackExecutor) {
     this.referenceConfig = referenceConfig;
     this.clientTransport = clientTransport;
+    this.invokeCallBackExecutor = invokeCallBackExecutor;
   }
 
   @Override
@@ -69,10 +69,12 @@ public class ConsumerInvoker implements Invoker {
             }
           });
 
-      // todo: support async invoke
       return result.get(invocation.getTimeoutMills());
     } catch (TimeoutException te) {
       throw new RpcTimeoutException("consumer invoke timeout. invocation:" + invocation, te);
+    } catch (ExecutionException ee) {
+      Throwable cause = ee.getCause() != null ? ee.getCause() : ee;
+      throw new RpcClientException("consumer invoke fail. invocation:" + invocation, cause);
     } catch (Exception e) {
       throw new RpcClientException("consumer invoke fail. invocation:" + invocation, e);
     }

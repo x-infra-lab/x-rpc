@@ -25,4 +25,6 @@ public interface AppServiceInstancesWatcher {
   String getAppName();
 
   void addNotifyListener(NotifyListener notifyListener);
+
+  void removeNotifyListener(NotifyListener notifyListener);
 }

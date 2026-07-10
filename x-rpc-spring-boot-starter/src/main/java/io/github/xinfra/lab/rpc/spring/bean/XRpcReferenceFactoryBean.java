@@ -30,7 +30,7 @@ public class XRpcReferenceFactoryBean<T> implements FactoryBean<T> {
 
   @Getter @Setter private ReferenceConfig<T> referenceConfig;
 
-  private T object;
+  private volatile T object;
 
   public XRpcReferenceFactoryBean(Class<?> objectType) {
     this.objectType = objectType;
@@ -39,7 +39,11 @@ public class XRpcReferenceFactoryBean<T> implements FactoryBean<T> {
   @Override
   public T getObject() throws Exception {
     if (object == null) {
-      object = consumerBootstrap.refer(referenceConfig);
+      synchronized (this) {
+        if (object == null) {
+          object = consumerBootstrap.refer(referenceConfig);
+        }
+      }
     }
     return object;
   }

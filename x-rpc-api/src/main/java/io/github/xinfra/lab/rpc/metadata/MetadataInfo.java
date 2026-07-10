@@ -27,6 +27,7 @@ import org.apache.commons.codec.digest.DigestUtils;
 @Data
 @NoArgsConstructor
 public class MetadataInfo implements Serializable {
+  private static final long serialVersionUID = 1L;
   public static final String EMPTY_REVISION = "-";
 
   private TreeMap<String, ServiceInfo> serviceInfos = new TreeMap<>();
@@ -41,6 +42,10 @@ public class MetadataInfo implements Serializable {
     serviceInfo.setGroup(new TreeSet<>(serviceConfig.getGroup()));
     serviceInfo.setVersion(new TreeSet<>(serviceConfig.getVersion()));
     serviceInfos.put(serviceConfig.getServiceInterfaceName(), serviceInfo);
+  }
+
+  public void removeService(String interfaceName) {
+    serviceInfos.remove(interfaceName);
   }
 
   /** @return revision is changed or not */

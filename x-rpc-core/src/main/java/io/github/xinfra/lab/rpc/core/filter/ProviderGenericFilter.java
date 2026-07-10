@@ -40,12 +40,11 @@ public class ProviderGenericFilter implements Filter {
 
       if (Objects.equals(generic, true)) {
         Object[] args = invocation.getArgs();
-        Object[] realArgs = new Object[args.length];
 
         if (Objects.equals(genericType, GenericType.JSON.name())) {
           Method method = invocation.getMethod();
-          // todo test genericParameter
           Type[] genericParameterTypes = method.getGenericParameterTypes();
+          Object[] realArgs = new Object[args.length];
 
           for (int i = 0; i < args.length; i++) {
             Object arg = args[i];
@@ -63,9 +62,10 @@ public class ProviderGenericFilter implements Filter {
               }
             }
           }
+          invocation.setArgs(realArgs);
+        } else {
+          throw new GenericException("Unsupported generic type: " + genericType);
         }
-
-        invocation.setArgs(realArgs);
       }
     }
     return invoker.invoke(invocation);
@@ -73,7 +73,6 @@ public class ProviderGenericFilter implements Filter {
 
   @Override
   public void onResult(InvocationResult invocationResult) {
-    // todo
     Filter.super.onResult(invocationResult);
   }
 }

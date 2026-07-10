@@ -21,15 +21,21 @@ import io.github.xinfra.lab.rpc.cluster.naming.NameService;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.core.cluster.naming.DefaultNameService;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
+import java.util.concurrent.ExecutorService;
 
 public abstract class AbstractCluster implements Cluster {
   protected ReferenceConfig<?> referenceConfig;
   protected NameService nameService;
   protected ClientTransport clientTransport;
+  protected ExecutorService callbackExecutor;
 
-  public AbstractCluster(ReferenceConfig<?> referenceConfig, ClientTransport clientTransport) {
+  public AbstractCluster(
+      ReferenceConfig<?> referenceConfig,
+      ClientTransport clientTransport,
+      ExecutorService callbackExecutor) {
     this.referenceConfig = referenceConfig;
     this.clientTransport = clientTransport;
+    this.callbackExecutor = callbackExecutor;
     this.nameService = new DefaultNameService(this);
   }
 
@@ -46,5 +52,10 @@ public abstract class AbstractCluster implements Cluster {
   @Override
   public ClientTransport clientTransport() {
     return clientTransport;
+  }
+
+  @Override
+  public ExecutorService callbackExecutor() {
+    return callbackExecutor;
   }
 }

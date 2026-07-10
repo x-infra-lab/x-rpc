@@ -18,6 +18,8 @@ package io.github.xinfra.lab.rpc.spring.bean;
 
 import static org.springframework.beans.factory.BeanFactory.FACTORY_BEAN_PREFIX;
 
+import io.github.xinfra.lab.rpc.cluster.ClusterType;
+import io.github.xinfra.lab.rpc.cluster.loadblancer.LoadBalanceType;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.spring.annotation.XRpcReference;
 import java.lang.reflect.Field;
@@ -70,7 +72,9 @@ public class XRpcReferenceAnnotationPostProcessor
   }
 
   private Object buildRpcReferenceObject(Field field) throws Exception {
-    String beanName = field.getType().getSimpleName() + "XRpcReferenceFactoryBean";
+    XRpcReference xRpcReference = field.getAnnotation(XRpcReference.class);
+    String beanName =
+        field.getType().getName() + "@" + xRpcReference.appName() + "XRpcReferenceFactoryBean";
     if (!beanFactory.containsBean(FACTORY_BEAN_PREFIX + beanName)) {
       registerReferenceFactoryBean(field, beanName);
     }
@@ -91,8 +95,14 @@ public class XRpcReferenceAnnotationPostProcessor
 
     XRpcReference xRpcReference = field.getAnnotation(XRpcReference.class);
     referenceConfig.setAppName(xRpcReference.appName());
+    referenceConfig.setTimeoutMills(xRpcReference.timeoutMills());
+    referenceConfig.setGeneric(xRpcReference.generic());
+    referenceConfig.setClusterType(ClusterType.valueOf(xRpcReference.clusterType()));
+    referenceConfig.setLoadBalanceType(LoadBalanceType.valueOf(xRpcReference.loadBalanceType()));
+    referenceConfig.setRetries(xRpcReference.retries());
+    referenceConfig.setRouteGroup(xRpcReference.routeGroup());
+    referenceConfig.setTpsLimit(xRpcReference.tpsLimit());
 
-    // todo resolve @XRpcReference attrs
     builder.addPropertyValue("referenceConfig", referenceConfig);
 
     BeanDefinition beanDefinition = builder.getBeanDefinition();

@@ -21,7 +21,11 @@ import io.github.xinfra.lab.rpc.proxy.ProxyType;
 
 public class ProxyFactory {
   public static Proxy create(ProxyType proxyType) {
-    // todo
-    return new JDKProxy();
+    switch (proxyType) {
+      case JDK:
+        return new JDKProxy();
+      default:
+        throw new IllegalArgumentException("unsupported proxy type: " + proxyType);
+    }
   }
 }

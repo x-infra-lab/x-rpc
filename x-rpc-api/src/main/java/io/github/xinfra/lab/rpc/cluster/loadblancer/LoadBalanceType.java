@@ -17,5 +17,7 @@
 package io.github.xinfra.lab.rpc.cluster.loadblancer;
 
 public enum LoadBalanceType {
-  RANDOM;
+  RANDOM,
+  ROUND_ROBIN,
+  WEIGHTED;
 }

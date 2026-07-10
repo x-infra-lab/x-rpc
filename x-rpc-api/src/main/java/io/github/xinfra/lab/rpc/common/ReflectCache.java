@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class ReflectCache {
   /** key: service class name value: classloader */
-  public Map<String, ClassLoader> classLoaderMap = new ConcurrentHashMap<>();
+  private Map<String, ClassLoader> classLoaderMap = new ConcurrentHashMap<>();
 
   /** key: methodName value: key: methodSign - value: method */
   private Map<String, Map<String, Method>> overrideMethodMap = new ConcurrentHashMap<>();
@@ -39,6 +39,11 @@ public class ReflectCache {
     Map<String, Method> methodSignMap =
         overrideMethodMap.computeIfAbsent(clazz.getName(), k -> new ConcurrentHashMap<>());
     methodSignMap.put(ClassUtils.genMethodSign(method), method);
+  }
+
+  public void removeClass(Class<?> serviceInterfaceClass) {
+    classLoaderMap.remove(serviceInterfaceClass.getName());
+    overrideMethodMap.remove(serviceInterfaceClass.getName());
   }
 
   public Method find(String serviceName, String methodName, String[] methodArgTypes) {

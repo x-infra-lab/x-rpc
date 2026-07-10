@@ -52,7 +52,7 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
     this.filteringConsumerInvoker =
         FilterChainBuilder.buildFilterChainInvoker(
             referenceConfig.getConsumerConfig().getFilters(),
-            new ConsumerInvoker(referenceConfig, cluster.clientTransport()));
+            new ConsumerInvoker(referenceConfig, cluster.clientTransport(), cluster.callbackExecutor()));
 
     this.loadBalancer = LoadBalancerManger.getLoadBalancer(referenceConfig.getLoadBalanceType());
     this.routerChain = referenceConfig.getConsumerConfig().getRouterChain();
@@ -76,7 +76,6 @@ public abstract class AbstractClusterInvoker implements ClusterInvoker {
   }
 
   protected ServiceInstance select(Invocation invocation, List<ServiceInstance> serviceInstances) {
-    // todo
     return loadBalancer.select(serviceInstances, invocation);
   }
 

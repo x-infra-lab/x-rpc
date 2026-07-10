@@ -19,7 +19,9 @@ package io.github.xinfra.lab.rpc.cluster;
 import io.github.xinfra.lab.rpc.cluster.naming.NameService;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
+import java.util.concurrent.ExecutorService;
 
+/** Manages the client-side cluster of service providers, including naming, transport, and invoker. */
 public interface Cluster {
 
   ReferenceConfig<?> referenceConfig();
@@ -27,6 +29,8 @@ public interface Cluster {
   NameService nameService();
 
   ClientTransport clientTransport();
+
+  ExecutorService callbackExecutor();
 
   ClusterInvoker filteringInvoker();
 }

@@ -29,40 +29,32 @@ import java.util.List;
 public class FilterChainBuilder {
 
   public static Invoker buildFilterChainInvoker(List<Filter> filters, Invoker invoker) {
-    if (filters.isEmpty()) {
+    if (filters == null || filters.isEmpty()) {
       return invoker;
     }
 
-    try {
-      Invoker nextNode = invoker;
-      for (int i = filters.size() - 1; i >= 0; i--) {
-        invoker = new FilterChainNodeInvoker(filters.get(i), nextNode);
-        nextNode = invoker;
-      }
-
-      return invoker;
-    } catch (Throwable throwable) {
-      throw new RuntimeException("fail build filter chain.", throwable);
+    Invoker nextNode = invoker;
+    for (int i = filters.size() - 1; i >= 0; i--) {
+      invoker = new FilterChainNodeInvoker(filters.get(i), nextNode);
+      nextNode = invoker;
     }
+
+    return invoker;
   }
 
   public static ClusterInvoker buildClusterFilterChainInvoker(
       List<ClusterFilter> clusterFilters, ClusterInvoker clusterInvoker) {
-    if (clusterFilters.isEmpty()) {
+    if (clusterFilters == null || clusterFilters.isEmpty()) {
       return clusterInvoker;
     }
 
-    try {
-      ClusterInvoker nextNode = clusterInvoker;
-      for (int i = clusterFilters.size() - 1; i >= 0; i--) {
-        clusterInvoker = new ClusterFilterChainNodeInvoker(clusterFilters.get(i), nextNode);
-        nextNode = clusterInvoker;
-      }
-
-      return clusterInvoker;
-    } catch (Throwable throwable) {
-      throw new RuntimeException("fail build filter chain.", throwable);
+    ClusterInvoker nextNode = clusterInvoker;
+    for (int i = clusterFilters.size() - 1; i >= 0; i--) {
+      clusterInvoker = new ClusterFilterChainNodeInvoker(clusterFilters.get(i), nextNode);
+      nextNode = clusterInvoker;
     }
+
+    return clusterInvoker;
   }
 
   public static class FilterChainNodeInvoker implements Invoker {
@@ -76,12 +68,12 @@ public class FilterChainBuilder {
 
     @Override
     public InvocationResult invoke(Invocation invocation) {
-      InvocationResult invocationResult = null;
+      InvocationResult invocationResult;
       try {
         invocationResult = filter.filter(nextNode, invocation);
-      } catch (Exception t) {
-        filter.onError(t);
-        throw t;
+      } catch (Exception e) {
+        filter.onError(e);
+        throw e;
       }
       return invocationResult.whenComplete(
           (result, throwable) -> {
@@ -111,12 +103,12 @@ public class FilterChainBuilder {
 
     @Override
     public InvocationResult invoke(Invocation invocation) {
-      InvocationResult invocationResult = null;
+      InvocationResult invocationResult;
       try {
         invocationResult = clusterFilter.filter(nextNode, invocation);
-      } catch (Throwable t) {
-        clusterFilter.onError(t);
-        throw t;
+      } catch (Exception e) {
+        clusterFilter.onError(e);
+        throw e;
       }
       return invocationResult.whenComplete(
           (result, throwable) -> {

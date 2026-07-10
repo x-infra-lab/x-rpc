@@ -29,6 +29,12 @@ public class ExporterConfig<T> extends ServiceConfig<T> {
 
   private T serviceImpl;
 
+  private double tpsLimit = -1;
+
+  private int weight = 100;
+
+  private int warmupMills = 0;
+
   public void setProviderConfig(ProviderConfig providerConfig) {
     this.providerConfig = providerConfig;
     this.protocol.add(providerConfig.getProtocolConfig().protocol());

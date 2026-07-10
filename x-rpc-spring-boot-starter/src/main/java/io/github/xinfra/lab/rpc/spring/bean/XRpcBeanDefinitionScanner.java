@@ -47,7 +47,7 @@ public class XRpcBeanDefinitionScanner extends ClassPathBeanDefinitionScanner {
 
     for (String basePackage : basePackages) {
       if (!beanDefinitionHolderMap.containsKey(basePackage)) {
-        Set<BeanDefinitionHolder> beanDefinitionHolders = super.doScan(basePackages);
+        Set<BeanDefinitionHolder> beanDefinitionHolders = super.doScan(basePackage);
         beanDefinitionHolderMap.put(basePackage, beanDefinitionHolders);
       }
       beanDefinitions.addAll(beanDefinitionHolderMap.get(basePackage));

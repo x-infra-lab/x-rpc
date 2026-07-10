@@ -24,8 +24,12 @@ import io.github.xinfra.lab.rpc.config.ProviderConfig;
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
 import io.github.xinfra.lab.rpc.core.bootstrap.ConsumerBootstrap;
 import io.github.xinfra.lab.rpc.core.bootstrap.ProviderBoostrap;
+import io.github.xinfra.lab.rpc.core.cluster.router.ServiceGroupRouter;
 import io.github.xinfra.lab.rpc.core.filter.ConsumerGenericFilter;
+import io.github.xinfra.lab.rpc.core.filter.GracefulShutdownFilter;
+import io.github.xinfra.lab.rpc.core.filter.MetricFilter;
 import io.github.xinfra.lab.rpc.core.filter.ProviderGenericFilter;
+import io.github.xinfra.lab.rpc.core.filter.TraceFilter;
 import io.github.xinfra.lab.rpc.core.protocol.XProtocolConfig;
 import io.github.xinfra.lab.rpc.filter.ClusterFilter;
 import io.github.xinfra.lab.rpc.filter.Filter;
@@ -35,6 +39,8 @@ import io.github.xinfra.lab.rpc.spring.context.XRpcApplicationListener;
 import io.github.xinfra.lab.rpc.transport.xremoting.XRemotingTransportClientConfig;
 import io.github.xinfra.lab.rpc.transport.xremoting.XRemotingTransportConfig;
 import io.github.xinfra.lab.rpc.transport.xremoting.XRemotingTransportServerConfig;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
@@ -113,14 +119,13 @@ public class XRpcAutoConfiguration {
     return xProtocolConfig;
   }
 
-  @Bean
-  public Filter providerGenericFilter() {
-    return new ProviderGenericFilter();
+  private List<Filter> buildProviderFilters() {
+    return Arrays.asList(
+        new GracefulShutdownFilter(), new TraceFilter(), new MetricFilter(), new ProviderGenericFilter());
   }
 
-  @Bean
-  public Filter consumerGenericFilter() {
-    return new ConsumerGenericFilter();
+  private List<Filter> buildConsumerFilters() {
+    return Arrays.asList(new TraceFilter(), new MetricFilter(), new ConsumerGenericFilter());
   }
 
   @Bean(destroyMethod = "close")
@@ -128,16 +133,15 @@ public class XRpcAutoConfiguration {
   public ProviderBoostrap providerBoostrap(
       ApplicationConfig applicationConfig,
       RegistryConfig<?> registryConfig,
-      ProtocolConfig protocolConfig,
-      List<Filter> filters) {
+      ProtocolConfig protocolConfig) {
     ProviderConfig providerConfig = new ProviderConfig();
     providerConfig.setApplicationConfig(applicationConfig);
     providerConfig.setRegistryConfig(registryConfig);
     providerConfig.setProtocolConfig(protocolConfig);
-    providerConfig.setFilters(filters);
+    providerConfig.setFilters(buildProviderFilters());
     providerConfig.setAutoRegister(false);
 
-    return ProviderBoostrap.form(providerConfig);
+    return ProviderBoostrap.from(providerConfig);
   }
 
   @Bean(destroyMethod = "close")
@@ -146,15 +150,16 @@ public class XRpcAutoConfiguration {
       ApplicationConfig applicationConfig,
       RegistryConfig<?> registryConfig,
       ProtocolConfig protocolConfig,
-      List<ClusterFilter> clusterFilters,
-      List<Filter> filters,
-      List<Router> routers) {
+      List<ClusterFilter> clusterFilters) {
     ConsumerConfig consumerConfig = new ConsumerConfig();
     consumerConfig.setApplicationConfig(applicationConfig);
     consumerConfig.setRegistryConfig(registryConfig);
     consumerConfig.setProtocolConfig(protocolConfig);
     consumerConfig.setClusterFilters(clusterFilters);
-    consumerConfig.setFilters(filters);
+    consumerConfig.setFilters(buildConsumerFilters());
+
+    List<Router> routers = new ArrayList<>();
+    routers.add(new ServiceGroupRouter());
     routers.forEach(router -> consumerConfig.getRouterChain().addRouter(router));
 
     return ConsumerBootstrap.from(consumerConfig);

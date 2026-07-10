@@ -17,13 +17,25 @@
 package io.github.xinfra.lab.rpc.core.cluster;
 
 import io.github.xinfra.lab.rpc.cluster.Cluster;
+import io.github.xinfra.lab.rpc.cluster.ClusterType;
 import io.github.xinfra.lab.rpc.config.ReferenceConfig;
 import io.github.xinfra.lab.rpc.transport.ClientTransport;
+import java.util.concurrent.ExecutorService;
 
 public class ClusterFactory {
 
   public static Cluster create(
-      ReferenceConfig<?> referenceConfig, ClientTransport clientTransport) {
-    return new FastFailCluster(referenceConfig, clientTransport);
+      ReferenceConfig<?> referenceConfig,
+      ClientTransport clientTransport,
+      ExecutorService callbackExecutor) {
+    ClusterType clusterType = referenceConfig.getClusterType();
+    switch (clusterType) {
+      case FAST_FAIL:
+        return new FastFailCluster(referenceConfig, clientTransport, callbackExecutor);
+      case FAIL_OVER:
+        return new FailoverCluster(referenceConfig, clientTransport, callbackExecutor);
+      default:
+        throw new IllegalArgumentException("unsupported cluster type: " + clusterType);
+    }
   }
 }

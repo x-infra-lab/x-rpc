@@ -44,6 +44,7 @@ public class XRemotingClientTransport implements ClientTransport {
       throw new IllegalArgumentException(
           "transportClientConfig must be XRemotingTransportClientConfig");
     }
+    this.transportClientConfig = (XRemotingTransportClientConfig) transportClientConfig;
     this.rpcClient = new RpcClient();
     this.rpcClient.startup();
     this.connectionManager = rpcClient.getConnectionManager();
@@ -91,7 +92,7 @@ public class XRemotingClientTransport implements ClientTransport {
       int timeoutMills,
       ExecutorService invokeCallBackExecutor)
       throws Exception {
-    CompletableFuture completableFuture = new CompletableFuture();
+    CompletableFuture<RpcResponse> completableFuture = new CompletableFuture<>();
     RpcInvokeCallBack<RpcResponse> rpcResponseRpcInvokeCallBack =
         new RpcInvokeCallBack<RpcResponse>() {
 

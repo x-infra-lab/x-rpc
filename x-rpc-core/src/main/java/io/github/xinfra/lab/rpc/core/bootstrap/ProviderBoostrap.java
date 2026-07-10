@@ -17,6 +17,7 @@
 package io.github.xinfra.lab.rpc.core.bootstrap;
 
 import com.google.common.collect.Lists;
+import io.github.xinfra.lab.rpc.common.Constants;
 import io.github.xinfra.lab.rpc.config.ExporterConfig;
 import io.github.xinfra.lab.rpc.config.ProviderConfig;
 import io.github.xinfra.lab.rpc.config.RegistryConfig;
@@ -52,19 +53,26 @@ public class ProviderBoostrap implements Closeable {
   private List<ExporterConfig<?>> exportedExporterConfigs = new ArrayList<>();
 
   public ProviderBoostrap(ProviderConfig providerConfig) {
-    Validate.notNull(providerConfig);
-    Validate.notNull(providerConfig.getApplicationConfig());
-    Validate.notNull(providerConfig.getRegistryConfig());
-    Validate.notNull(providerConfig.getProtocolConfig());
-    Validate.notNull(providerConfig.getFilters());
+    Validate.notNull(providerConfig, "providerConfig must not be null");
+    Validate.notNull(providerConfig.getApplicationConfig(), "applicationConfig must not be null");
+    Validate.notBlank(
+        providerConfig.getApplicationConfig().getAppName(), "appName must not be blank");
+    Validate.notNull(providerConfig.getRegistryConfig(), "registryConfig must not be null");
+    Validate.notNull(providerConfig.getProtocolConfig(), "protocolConfig must not be null");
+    Validate.notNull(providerConfig.getFilters(), "filters must not be null");
     this.providerConfig = providerConfig;
+    GracefulShutdown.INSTANCE.registerShutdownHook(this);
   }
 
-  public static ProviderBoostrap form(ProviderConfig providerConfig) {
+  public static ProviderBoostrap from(ProviderConfig providerConfig) {
     return new ProviderBoostrap(providerConfig);
   }
 
-  public void export(ExporterConfig<?> exporterConfig) {
+  public synchronized void export(ExporterConfig<?> exporterConfig) {
+    Validate.notNull(exporterConfig, "exporterConfig must not be null");
+    Validate.notNull(
+        exporterConfig.getServiceInterfaceClass(), "serviceInterfaceClass must not be null");
+    Validate.notNull(exporterConfig.getServiceImpl(), "serviceImpl must not be null");
     exporterConfig.setProviderConfig(providerConfig);
 
     // build invoker
@@ -87,19 +95,36 @@ public class ProviderBoostrap implements Closeable {
         providerConfig.getProtocolConfig().protocol(),
         serverTransport.address());
 
+    ServiceInstance serviceInstance = registry.getServiceInstance();
+    if (exporterConfig.getWeight() != 100) {
+      serviceInstance
+          .getProps()
+          .put(Constants.WEIGHT_KEY, String.valueOf(exporterConfig.getWeight()));
+    }
+    if (exporterConfig.getWarmupMills() > 0) {
+      serviceInstance
+          .getProps()
+          .put(Constants.WARMUP_KEY, String.valueOf(exporterConfig.getWarmupMills()));
+    }
+
     // export metadata service
     if (metadataServiceExported.compareAndSet(false, true)) {
       exportMetadataService(serverTransport, registry.getServiceInstance());
     }
 
-    // todo: check repeat export
+    for (ExporterConfig<?> existing : exportedExporterConfigs) {
+      if (existing.getServiceInterfaceName().equals(exporterConfig.getServiceInterfaceName())) {
+        throw new IllegalStateException(
+            "duplicate export service: " + exporterConfig.getServiceInterfaceName());
+      }
+    }
     exportedExporterConfigs.add(exporterConfig);
     if (providerConfig.isAutoRegister()) {
       registry.register(Lists.newArrayList(exporterConfig));
     }
   }
 
-  public void register() {
+  public synchronized void register() {
     if (exportedExporterConfigs.isEmpty()) {
       log.info("XRpc no service exported, skip registry register.");
       return;
@@ -118,12 +143,42 @@ public class ProviderBoostrap implements Closeable {
     serverTransport.register(exporterConfig, providerInvoker);
   }
 
-  public void unExport(ExporterConfig<?> exporterConfig) {
-    // too
+  public synchronized void unExport(ExporterConfig<?> exporterConfig) {
+    exportedExporterConfigs.remove(exporterConfig);
+
+    ServerTransport serverTransport =
+        serverTransportManager.getServerTransport(
+            providerConfig.getProtocolConfig().transportConfig());
+    serverTransport.unRegister(exporterConfig, null);
+
+    RegistryConfig<?> registryConfig = providerConfig.getRegistryConfig();
+    Registry registry = registryManager.getRegistry(registryConfig);
+    ServiceInstance serviceInstance = registry.getServiceInstance();
+    serviceInstance.removeService(exporterConfig);
+    if (serviceInstance.isRevisionChanged()) {
+      registry.update(serviceInstance);
+    }
   }
 
   @Override
   public void close() throws IOException {
-    // todo
+    IOException ex = null;
+    try {
+      registryManager.close();
+    } catch (IOException e) {
+      ex = e;
+    }
+    try {
+      serverTransportManager.close();
+    } catch (IOException e) {
+      if (ex != null) {
+        ex.addSuppressed(e);
+      } else {
+        ex = e;
+      }
+    }
+    if (ex != null) {
+      throw ex;
+    }
   }
 }

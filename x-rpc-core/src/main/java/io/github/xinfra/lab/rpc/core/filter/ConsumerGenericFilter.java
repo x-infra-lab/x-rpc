@@ -34,6 +34,10 @@ public class ConsumerGenericFilter implements Filter {
       ReferenceConfig<?> referenceConfig = (ReferenceConfig<?>) invoker.serviceConfig();
       if (referenceConfig.isGeneric()) {
         Object[] args = invocation.getArgs();
+        if (args == null || args.length != 3) {
+          throw new GenericException(
+              "Generic invocation requires exactly 3 arguments: (methodName, argTypes, args)");
+        }
         String methodName = (String) args[0];
         String[] methodArgTypes = (String[]) args[1];
         Object[] methodArgs = (Object[]) args[2];

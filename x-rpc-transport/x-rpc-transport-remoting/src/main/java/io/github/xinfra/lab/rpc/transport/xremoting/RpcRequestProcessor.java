@@ -25,11 +25,9 @@ import io.github.xinfra.lab.rpc.invoker.Invoker;
 import io.github.xinfra.lab.rpc.invoker.RpcRequest;
 import io.github.xinfra.lab.rpc.invoker.RpcResponse;
 import java.lang.reflect.Method;
-import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Slf4j
 public class RpcRequestProcessor implements UserProcessor<RpcRequest> {
   private static final Logger log = LoggerFactory.getLogger(RpcRequestProcessor.class);
   private final XRemotingServerTransport xremotingServerTransport;
@@ -71,14 +69,17 @@ public class RpcRequestProcessor implements UserProcessor<RpcRequest> {
       invocation.setMethodName(method.getName());
       invocation.setArgs(request.getMethodArgs());
       invocation.setArgTypes(request.getMethodArgTypes());
-      invocation.setAttachment(request.getAttachment());
+      if (request.getAttachment() != null) {
+        invocation.setAttachment(request.getAttachment());
+      }
 
       InvocationResult invocationResult = invoker.invoke(invocation);
       return InvokeTypes.convertRpcResponse(invocationResult);
     } catch (Throwable e) {
+      log.error("RpcRequestProcessor handle request error. serviceName:{}", request.getServiceName(), e);
       RpcResponse rpcResponse = new RpcResponse();
       rpcResponse.setSuccess(false);
-      rpcResponse.setErrorMsg(e.getMessage());
+      rpcResponse.setErrorMsg(e.getClass().getName() + ": " + e.getMessage());
       return rpcResponse;
     }
   }

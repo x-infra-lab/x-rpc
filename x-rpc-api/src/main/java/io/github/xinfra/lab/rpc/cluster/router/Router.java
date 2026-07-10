@@ -20,6 +20,7 @@ import io.github.xinfra.lab.rpc.invoker.Invocation;
 import io.github.xinfra.lab.rpc.registry.ServiceInstance;
 import java.util.List;
 
+/** Filters the list of candidate service instances for an invocation. */
 public interface Router {
   List<ServiceInstance> route(Invocation invocation, List<ServiceInstance> serviceInstanceList);
 }
